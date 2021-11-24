@@ -1,0 +1,20 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " c ",
+        "cIc",
+        " c "
+    ],
+    "key": {
+        "c": {
+            "item": "minecraft:copper_ingot"
+        },
+        "I": {
+            "item": "locksmith:lock"
+        }
+    },
+    "result": {
+        "item": "locksmith:lock_button",
+        "count": 1
+    }
+}
