@@ -1,9 +1,9 @@
 {
   "item.locksmith.key_ring": "Portachiavi",
   "item.locksmith.key": "Chiave",
-  "item.locksmith.blank_key": "Chiave anonima",
+  "item.locksmith.blank_key": "Chiave generica",
   "item.locksmith.lock": "Lucchetto",
   "item.locksmith.lockpick": "Grimaldello",
-  "block.locksmith.locksmithing_table": "Banco da forgiatura di chiavi"
+  "block.locksmith.locksmithing_table": "Banco da creazione di chiavi"
   "block.locksmith.lock_button": "Serratura"
 }
