@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "locksmith:block/locksmithing_table"
+    }
+  }
+}

@@ -2,6 +2,8 @@ package gg.moonflower.locksmith.core;
 
 import gg.moonflower.locksmith.client.lock.ClientLockManager;
 import gg.moonflower.locksmith.common.world.lock.LockManager;
+import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
+import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.pollen.api.platform.Platform;
 
 public class Locksmith {
@@ -21,7 +23,9 @@ public class Locksmith {
     }
 
     public static void onCommonInit() {
-        LockManager.INSTANCE.init();
+        LocksmithBlocks.BLOCKS.register(Locksmith.PLATFORM);
+        LocksmithItems.ITEMS.register(Locksmith.PLATFORM);
+        LockManager.init();
     }
 
     public static void onCommonPostInit(Platform.ModSetupContext ctx) {
