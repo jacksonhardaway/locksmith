@@ -3,7 +3,7 @@ package gg.moonflower.locksmith.common.world.lock;
 import gg.moonflower.locksmith.api.lock.LockData;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockSyncPacket;
-import gg.moonflower.pollen.api.event.events.entity.player.server.PlayerTrackingEvent;
+import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -19,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public final class LockManager extends SavedData {
-    public static final LockManager INSTANCE = new LockManager();
     private static final Logger LOGGER = LogManager.getLogger();
     private final Map<ChunkPos, ChunkLockData> locks = new HashMap<>();
 
@@ -28,11 +27,11 @@ public final class LockManager extends SavedData {
     }
 
     public static LockManager getOrCreate(ServerLevel level) {
-        return level.getDataStorage().get(() -> LockManager.INSTANCE, "locksmith_locks");
+        return level.getDataStorage().computeIfAbsent(LockManager::new, "locksmith_locks");
     }
 
-    public void init() {
-        PlayerTrackingEvent.START_TRACKING_CHUNK.register((player, chunk) -> {
+    public static void init() {
+        ServerPlayerTrackingEvent.START_TRACKING_CHUNK.register((player, chunk) -> {
             if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
                 return;
 

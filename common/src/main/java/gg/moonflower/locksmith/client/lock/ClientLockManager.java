@@ -1,7 +1,7 @@
 package gg.moonflower.locksmith.client.lock;
 
 import gg.moonflower.locksmith.api.lock.LockData;
-import gg.moonflower.pollen.api.event.events.entity.player.server.PlayerTrackingEvent;
+import gg.moonflower.pollen.api.event.events.world.ChunkEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +17,10 @@ public final class ClientLockManager {
     }
 
     public void init() {
-        PlayerTrackingEvent.STOP_TRACKING_CHUNK.register((player, chunkPos) -> this.locks.remove(chunkPos));
+        ChunkEvent.UNLOAD.register((level, chunk) -> {
+            if (level.isClientSide())
+                this.locks.remove(chunk.getPos());
+        });
     }
 
     public Map<ChunkPos, LockData> getLocks() {
