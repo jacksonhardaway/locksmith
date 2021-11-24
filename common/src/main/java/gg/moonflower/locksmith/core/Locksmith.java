@@ -1,5 +1,7 @@
 package gg.moonflower.locksmith.core;
 
+import gg.moonflower.locksmith.client.lock.ClientLockManager;
+import gg.moonflower.locksmith.common.world.lock.LockManager;
 import gg.moonflower.pollen.api.platform.Platform;
 
 public class Locksmith {
@@ -12,12 +14,14 @@ public class Locksmith {
             .build();
 
     public static void onClientInit() {
+        ClientLockManager.INSTANCE.init();
     }
 
     public static void onClientPostInit(Platform.ModSetupContext ctx) {
     }
 
     public static void onCommonInit() {
+        LockManager.INSTANCE.init();
     }
 
     public static void onCommonPostInit(Platform.ModSetupContext ctx) {
