@@ -18,7 +18,10 @@ subprojects {
 
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-        mappings loom.officialMojangMappings()
+        mappings loom.layered() {
+            officialMojangMappings()
+            parchment("org.parchmentmc.data:parchment-${rootProject.minecraft_version}:${rootProject.parchment_version}")
+        }
     }
 }
 
@@ -33,8 +36,9 @@ allprojects {
 
     repositories {
 		mavenLocal()
-        maven { url = "https://jitpack.io" }
+        maven { url "https://jitpack.io" }
         maven { url "https://maven.jaackson.me" }
+        maven { url "https://maven.parchmentmc.org" }
         maven {
             url "https://www.cursemaven.com"
             content {
