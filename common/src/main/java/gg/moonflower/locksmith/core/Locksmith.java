@@ -1,14 +1,14 @@
-package gg.moonflower.starter.core;
+package gg.moonflower.locksmith.core;
 
 import gg.moonflower.pollen.api.platform.Platform;
 
-public class Starter {
-    public static final String MOD_ID = "starter";
+public class Locksmith {
+    public static final String MOD_ID = "locksmith";
     public static final Platform PLATFORM = Platform.builder(MOD_ID)
-            .clientInit(Starter::onClientInit)
-            .clientPostInit(Starter::onClientPostInit)
-            .commonInit(Starter::onCommonInit)
-            .commonPostInit(Starter::onCommonPostInit)
+            .clientInit(Locksmith::onClientInit)
+            .clientPostInit(Locksmith::onClientPostInit)
+            .commonInit(Locksmith::onCommonInit)
+            .commonPostInit(Locksmith::onCommonPostInit)
             .build();
 
     public static void onClientInit() {

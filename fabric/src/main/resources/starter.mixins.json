@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "gg.moonflower.starter.core.mixin.fabric",
+  "package": "gg.moonflower.locksmith.core.mixin.fabric",
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.8",
   "client": [

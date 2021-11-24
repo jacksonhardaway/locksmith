@@ -8,10 +8,8 @@ modId = "${id}"
 version = "${version}"
 displayName = "${name}"
 authors = "Moonflower"
-credits = "An author, another author, and the last author."
-description = '''
-This is an example starter template.
-'''
+credits = "Jackson"
+description = "A mod about locks"
 updateJSONURL = "https://github.com/MoonflowerTeam/${repo}/update.json"
 #logoFile = ""
 
