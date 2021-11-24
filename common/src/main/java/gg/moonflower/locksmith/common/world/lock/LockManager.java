@@ -21,13 +21,15 @@ import java.util.*;
 public final class LockManager extends SavedData {
     private static final Logger LOGGER = LogManager.getLogger();
     private final Map<ChunkPos, ChunkLockData> locks = new HashMap<>();
+    private final ServerLevel level;
 
-    private LockManager() {
-        super("locksmith_locks");
+    private LockManager(ServerLevel level) {
+        super("locksmithLocks");
+        this.level = level;
     }
 
     public static LockManager getOrCreate(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(LockManager::new, "locksmith_locks");
+        return level.getDataStorage().computeIfAbsent(() -> new LockManager(level), "locksmithLocks");
     }
 
     public static void init() {
@@ -35,22 +37,21 @@ public final class LockManager extends SavedData {
             if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
                 return;
 
-            ServerLevel serverLevel = (ServerLevel) player.level;
-            Set<LockData> locks = LockManager.getOrCreate(serverLevel).getLocks(chunk);
+            Set<LockData> locks = LockManager.getOrCreate((ServerLevel) player.level).getLocks(chunk);
             if (locks.isEmpty())
                 return;
 
-            LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundLockSyncPacket(locks));
+            LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundLockSyncPacket(ClientboundLockSyncPacket.Action.REPLACE, chunk, locks));
         });
     }
 
     @Override
     public void load(CompoundTag compoundTag) {
-        ListTag tag = compoundTag.getList("Locks", 10);
+        ListTag tag = compoundTag.getList("Chunks", 10);
         for (int i = 0; i < tag.size(); i++) {
             CompoundTag lock = tag.getCompound(i);
             ChunkLockData data = new ChunkLockData();
-            data.save(lock);
+            data.load(lock);
 
             this.locks.put(new ChunkPos(lock.getInt("X"), lock.getInt("Z")), data);
         }
@@ -67,7 +68,7 @@ public final class LockManager extends SavedData {
             list.add(this.locks.get(pos).save(tag));
         }
 
-        compoundTag.put("Locks", list);
+        compoundTag.put("Chunks", list);
         return compoundTag;
     }
 
@@ -78,16 +79,30 @@ public final class LockManager extends SavedData {
             return data;
         });
         this.setDirty();
+        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundLockSyncPacket(ClientboundLockSyncPacket.Action.APPEND, chunk, Collections.singleton(lock)));
     }
 
-    public void removeLock(ChunkPos chunk, UUID id) {
-        this.locks.get(chunk).removeLock(id);
+    public void removeLock(BlockPos pos) {
+        ChunkPos chunk = new ChunkPos(pos);
+        ChunkLockData data = this.locks.get(chunk);
+        if (data == null)
+            return;
+
+        LockData lock = data.getLock(pos);
+        if (lock == null)
+            return;
+
+        data.getLocks().forEach((uuid, lockData) -> System.out.println(uuid));
+        data.removeLock(lock.getId());
         this.setDirty();
+
+        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundLockSyncPacket(ClientboundLockSyncPacket.Action.REMOVE, chunk, Collections.singleton(lock)));
     }
 
     @Nullable
-    public LockData getLock(ChunkPos chunk, BlockPos pos) {
-        return this.locks.get(chunk).getLock(pos);
+    public LockData getLock(BlockPos pos) {
+        ChunkLockData data = this.locks.get(new ChunkPos(pos));
+        return data == null ? null : data.getLock(pos);
     }
 
     public Set<LockData> getLocks(ChunkPos chunk) {
@@ -118,8 +133,7 @@ public final class LockManager extends SavedData {
         }
 
         public void addLock(LockData lock) {
-            UUID id = UUID.randomUUID();
-            this.locks.put(id, lock);
+            this.locks.put(lock.getId(), lock);
         }
 
         public void removeLock(UUID id) {

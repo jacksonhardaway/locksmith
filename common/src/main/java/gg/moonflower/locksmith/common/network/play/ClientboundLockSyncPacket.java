@@ -5,20 +5,29 @@ import gg.moonflower.locksmith.api.lock.LockData;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.ChunkPos;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClientPlayPacketHandler> {
 
-    private final Set<LockData> locks;
+    private final Action action;
+    private final ChunkPos chunk;
+    private final Collection<LockData> locks;
 
-    public ClientboundLockSyncPacket(Set<LockData> locks) {
+    public ClientboundLockSyncPacket(Action action, ChunkPos chunk, Collection<LockData> locks) {
+        this.action = action;
+        this.chunk = chunk;
         this.locks = locks;
     }
 
     public ClientboundLockSyncPacket(FriendlyByteBuf buf) {
+        this.action = buf.readEnum(Action.class);
+        this.chunk = new ChunkPos(buf.readLong());
+
         int size = buf.readVarInt();
         this.locks = new HashSet<>();
         try {
@@ -32,6 +41,8 @@ public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClie
 
     @Override
     public void writePacketData(FriendlyByteBuf buf) {
+        buf.writeEnum(this.action);
+        buf.writeLong(this.chunk.toLong());
         buf.writeVarInt(this.locks.size());
         try {
             for (LockData lock : this.locks) {
@@ -47,7 +58,19 @@ public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClie
         handler.handleLockSync(this, ctx);
     }
 
-    public Set<LockData> getLocks() {
+    public Action getAction() {
+        return action;
+    }
+
+    public ChunkPos getChunk() {
+        return chunk;
+    }
+
+    public Collection<LockData> getLocks() {
         return locks;
+    }
+
+    public enum Action {
+        REPLACE, APPEND, REMOVE
     }
 }
