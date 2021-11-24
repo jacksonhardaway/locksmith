@@ -1,0 +1,37 @@
+modLoader = "javafml"
+loaderVersion = "[36,)"
+issueTrackerURL = "https://github.com/MoonflowerTeam/${repo}/issues"
+license = "GPLv3"
+
+[[mods]]
+modId = "${id}"
+version = "${version}"
+displayName = "${name}"
+authors = "Moonflower"
+credits = "An author, another author, and the last author."
+description = '''
+This is an example starter template.
+'''
+updateJSONURL = "https://github.com/MoonflowerTeam/${repo}/update.json"
+#logoFile = ""
+
+[[dependencies.${id}]]
+modId = "forge"
+mandatory = true
+versionRange = "[36,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${id}]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.16.5,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${id}]]
+modId = "pollen"
+mandatory = true
+versionRange = "[1.0.0,)"
+ordering = "BEFORE"
+side = "BOTH"
