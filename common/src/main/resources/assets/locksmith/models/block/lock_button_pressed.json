@@ -1,0 +1,21 @@
+{
+	"credit": "Made by Farcr",
+	"textures": {
+		"0": "blocks/lock_button",
+		"particle": "blocks/lock_button"
+	},
+	"elements": [
+		{
+			"from": [4.5, 3.5, 0],
+			"to": [11.5, 10.5, 2],
+			"faces": {
+				"north": {"uv": [7, 0, 14, 7], "texture": "#0"},
+				"east": {"uv": [12, 8, 14, 15], "texture": "#0"},
+				"south": {"uv": [0, 0, 7, 7], "texture": "#0"},
+				"west": {"uv": [1, 8, 3, 15], "texture": "#0"},
+				"up": {"uv": [4, 13, 11, 15], "texture": "#0"},
+				"down": {"uv": [4, 8, 11, 10], "texture": "#0"}
+			}
+		}
+	]
+}
