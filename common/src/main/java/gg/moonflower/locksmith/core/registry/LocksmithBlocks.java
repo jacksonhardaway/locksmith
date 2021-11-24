@@ -1,5 +1,6 @@
 package gg.moonflower.locksmith.core.registry;
 
+import gg.moonflower.locksmith.common.block.LocksmithingTableBlock;
 import gg.moonflower.locksmith.core.Locksmith;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
 import net.minecraft.core.Registry;
@@ -16,7 +17,7 @@ import java.util.function.Supplier;
 public class LocksmithBlocks {
     public static final PollinatedRegistry<Block> BLOCKS = PollinatedRegistry.create(Registry.BLOCK, Locksmith.MOD_ID);
 
-    public static final Supplier<Block> LOCKSMITHING_TABLE = registerBlock("locksmithing_table", () -> new Block(BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS));
+    public static final Supplier<Block> LOCKSMITHING_TABLE = registerBlock("locksmithing_table", () -> new LocksmithingTableBlock(BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS));
 
     private static Supplier<Block> registerBlock(String id, Supplier<Block> block, Item.Properties properties) {
         Supplier<Block> register = BLOCKS.register(id, block);

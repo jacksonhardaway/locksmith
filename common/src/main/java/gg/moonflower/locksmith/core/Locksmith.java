@@ -1,11 +1,14 @@
 package gg.moonflower.locksmith.core;
 
 import gg.moonflower.locksmith.client.lock.ClientLockManager;
+import gg.moonflower.locksmith.client.screen.LocksmithingTableScreen;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.common.world.lock.LockManager;
 import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
+import gg.moonflower.locksmith.core.registry.LocksmithMenus;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.registry.ClientRegistries;
 
 public class Locksmith {
     public static final String MOD_ID = "locksmith";
@@ -17,6 +20,7 @@ public class Locksmith {
             .build();
 
     public static void onClientInit() {
+        ClientRegistries.registerScreenFactory(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
         ClientLockManager.INSTANCE.init();
     }
 

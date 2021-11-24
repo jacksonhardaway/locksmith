@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:block/cube",
   "textures": {
-    "particle": "minecraft:block/smithing_table_front",
-    "north": "minecraft:block/smithing_table_front",
-    "south": "minecraft:block/smithing_table_front",
-    "east": "minecraft:block/smithing_table_side",
-    "west": "minecraft:block/smithing_table_side",
-    "up": "minecraft:block/smithing_table_top",
-    "down": "minecraft:block/smithing_table_bottom"
+    "particle": "locksmith:block/locksmithing_table_front",
+    "north": "locksmith:block/locksmithing_table_front",
+    "south": "locksmith:block/locksmithing_table_front",
+    "east": "locksmith:block/locksmithing_table_side",
+    "west": "locksmith:block/locksmithing_table_side",
+    "up": "locksmith:block/locksmithing_table_top",
+    "down": "locksmith:block/locksmithing_table_bottom"
   }
 }
