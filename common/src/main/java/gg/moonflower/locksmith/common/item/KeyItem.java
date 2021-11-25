@@ -1,7 +1,6 @@
 package gg.moonflower.locksmith.common.item;
 
 import gg.moonflower.locksmith.api.lock.LockData;
-import gg.moonflower.locksmith.client.lock.ClientLockManager;
 import gg.moonflower.locksmith.common.world.lock.LockManager;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import net.minecraft.ChatFormatting;
@@ -9,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
@@ -23,8 +23,53 @@ import java.util.List;
 import java.util.UUID;
 
 public class KeyItem extends Item {
+    private static final Component ORIGINAL = new TranslatableComponent("item.locksmith.key.original").withStyle(ChatFormatting.GRAY);
+    private static final Component COPY = new TranslatableComponent("item.locksmith.key.copy").withStyle(ChatFormatting.GRAY);
+
     public KeyItem(Properties properties) {
         super(properties);
+    }
+
+    public static boolean matchesLock(ServerLevel level, BlockPos pos, ItemStack stack) {
+        if (stack.getItem() != LocksmithItems.KEY.get())
+            return false;
+
+        LockManager manager = LockManager.getOrCreate(level);
+        LockData lock = manager.getLock(pos);
+        if (lock == null)
+            return false;
+
+        return lock.getId().equals(KeyItem.getLockId(stack));
+    }
+
+    @Nullable
+    public static UUID getLockId(ItemStack stack) {
+        if (stack.getItem() != LocksmithItems.KEY.get() && stack.getItem() != LocksmithItems.LOCK.get())
+            return null;
+
+        CompoundTag tag = stack.getOrCreateTag();
+        if (!tag.contains("Lock"))
+            return null;
+
+        return tag.getUUID("Lock");
+    }
+
+    public static void setLockId(ItemStack stack, UUID id) {
+        if (stack.getItem() != LocksmithItems.KEY.get() && stack.getItem() != LocksmithItems.LOCK.get())
+            return;
+
+        stack.getOrCreateTag().putUUID("Lock", id);
+    }
+
+    public static boolean isOriginal(ItemStack stack) {
+        return stack.getItem() == LocksmithItems.KEY.get() && stack.getOrCreateTag().getBoolean("Original");
+    }
+
+    public static void setOriginal(ItemStack stack, boolean original) {
+        if (stack.getItem() != LocksmithItems.KEY.get())
+            return;
+
+        stack.getOrCreateTag().putBoolean("Original", original);
     }
 
     @Override
@@ -43,7 +88,7 @@ public class KeyItem extends Item {
         } else if (lock == null) {
             LockData newLock = new LockData(UUID.randomUUID(), context.getClickedPos(), true);
             manager.addLock(new ChunkPos(context.getClickedPos()), newLock);
-            KeyItem.bind(newLock, context.getItemInHand());
+            KeyItem.setLockId(context.getItemInHand(), newLock.getId());
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.FAIL;
@@ -51,57 +96,16 @@ public class KeyItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+        if (KeyItem.isOriginal(stack))
+            tooltipComponents.add(ORIGINAL);
+        else
+            tooltipComponents.add(COPY);
         if (isAdvanced.isAdvanced()) {
             UUID id = KeyItem.getLockId(stack);
             if (id == null)
                 return;
 
-            tooltipComponents.add(new TextComponent("Bound Lock: " + id).withStyle(ChatFormatting.GRAY));
+            tooltipComponents.add(new TextComponent("Lock Id: " + id).withStyle(ChatFormatting.DARK_GRAY));
         }
-    }
-
-    public static boolean matchesLock(ServerLevel level, BlockPos pos, ItemStack stack) {
-        if (stack.getItem() != LocksmithItems.KEY.get())
-            return false;
-
-        LockManager manager = LockManager.getOrCreate(level);
-        LockData lock = manager.getLock(pos);
-        if (lock == null)
-            return false;
-
-        return lock.getId().equals(KeyItem.getLockId(stack));
-    }
-
-    public static void bind(LockData data, ItemStack stack) {
-        if (stack.getItem() != LocksmithItems.KEY.get())
-            return;
-
-        if (stack.getOrCreateTag().contains("BoundLock"))
-            return;
-
-        stack.getOrCreateTag().putUUID("BoundLock", data.getId());
-    }
-
-    @Nullable
-    public static UUID getLockId(ItemStack stack) {
-        if (stack.getItem() != LocksmithItems.KEY.get())
-            return null;
-
-        CompoundTag tag = stack.getOrCreateTag();
-        if (!tag.contains("BoundLock"))
-            return null;
-
-        return tag.getUUID("BoundLock");
-    }
-
-    public static boolean isOriginal(ItemStack stack) {
-        return stack.getItem() == LocksmithItems.KEY.get() && stack.getOrCreateTag().getBoolean("Original");
-    }
-
-    public static void setOriginal(ItemStack stack, boolean original) {
-        if (stack.getItem() != LocksmithItems.KEY.get())
-            return;
-
-        stack.getOrCreateTag().putBoolean("Original", original);
     }
 }

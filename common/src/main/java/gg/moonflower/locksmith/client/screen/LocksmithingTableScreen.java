@@ -117,8 +117,7 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
         if (key == LocksmithItems.KEY.get()) {
             if (!KeyItem.isOriginal(this.keyStack)) {
                 return this.font.split(UNORIGINAL_KEY, 200);
-            }
-            else if (KeyItem.getLockId(this.keyStack) == null) {
+            } else if (KeyItem.getLockId(this.keyStack) == null) {
                 return this.font.split(INVALID_KEY, 200);
             }
         }

@@ -1,12 +1,12 @@
 package gg.moonflower.locksmith.common.network.play.handler;
 
+import gg.moonflower.locksmith.api.lock.LockData;
 import gg.moonflower.locksmith.client.lock.ClientLockManager;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockSyncPacket;
-import gg.moonflower.locksmith.api.lock.LockData;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
-import net.minecraft.world.level.ChunkPos;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class LocksmithClientPlayPacketHandlerImpl implements LocksmithClientPlayPacketHandler {
 

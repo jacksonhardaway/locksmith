@@ -18,7 +18,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.UUID;
 
 public class LocksmithingTableMenu extends AbstractContainerMenu {
     public static final ResourceLocation EMPTY_SLOT_KEY = new ResourceLocation(Locksmith.MOD_ID, "item/empty_locksmithing_table_slot_key");
@@ -27,6 +30,7 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
                     add(4, 36, 0, 2, false); // from Inventory
 
     private final ContainerLevelAccess access;
+    private final Slot keyInputSlot;
     private final Container inputSlots = new SimpleContainer(2) {
         @Override
         public void setChanged() {
@@ -36,22 +40,18 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
 
         // TODO: make result
     };
-    private final Container resultSlots = new SimpleContainer(2) {
+    private final Slot inputSlot;    private final Container resultSlots = new SimpleContainer(2) {
         @Override
         public void setChanged() {
             super.setChanged();
             LocksmithingTableMenu.this.slotsChanged(this);
         }
     };
-
-    private final Slot keyInputSlot;
-    private final Slot inputSlot;
     private long lastSoundTime;
-
+    private boolean pendingResult;
     public LocksmithingTableMenu(int containerId, Inventory inventory) {
         this(containerId, inventory, ContainerLevelAccess.NULL);
     }
-
     public LocksmithingTableMenu(int containerId, Inventory inventory, ContainerLevelAccess access) {
         super(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), containerId);
         this.access = access;
@@ -63,6 +63,12 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
             }
 
             @Override
+            public ItemStack onTake(Player player, ItemStack stack) {
+                LocksmithingTableMenu.this.pendingResult = false;
+                return super.onTake(player, stack);
+            }
+
+            @Override
             public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
                 return Pair.of(InventoryMenu.BLOCK_ATLAS, EMPTY_SLOT_KEY);
             }
@@ -71,6 +77,12 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.getItem() == LocksmithItems.BLANK_KEY.get() || stack.getItem() == LocksmithItems.BLANK_LOCK.get();
+            }
+
+            @Override
+            public ItemStack onTake(Player player, ItemStack stack) {
+                LocksmithingTableMenu.this.pendingResult = false;
+                return super.onTake(player, stack);
             }
         });
 
@@ -113,12 +125,68 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
     }
 
     private void createResult() {
-        this.resultSlots.setItem(0, ItemStack.EMPTY);
-        this.resultSlots.setItem(1, ItemStack.EMPTY);
-        if ((!KeyItem.isOriginal(this.keyInputSlot.getItem()) && this.keyInputSlot.getItem().getItem() != LocksmithItems.BLANK_KEY.get()) || !this.inputSlot.hasItem())
+        if (this.pendingResult)
             return;
 
-        System.out.println("Valid!");
+        this.resultSlots.setItem(0, ItemStack.EMPTY);
+        this.resultSlots.setItem(1, ItemStack.EMPTY);
+        if (!this.isValid())
+            return;
+
+        ItemStack keyStack = this.keyInputSlot.getItem();
+        ItemStack inputStack = this.inputSlot.getItem();
+        boolean blank = this.keyInputSlot.getItem().getItem() == LocksmithItems.BLANK_KEY.get();
+
+        ItemStack result;
+        if (inputStack.getItem() == LocksmithItems.BLANK_LOCK.get()) {
+            result = new ItemStack(LocksmithItems.LOCK.get());
+        } else if (inputStack.getItem() == LocksmithItems.BLANK_KEY.get()) {
+            result = new ItemStack(LocksmithItems.KEY.get());
+        } else return;
+
+        if (inputStack.hasCustomHoverName())
+            result.setHoverName(keyStack.getHoverName());
+
+        if (blank && this.isValidInputItem(inputStack)) {
+            UUID id = UUID.randomUUID();
+
+            ItemStack newKey = new ItemStack(LocksmithItems.KEY.get());
+            if (keyStack.hasCustomHoverName())
+                newKey.setHoverName(keyStack.getHoverName());
+            KeyItem.setOriginal(newKey, true);
+            KeyItem.setLockId(newKey, id);
+            KeyItem.setLockId(result, id);
+
+            this.resultSlots.setItem(0, newKey);
+            this.resultSlots.setItem(1, result);
+        } else if (!blank && this.isValidInputItem(inputStack)) {
+            UUID id = KeyItem.getLockId(keyStack);
+            if (id == null)
+                return;
+
+            KeyItem.setLockId(result, id);
+            this.resultSlots.setItem(0, keyStack.copy());
+            this.resultSlots.setItem(1, result);
+        }
+
+        this.pendingResult = true;
+    }
+
+    private boolean isValid() {
+        if (!this.keyInputSlot.hasItem() && !this.inputSlot.hasItem())
+            return false;
+
+        Item key = this.keyInputSlot.getItem().getItem();
+        if (key != LocksmithItems.KEY.get() && key != LocksmithItems.BLANK_KEY.get())
+            return false;
+        if (!this.isValidInputItem(this.inputSlot.getItem()))
+            return false;
+
+        return key != LocksmithItems.KEY.get() || (KeyItem.isOriginal(this.keyInputSlot.getItem()) && KeyItem.getLockId(this.keyInputSlot.getItem()) != null);
+    }
+
+    private boolean isValidInputItem(ItemStack stack) {
+        return stack.getItem() == LocksmithItems.BLANK_LOCK.get() || stack.getItem() == LocksmithItems.BLANK_KEY.get();
     }
 
     class ResultSlot extends Slot {
@@ -136,6 +204,10 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
             LocksmithingTableMenu.this.keyInputSlot.remove(1);
             LocksmithingTableMenu.this.inputSlot.remove(1);
 
+            super.onTake(player, stack);
+
+            LocksmithingTableMenu.this.pendingResult = !LocksmithingTableMenu.this.resultSlots.getItem(0).isEmpty() || !LocksmithingTableMenu.this.resultSlots.getItem(1).isEmpty();
+
             LocksmithingTableMenu.this.createResult();
             LocksmithingTableMenu.this.broadcastChanges();
 
@@ -147,7 +219,11 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
                 }
 
             });
-            return super.onTake(player, stack);
+            return stack;
         }
     }
+
+
+
+
 }

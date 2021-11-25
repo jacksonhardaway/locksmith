@@ -1,6 +1,8 @@
 {
   "item.locksmith.keyring": "Keyring",
   "item.locksmith.key": "Key",
+  "item.locksmith.key.original": "Original",
+  "item.locksmith.key.copy": "Copied",
   "item.locksmith.blank_key": "Blank Key",
   "item.locksmith.lock": "Lock",
   "item.locksmith.blank_lock": "Blank Lock",
@@ -11,7 +13,7 @@
   "screen.locksmith.locksmithing_table.missing_key": "Key Missing",
   "screen.locksmith.locksmithing_table.missing_key.tooltip": "You must provide a key in the top slot to create or copy a key.",
   "screen.locksmith.locksmithing_table.missing_input": "Blank Key or Lock Missing",
-  "screen.locksmith.locksmithing_table.missing_input.tooltip": "You must provide a blank key or lock in the bottom slot to create or copy the key onto.",
+  "screen.locksmith.locksmithing_table.missing_input.tooltip": "You must provide a blank key or lock in the bottom slot to create or copy the key onto. You can make an existing key or lock blank by putting in a grindstone.",
   "screen.locksmith.locksmithing_table.unoriginal_key": "Unoriginal Key",
   "screen.locksmith.locksmithing_table.unoriginal_key.tooltip": "The key you provided is not the original copy. To copy key from another key, you must provide the original key that was used to create the lock.",
   "screen.locksmith.locksmithing_table.invalid_key": "Invalid Key",

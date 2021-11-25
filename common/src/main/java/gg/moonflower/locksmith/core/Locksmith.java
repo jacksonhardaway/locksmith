@@ -17,19 +17,18 @@ import net.minecraft.world.inventory.InventoryMenu;
 
 public class Locksmith {
     public static final String MOD_ID = "locksmith";
-    public static final Platform PLATFORM = Platform.builder(MOD_ID)
-            .clientInit(Locksmith::onClientInit)
-            .clientPostInit(Locksmith::onClientPostInit)
-            .commonInit(Locksmith::onCommonInit)
-            .commonPostInit(Locksmith::onCommonPostInit)
-            .build();
 
     public static void onClientInit() {
         ClientRegistries.registerScreenFactory(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
         RegisterAtlasSpriteEvent.event(InventoryMenu.BLOCK_ATLAS).register((atlas, registry) -> registry.accept(LocksmithingTableMenu.EMPTY_SLOT_KEY));
         ClientRegistries.registerItemOverride(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity) -> Mth.clamp(4 / 4F, 0, 1));
         ClientLockManager.INSTANCE.init();
-    }
+    }    public static final Platform PLATFORM = Platform.builder(MOD_ID)
+            .clientInit(Locksmith::onClientInit)
+            .clientPostInit(Locksmith::onClientPostInit)
+            .commonInit(Locksmith::onCommonInit)
+            .commonPostInit(Locksmith::onCommonPostInit)
+            .build();
 
     public static void onClientPostInit(Platform.ModSetupContext ctx) {
     }
@@ -43,4 +42,6 @@ public class Locksmith {
 
     public static void onCommonPostInit(Platform.ModSetupContext ctx) {
     }
+
+
 }

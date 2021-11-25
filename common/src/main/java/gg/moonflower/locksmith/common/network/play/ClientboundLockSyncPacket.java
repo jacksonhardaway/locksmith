@@ -1,7 +1,7 @@
 package gg.moonflower.locksmith.common.network.play;
 
-import gg.moonflower.locksmith.common.network.play.handler.LocksmithClientPlayPacketHandler;
 import gg.moonflower.locksmith.api.lock.LockData;
+import gg.moonflower.locksmith.common.network.play.handler.LocksmithClientPlayPacketHandler;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,7 +10,6 @@ import net.minecraft.world.level.ChunkPos;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClientPlayPacketHandler> {
 
