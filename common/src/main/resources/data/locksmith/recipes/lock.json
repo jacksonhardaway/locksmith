@@ -14,7 +14,7 @@
         }
     },
     "result": {
-        "item": "locksmith:lock",
+        "item": "locksmith:blank_lock",
         "count": 1
     }
 }
