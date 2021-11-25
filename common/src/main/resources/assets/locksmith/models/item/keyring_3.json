@@ -1,0 +1,6 @@
+{
+  "parent": "locksmith:item/template_keyring",
+  "textures": {
+    "layer0": "locksmith:item/keyring_3"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "locksmith:item/keyring"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "locksmith:keys": 0.25
+      },
+      "model": "locksmith:item/keyring_1"
+    },
+    {
+      "predicate": {
+        "locksmith:keys": 0.5
+      },
+      "model": "locksmith:item/keyring_2"
+    },
+    {
+      "predicate": {
+        "locksmith:keys": 0.75
+      },
+      "model": "locksmith:item/keyring_3"
+    },
+    {
+      "predicate": {
+        "locksmith:keys": 1
+      },
+      "model": "locksmith:item/keyring_4"
+    }
+  ]
+}

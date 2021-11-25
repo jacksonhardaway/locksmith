@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "locksmith:item/key_ring"
+    "layer0": "locksmith:item/lock"
   }
 }
