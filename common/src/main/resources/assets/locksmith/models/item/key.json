@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "locksmith:item/template_key",
   "textures": {
     "layer0": "locksmith:item/key"
   }

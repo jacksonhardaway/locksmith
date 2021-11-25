@@ -3,7 +3,8 @@
   "item.locksmith.key": "Chiave",
   "item.locksmith.blank_key": "Chiave vuota",
   "item.locksmith.lock": "Lucchetto",
+  "item.locksmith.blank_lock": "Lucchetto vuoto",
   "item.locksmith.lockpick": "Grimaldello",
-  "block.locksmith.locksmithing_table": "Banco da creazione di chiavi"
+  "block.locksmith.locksmithing_table": "Banco da creazione di chiavi",
   "block.locksmith.lock_button": "Serratura"
 }
