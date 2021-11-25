@@ -49,6 +49,17 @@ public class KeyItem extends Item {
         return InteractionResult.FAIL;
     }
 
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+        if (isAdvanced.isAdvanced()) {
+            UUID id = KeyItem.getLockId(stack);
+            if (id == null)
+                return;
+
+            tooltipComponents.add(new TextComponent("Bound Lock: " + id).withStyle(ChatFormatting.GRAY));
+        }
+    }
+
     public static boolean matchesLock(ServerLevel level, BlockPos pos, ItemStack stack) {
         if (stack.getItem() != LocksmithItems.KEY.get())
             return false;
@@ -83,14 +94,14 @@ public class KeyItem extends Item {
         return tag.getUUID("BoundLock");
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        if (isAdvanced.isAdvanced()) {
-            UUID id = KeyItem.getLockId(stack);
-            if (id == null)
-                return;
+    public static boolean isOriginal(ItemStack stack) {
+        return stack.getItem() == LocksmithItems.KEY.get() && stack.getOrCreateTag().getBoolean("Original");
+    }
 
-            tooltipComponents.add(new TextComponent(id.toString()).withStyle(ChatFormatting.GRAY));
-        }
+    public static void setOriginal(ItemStack stack, boolean original) {
+        if (stack.getItem() != LocksmithItems.KEY.get())
+            return;
+
+        stack.getOrCreateTag().putBoolean("Original", original);
     }
 }

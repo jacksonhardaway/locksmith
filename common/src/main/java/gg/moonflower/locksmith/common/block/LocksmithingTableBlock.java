@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class LocksmithingTableBlock extends Block {
-    private static final Component CONTAINER_TITLE = new TranslatableComponent("container.locksmith.locksmithing");
+    private static final Component CONTAINER_TITLE = new TranslatableComponent("container.locksmith.locksmithing_table");
 
     public LocksmithingTableBlock(Properties properties) {
         super(properties);
