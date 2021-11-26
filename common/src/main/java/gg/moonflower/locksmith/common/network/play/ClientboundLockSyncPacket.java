@@ -4,8 +4,12 @@ import gg.moonflower.locksmith.api.lock.LockData;
 import gg.moonflower.locksmith.common.network.play.handler.LocksmithClientPlayPacketHandler;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -39,16 +43,13 @@ public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClie
     }
 
     @Override
-    public void writePacketData(FriendlyByteBuf buf) {
+    public void writePacketData(FriendlyByteBuf buf) throws IOException {
         buf.writeEnum(this.action);
         buf.writeLong(this.chunk.toLong());
         buf.writeVarInt(this.locks.size());
-        try {
-            for (LockData lock : this.locks) {
-                buf.writeWithCodec(LockData.CODEC, lock);
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to write lock", e);
+
+        for (LockData lock : this.locks) {
+            buf.writeWithCodec(LockData.CODEC, lock);
         }
     }
 

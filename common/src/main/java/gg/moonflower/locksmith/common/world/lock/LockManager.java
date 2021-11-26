@@ -3,7 +3,7 @@ package gg.moonflower.locksmith.common.world.lock;
 import gg.moonflower.locksmith.api.lock.LockData;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockSyncPacket;
-import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvent;
+import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -33,7 +33,7 @@ public final class LockManager extends SavedData {
     }
 
     public static void init() {
-        ServerPlayerTrackingEvent.START_TRACKING_CHUNK.register((player, chunk) -> {
+        ServerPlayerTrackingEvents.START_TRACKING_CHUNK.register((player, chunk) -> {
             if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
                 return;
 
@@ -72,7 +72,8 @@ public final class LockManager extends SavedData {
         return compoundTag;
     }
 
-    public void addLock(ChunkPos chunk, LockData lock) {
+    public void addLock(LockData lock) {
+        ChunkPos chunk = new ChunkPos(lock.getPos());
         this.locks.compute(chunk, (chunkPos, chunkLockData) -> {
             ChunkLockData data = chunkLockData == null ? new ChunkLockData() : chunkLockData;
             data.addLock(lock);
@@ -92,7 +93,6 @@ public final class LockManager extends SavedData {
         if (lock == null)
             return;
 
-        data.getLocks().forEach((uuid, lockData) -> System.out.println(uuid));
         data.removeLock(lock.getId());
         this.setDirty();
 

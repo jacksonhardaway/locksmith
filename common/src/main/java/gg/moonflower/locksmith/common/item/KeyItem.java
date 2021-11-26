@@ -10,7 +10,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -25,6 +27,7 @@ import java.util.UUID;
 public class KeyItem extends Item {
     private static final Component ORIGINAL = new TranslatableComponent("item.locksmith.key.original").withStyle(ChatFormatting.GRAY);
     private static final Component COPY = new TranslatableComponent("item.locksmith.key.copy").withStyle(ChatFormatting.GRAY);
+    private static final Component DOES_NOT_MATCH = new TranslatableComponent("iten.locksmith.key.does_not_match").withStyle(ChatFormatting.GRAY);
 
     public KeyItem(Properties properties) {
         super(properties);
@@ -81,17 +84,29 @@ public class KeyItem extends Item {
         BlockPos pos = context.getClickedPos();
         LockManager manager = LockManager.getOrCreate(level);
         LockData lock = manager.getLock(pos);
+        if (lock == null)
+            return InteractionResult.PASS;
 
         if (KeyItem.matchesLock(level, pos, context.getItemInHand())) {
-            manager.removeLock(pos);
+            if (context.isSecondaryUseActive()) {
+                ItemStack lockStack = lock.getStack().copy();
+                if (!lockStack.isEmpty()) {
+                    ItemEntity itemEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), lockStack);
+                    itemEntity.setDefaultPickUpDelay();
+                    level.addFreshEntity(itemEntity);
+                }
+
+                manager.removeLock(pos);
+            } else {
+                lock.setLocked(!lock.isLocked());
+            }
+
             return InteractionResult.SUCCESS;
-        } else if (lock == null) {
-            LockData newLock = new LockData(UUID.randomUUID(), context.getClickedPos(), true);
-            manager.addLock(new ChunkPos(context.getClickedPos()), newLock);
-            KeyItem.setLockId(context.getItemInHand(), newLock.getId());
+        } else {
+            if (context.getPlayer() != null)
+                context.getPlayer().displayClientMessage(DOES_NOT_MATCH, true);
             return InteractionResult.SUCCESS;
         }
-        return InteractionResult.FAIL;
     }
 
     @Override
