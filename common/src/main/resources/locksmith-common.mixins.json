@@ -7,6 +7,8 @@
     "client.GuiMixin"
   ],
   "mixins": [
+    "GrindstoneMenuMixin",
+    "GrindstoneMenuSlotMixin"
   ],
   "injectors": {
     "defaultRequire": 1
