@@ -35,7 +35,7 @@ public class LockInteractionManager {
             return InteractionResult.PASS;
         else {
             player.displayClientMessage(LOCKED, true);
-            return InteractionResult.FAIL;
+            return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
     }
 
