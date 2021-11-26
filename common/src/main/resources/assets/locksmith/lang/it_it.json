@@ -1,10 +1,23 @@
 {
   "item.locksmith.keyring": "Portachiavi",
   "item.locksmith.key": "Chiave",
+  "item.locksmith.key.original": "Originale",
+  "item.locksmith.key.copy": "Copia",
   "item.locksmith.blank_key": "Chiave vuota",
   "item.locksmith.lock": "Lucchetto",
   "item.locksmith.blank_lock": "Lucchetto vuoto",
   "item.locksmith.lockpick": "Grimaldello",
   "block.locksmith.locksmithing_table": "Banco da creazione di chiavi",
   "block.locksmith.lock_button": "Serratura"
+  "container.locksmith.locksmithing_table": "Banco da creazione di chiavi",
+  "screen.locksmith.locksmithing_table.missing_key": "Chiave mancante",
+  "screen.locksmith.locksmithing_table.missing_key.tooltip": "Necessaria una chiave nello slot superiore.",
+  "screen.locksmith.locksmithing_table.missing_input": "Oggetto vuoto mancante",
+  "screen.locksmith.locksmithing_table.missing_input.tooltip": "Necessario un oggetto vuoto nello slot inferiore per copiare o vincolare alla chiave.",
+  "screen.locksmith.locksmithing_table.unoriginal_key": "Copia di una chiave",
+  "screen.locksmith.locksmithing_table.unoriginal_key.tooltip": "Solo dalla chiave originale possono essere create delle copie.",
+  "screen.locksmith.locksmithing_table.invalid_key": "Chiave invalida",
+  "screen.locksmith.locksmithing_table.invalid_key.tooltip": "La chiave inserita non possiede un ID. Ciò, solitamente, accade quando una chiave è creata tramite comandi e non tramite un banco da lavoro appropriato.",
+  "lock.locksmith.locked": "Chiuso da una serratura.",
+  "lock.locksmith.opened": "Aperto con [chiave]."
 }
