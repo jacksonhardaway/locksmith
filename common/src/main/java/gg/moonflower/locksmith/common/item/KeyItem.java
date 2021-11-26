@@ -1,7 +1,7 @@
 package gg.moonflower.locksmith.common.item;
 
 import gg.moonflower.locksmith.api.lock.LockData;
-import gg.moonflower.locksmith.common.world.lock.LockManager;
+import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -9,15 +9,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,16 +30,11 @@ public class KeyItem extends Item {
         super(properties);
     }
 
-    public static boolean matchesLock(ServerLevel level, BlockPos pos, ItemStack stack) {
+    public static boolean matchesLock(UUID id, ItemStack stack) {
         if (stack.getItem() != LocksmithItems.KEY.get())
             return false;
 
-        LockManager manager = LockManager.getOrCreate(level);
-        LockData lock = manager.getLock(pos);
-        if (lock == null)
-            return false;
-
-        return lock.getId().equals(KeyItem.getLockId(stack));
+        return id.equals(KeyItem.getLockId(stack));
     }
 
     @Nullable
@@ -77,17 +69,18 @@ public class KeyItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (context.getLevel().isClientSide())
-            return InteractionResult.CONSUME;
-
-        ServerLevel level = (ServerLevel) context.getLevel();
         BlockPos pos = context.getClickedPos();
-        LockManager manager = LockManager.getOrCreate(level);
+
+        LockManager manager = LockManager.get(context.getLevel());
         LockData lock = manager.getLock(pos);
         if (lock == null)
             return InteractionResult.PASS;
 
-        if (KeyItem.matchesLock(level, pos, context.getItemInHand())) {
+        Level level = context.getLevel();
+        if (level.isClientSide())
+            return InteractionResult.CONSUME;
+
+        if (KeyItem.matchesLock(lock.getId(), context.getItemInHand())) {
             if (context.isSecondaryUseActive()) {
                 ItemStack lockStack = lock.getStack().copy();
                 if (!lockStack.isEmpty()) {
@@ -97,16 +90,9 @@ public class KeyItem extends Item {
                 }
 
                 manager.removeLock(pos);
-            } else {
-                lock.setLocked(!lock.isLocked());
             }
-
-            return InteractionResult.SUCCESS;
-        } else {
-            if (context.getPlayer() != null)
-                context.getPlayer().displayClientMessage(DOES_NOT_MATCH, true);
-            return InteractionResult.SUCCESS;
         }
+        return InteractionResult.SUCCESS;
     }
 
     @Override

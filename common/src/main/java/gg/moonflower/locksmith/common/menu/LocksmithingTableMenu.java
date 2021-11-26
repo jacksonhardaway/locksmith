@@ -31,7 +31,7 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
 
     private final ContainerLevelAccess access;
     private final Slot keyInputSlot;
-    private final Container inputSlots = new SimpleContainer(2) {
+    private final Slot inputSlot;    private final Container inputSlots = new SimpleContainer(2) {
         @Override
         public void setChanged() {
             super.setChanged();
@@ -40,15 +40,14 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
 
         // TODO: make result
     };
-    private final Slot inputSlot;    private final Container resultSlots = new SimpleContainer(2) {
+    private long lastSoundTime;
+    private boolean pendingResult;    private final Container resultSlots = new SimpleContainer(2) {
         @Override
         public void setChanged() {
             super.setChanged();
             LocksmithingTableMenu.this.slotsChanged(this);
         }
     };
-    private long lastSoundTime;
-    private boolean pendingResult;
     public LocksmithingTableMenu(int containerId, Inventory inventory) {
         this(containerId, inventory, ContainerLevelAccess.NULL);
     }
@@ -222,6 +221,8 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
             return stack;
         }
     }
+
+
 
 
 

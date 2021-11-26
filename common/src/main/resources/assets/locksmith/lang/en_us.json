@@ -2,7 +2,7 @@
   "item.locksmith.keyring": "Keyring",
   "item.locksmith.key": "Key",
   "item.locksmith.key.original": "Original",
-  "item.locksmith.key.copy": "Copied",
+  "item.locksmith.key.copy": "Copy",
   "item.locksmith.blank_key": "Blank Key",
   "item.locksmith.lock": "Lock",
   "item.locksmith.blank_lock": "Blank Lock",
@@ -17,5 +17,6 @@
   "screen.locksmith.locksmithing_table.unoriginal_key": "Unoriginal Key",
   "screen.locksmith.locksmithing_table.unoriginal_key.tooltip": "The key you provided is not the original copy. To copy key from another key, you must provide the original key that was used to create the lock.",
   "screen.locksmith.locksmithing_table.invalid_key": "Invalid Key",
-  "screen.locksmith.locksmithing_table.invalid_key.tooltip": "The key you provided is missing a lock id. This usually happens when a key is spawned in and not from a blank key in the Locksmithing Table."
+  "screen.locksmith.locksmithing_table.invalid_key.tooltip": "The key you provided is missing a lock id. This usually happens when a key is spawned in and not from a blank key in the Locksmithing Table.",
+  "lock.locksmith.locked": "%s is locked!"
 }

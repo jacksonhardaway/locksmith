@@ -1,6 +1,7 @@
 package gg.moonflower.locksmith.common.world.lock;
 
 import gg.moonflower.locksmith.api.lock.LockData;
+import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockSyncPacket;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
@@ -16,20 +17,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-public final class LockManager extends SavedData {
+public final class ServerLockManager extends SavedData implements LockManager {
     private static final Logger LOGGER = LogManager.getLogger();
+
     private final Map<ChunkPos, ChunkLockData> locks = new HashMap<>();
     private final ServerLevel level;
 
-    private LockManager(ServerLevel level) {
+    private ServerLockManager(ServerLevel level) {
         super("locksmithLocks");
         this.level = level;
     }
 
-    public static LockManager getOrCreate(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(() -> new LockManager(level), "locksmithLocks");
+    public static ServerLockManager getOrCreate(ServerLevel level) {
+        return level.getDataStorage().computeIfAbsent(() -> new ServerLockManager(level), "locksmithLocks");
     }
 
     public static void init() {
@@ -37,12 +42,54 @@ public final class LockManager extends SavedData {
             if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
                 return;
 
-            Set<LockData> locks = LockManager.getOrCreate((ServerLevel) player.level).getLocks(chunk);
+            Collection<LockData> locks = LockManager.get(player.level).getLocks(chunk);
             if (locks.isEmpty())
                 return;
 
-            LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundLockSyncPacket(ClientboundLockSyncPacket.Action.REPLACE, chunk, locks));
+            LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundLockSyncPacket(chunk, locks, true));
         });
+    }
+
+    @Override
+    public Collection<LockData> getLocks(ChunkPos chunkPos) {
+        ChunkLockData chunk = this.locks.get(chunkPos);
+        if (chunk == null)
+            return Collections.emptySet();
+        return chunk.getLocks();
+    }
+
+    @Override
+    @Nullable
+    public LockData getLock(BlockPos pos) {
+        ChunkLockData chunk = this.locks.get(new ChunkPos(pos));
+        if (chunk == null)
+            return null;
+
+        return chunk.getLock(pos);
+    }
+
+    @Override
+    public void addLock(LockData data) {
+        ChunkPos chunk = new ChunkPos(data.getPos());
+        this.locks.compute(chunk, (chunkPos, chunkLockData) -> {
+            ChunkLockData chunkData = chunkLockData == null ? new ChunkLockData() : chunkLockData;
+            chunkData.addLock(data);
+            return chunkData;
+        });
+        this.setDirty();
+        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundLockSyncPacket(chunk, Collections.singleton(data), false));
+    }
+
+    @Override
+    public void removeLock(BlockPos pos) {
+        ChunkPos chunk = new ChunkPos(pos);
+        ChunkLockData chunkData = this.locks.get(chunk);
+        if (chunkData == null)
+            return;
+
+        chunkData.removeLock(pos);
+        this.setDirty();
+        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundLockSyncPacket(chunk, pos));
     }
 
     @Override
@@ -72,53 +119,14 @@ public final class LockManager extends SavedData {
         return compoundTag;
     }
 
-    public void addLock(LockData lock) {
-        ChunkPos chunk = new ChunkPos(lock.getPos());
-        this.locks.compute(chunk, (chunkPos, chunkLockData) -> {
-            ChunkLockData data = chunkLockData == null ? new ChunkLockData() : chunkLockData;
-            data.addLock(lock);
-            return data;
-        });
-        this.setDirty();
-        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundLockSyncPacket(ClientboundLockSyncPacket.Action.APPEND, chunk, Collections.singleton(lock)));
-    }
-
-    public void removeLock(BlockPos pos) {
-        ChunkPos chunk = new ChunkPos(pos);
-        ChunkLockData data = this.locks.get(chunk);
-        if (data == null)
-            return;
-
-        LockData lock = data.getLock(pos);
-        if (lock == null)
-            return;
-
-        data.removeLock(lock.getId());
-        this.setDirty();
-
-        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundLockSyncPacket(ClientboundLockSyncPacket.Action.REMOVE, chunk, Collections.singleton(lock)));
-    }
-
-    @Nullable
-    public LockData getLock(BlockPos pos) {
-        ChunkLockData data = this.locks.get(new ChunkPos(pos));
-        return data == null ? null : data.getLock(pos);
-    }
-
-    public Set<LockData> getLocks(ChunkPos chunk) {
-        if (!this.locks.containsKey(chunk))
-            return Collections.emptySet();
-        return new HashSet<>(this.locks.get(chunk).getLocks().values());
-    }
-
     private static class ChunkLockData {
-        private final Map<UUID, LockData> locks = new HashMap<>();
+        private final Map<BlockPos, LockData> locks = new HashMap<>();
 
         public void load(CompoundTag compoundTag) {
             ListTag tag = compoundTag.getList("Locks", 10);
             for (int i = 0; i < tag.size(); i++) {
                 LockData lock = LockData.CODEC.parse(NbtOps.INSTANCE, tag.getCompound(i)).getOrThrow(false, LOGGER::error);
-                this.locks.put(lock.getId(), lock);
+                this.locks.put(lock.getPos(), lock);
             }
         }
 
@@ -132,25 +140,21 @@ public final class LockManager extends SavedData {
             return compoundTag;
         }
 
-        public void addLock(LockData lock) {
-            this.locks.put(lock.getId(), lock);
-        }
-
-        public void removeLock(UUID id) {
-            this.locks.remove(id);
+        public Collection<LockData> getLocks() {
+            return locks.values();
         }
 
         @Nullable
         public LockData getLock(BlockPos pos) {
-            for (LockData lock : this.locks.values()) {
-                if (lock.getPos().equals(pos))
-                    return lock;
-            }
-            return null;
+            return this.locks.get(pos);
         }
 
-        public Map<UUID, LockData> getLocks() {
-            return locks;
+        public void addLock(LockData lock) {
+            this.locks.put(lock.getPos(), lock);
+        }
+
+        public void removeLock(BlockPos pos) {
+            this.locks.remove(pos);
         }
     }
 }

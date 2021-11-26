@@ -4,12 +4,10 @@ import gg.moonflower.locksmith.api.lock.LockData;
 import gg.moonflower.locksmith.common.network.play.handler.LocksmithClientPlayPacketHandler;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
-import net.minecraft.core.Registry;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -19,26 +17,35 @@ public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClie
 
     private final Action action;
     private final ChunkPos chunk;
-    private final Collection<LockData> locks;
+    private BlockPos pos;
+    private Collection<LockData> locks;
 
-    public ClientboundLockSyncPacket(Action action, ChunkPos chunk, Collection<LockData> locks) {
-        this.action = action;
+    public ClientboundLockSyncPacket(ChunkPos chunk, BlockPos pos) {
+        this.action = Action.REMOVE;
+        this.chunk = chunk;
+        this.pos = pos;
+    }
+
+    public ClientboundLockSyncPacket(ChunkPos chunk, Collection<LockData> locks, boolean replace) {
+        this.action = replace ? Action.REPLACE : Action.APPEND;
         this.chunk = chunk;
         this.locks = locks;
     }
 
-    public ClientboundLockSyncPacket(FriendlyByteBuf buf) {
+    public ClientboundLockSyncPacket(FriendlyByteBuf buf) throws IOException {
         this.action = buf.readEnum(Action.class);
         this.chunk = new ChunkPos(buf.readLong());
-
-        int size = buf.readVarInt();
-        this.locks = new HashSet<>();
-        try {
-            for (int i = 0; i < size; i++) {
-                this.locks.add(buf.readWithCodec(LockData.CODEC));
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to read lock", e);
+        switch (this.action) {
+            case REMOVE:
+                this.pos = buf.readBlockPos();
+                break;
+            case REPLACE:
+            case APPEND:
+                int size = buf.readVarInt();
+                this.locks = new HashSet<>();
+                for (int i = 0; i < size; i++)
+                    this.locks.add(buf.readWithCodec(LockData.CODEC));
+                break;
         }
     }
 
@@ -46,10 +53,17 @@ public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClie
     public void writePacketData(FriendlyByteBuf buf) throws IOException {
         buf.writeEnum(this.action);
         buf.writeLong(this.chunk.toLong());
-        buf.writeVarInt(this.locks.size());
-
-        for (LockData lock : this.locks) {
-            buf.writeWithCodec(LockData.CODEC, lock);
+        switch (this.action) {
+            case REMOVE:
+                buf.writeBlockPos(this.pos);
+                break;
+            case REPLACE:
+            case APPEND:
+                buf.writeVarInt(this.locks.size());
+                for (LockData lock : this.locks) {
+                    buf.writeWithCodec(LockData.CODEC, lock);
+                }
+                break;
         }
     }
 
@@ -66,6 +80,12 @@ public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClie
         return chunk;
     }
 
+    @Nullable
+    public BlockPos getPos() {
+        return pos;
+    }
+
+    @Nullable
     public Collection<LockData> getLocks() {
         return locks;
     }

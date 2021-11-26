@@ -4,7 +4,8 @@ import gg.moonflower.locksmith.client.lock.ClientLockManager;
 import gg.moonflower.locksmith.client.screen.LocksmithingTableScreen;
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
-import gg.moonflower.locksmith.common.world.lock.LockManager;
+import gg.moonflower.locksmith.common.world.lock.LockInteractionManager;
+import gg.moonflower.locksmith.common.world.lock.ServerLockManager;
 import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.locksmith.core.registry.LocksmithMenus;
@@ -22,7 +23,7 @@ public class Locksmith {
         ClientRegistries.registerScreenFactory(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
         RegisterAtlasSpriteEvent.event(InventoryMenu.BLOCK_ATLAS).register((atlas, registry) -> registry.accept(LocksmithingTableMenu.EMPTY_SLOT_KEY));
         ClientRegistries.registerItemOverride(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity) -> Mth.clamp(4 / 4F, 0, 1));
-        ClientLockManager.INSTANCE.init();
+        ClientLockManager.init();
     }    public static final Platform PLATFORM = Platform.builder(MOD_ID)
             .clientInit(Locksmith::onClientInit)
             .clientPostInit(Locksmith::onClientPostInit)
@@ -37,11 +38,15 @@ public class Locksmith {
         LocksmithBlocks.BLOCKS.register(Locksmith.PLATFORM);
         LocksmithItems.ITEMS.register(Locksmith.PLATFORM);
         LocksmithMessages.init();
-        LockManager.init();
+
+        ServerLockManager.init();
+        LockInteractionManager.init();
     }
 
     public static void onCommonPostInit(Platform.ModSetupContext ctx) {
     }
+
+
 
 
 }
