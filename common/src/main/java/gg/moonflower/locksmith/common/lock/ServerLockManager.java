@@ -2,7 +2,8 @@ package gg.moonflower.locksmith.common.lock;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
-import gg.moonflower.locksmith.common.network.play.ClientboundLockSyncPacket;
+import gg.moonflower.locksmith.common.network.play.ClientboundAddLocksPacket;
+import gg.moonflower.locksmith.common.network.play.ClientboundDeleteLockPacket;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -45,7 +46,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
             if (locks.isEmpty())
                 return;
 
-            LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundLockSyncPacket(chunk, locks, true));
+            LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundAddLocksPacket(chunk, locks, true));
         });
     }
 
@@ -76,7 +77,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
             return chunkData;
         });
         this.setDirty();
-        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundLockSyncPacket(chunk, Collections.singleton(data), false));
+        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundAddLocksPacket(chunk, Collections.singleton(data), false));
     }
 
     @Override
@@ -88,7 +89,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
 
         chunkData.removeLock(pos);
         this.setDirty();
-        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundLockSyncPacket(chunk, pos));
+        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundDeleteLockPacket(pos));
     }
 
     @Override
