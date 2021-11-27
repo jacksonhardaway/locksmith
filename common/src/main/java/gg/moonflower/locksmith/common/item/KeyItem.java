@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -78,14 +79,17 @@ public class KeyItem extends Item {
             return InteractionResult.PASS;
 
         KeyLock lock = (KeyLock) abstractLock;
+        boolean canRemove = lock.canRemove(player, level, context.getItemInHand());
         if (level.isClientSide())
-            return InteractionResult.SUCCESS;
+            return canRemove ? InteractionResult.SUCCESS : InteractionResult.PASS;
 
-        if (lock.canRemove(player, level, context.getItemInHand())) {
+        if (canRemove) {
             lock.onRemove(level, pos);
             LockManager.get(level).removeLock(lock.getPos());
+            player.awardStat(Stats.ITEM_USED.get(this));
             return InteractionResult.CONSUME;
         }
+
         return InteractionResult.PASS;
     }
 

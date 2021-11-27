@@ -5,10 +5,7 @@ import gg.moonflower.locksmith.client.screen.LocksmithingTableScreen;
 import gg.moonflower.locksmith.common.lock.ServerLockManager;
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
-import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
-import gg.moonflower.locksmith.core.registry.LocksmithItems;
-import gg.moonflower.locksmith.core.registry.LocksmithLocks;
-import gg.moonflower.locksmith.core.registry.LocksmithMenus;
+import gg.moonflower.locksmith.core.registry.*;
 import gg.moonflower.pollen.api.event.events.registry.RegisterAtlasSpriteEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ClientRegistries;
@@ -44,5 +41,6 @@ public class Locksmith {
     }
 
     public static void onCommonPostInit(Platform.ModSetupContext ctx) {
+        ctx.enqueueWork(() -> LocksmithStats.STATS.register(Locksmith.PLATFORM));
     }
 }

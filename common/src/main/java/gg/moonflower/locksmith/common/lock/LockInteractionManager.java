@@ -9,6 +9,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -29,6 +30,7 @@ public class LockInteractionManager {
 
         if (player.getItemInHand(hand).getItem() == LocksmithItems.LOCKPICK.get()) {
             lock.onLockpick(player, level);
+            player.awardStat(Stats.ITEM_USED.get(LocksmithItems.LOCKPICK.get()));
             return InteractionResult.SUCCESS;
         }
 

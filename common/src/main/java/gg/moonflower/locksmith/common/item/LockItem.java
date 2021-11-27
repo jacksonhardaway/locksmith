@@ -6,6 +6,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -39,8 +40,11 @@ public class LockItem extends Item {
         lockStack.setCount(1);
         LockManager.get(level).addLock(new KeyLock(lockId, pos, lockStack));
         Player player = context.getPlayer();
-        if (player != null && !player.isCreative())
-            stack.shrink(1);
+        if (player != null) {
+            player.awardStat(Stats.ITEM_USED.get(this));
+            if (!player.isCreative())
+                stack.shrink(1);
+        }
         return InteractionResult.CONSUME;
     }
 
