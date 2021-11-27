@@ -1,6 +1,6 @@
 package gg.moonflower.locksmith.client.lock;
 
-import gg.moonflower.locksmith.api.lock.LockData;
+import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvent;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvent;
@@ -15,7 +15,7 @@ import java.util.*;
 
 public final class ClientLockManager implements LockManager {
     private static final Map<ResourceKey<Level>, ClientLockManager> INSTANCES = new HashMap<>();
-    private final Map<ChunkPos, Set<LockData>> locks = new HashMap<>();
+    private final Map<ChunkPos, Set<AbstractLock>> locks = new HashMap<>();
     private final ClientLevel level;
 
     private ClientLockManager(ClientLevel level) {
@@ -39,8 +39,8 @@ public final class ClientLockManager implements LockManager {
     }
 
     @Override
-    public Collection<LockData> getLocks(ChunkPos chunkPos) {
-        Set<LockData> locks = this.locks.get(chunkPos);
+    public Collection<AbstractLock> getLocks(ChunkPos chunkPos) {
+        Set<AbstractLock> locks = this.locks.get(chunkPos);
         if (locks == null)
             return Collections.emptySet();
         return locks;
@@ -48,11 +48,11 @@ public final class ClientLockManager implements LockManager {
 
     @Override
     @Nullable
-    public LockData getLock(BlockPos pos) {
-        Set<LockData> locks = this.locks.get(new ChunkPos(pos));
+    public AbstractLock getLock(BlockPos pos) {
+        Set<AbstractLock> locks = this.locks.get(new ChunkPos(pos));
         if (locks == null)
             return null;
-        for (LockData lock : locks) {
+        for (AbstractLock lock : locks) {
             if (lock.getPos().equals(pos))
                 return lock;
         }
@@ -60,13 +60,13 @@ public final class ClientLockManager implements LockManager {
     }
 
     @Override
-    public void addLock(LockData data) {
+    public void addLock(AbstractLock data) {
         this.locks.computeIfAbsent(new ChunkPos(data.getPos()), chunkPos -> new HashSet<>()).add(data);
     }
 
     @Override
     public void removeLock(BlockPos pos) {
-        Set<LockData> locks = this.locks.get(new ChunkPos(pos));
+        Set<AbstractLock> locks = this.locks.get(new ChunkPos(pos));
         if (locks == null)
             return;
 
@@ -74,7 +74,7 @@ public final class ClientLockManager implements LockManager {
     }
 
     public void clearLocks(ChunkPos chunkPos) {
-        Set<LockData> locks = this.locks.get(chunkPos);
+        Set<AbstractLock> locks = this.locks.get(chunkPos);
         if (locks == null)
             return;
         locks.clear();

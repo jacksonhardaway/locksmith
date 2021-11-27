@@ -8,7 +8,9 @@ import gg.moonflower.locksmith.common.world.lock.LockInteractionManager;
 import gg.moonflower.locksmith.common.world.lock.ServerLockManager;
 import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
+import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import gg.moonflower.locksmith.core.registry.LocksmithMenus;
+import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
 import gg.moonflower.pollen.api.event.events.registry.RegisterAtlasSpriteEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ClientRegistries;
@@ -37,10 +39,12 @@ public class Locksmith {
     public static void onCommonInit() {
         LocksmithBlocks.BLOCKS.register(Locksmith.PLATFORM);
         LocksmithItems.ITEMS.register(Locksmith.PLATFORM);
+        LocksmithLocks.LOCKS.register(Locksmith.PLATFORM);
         LocksmithMessages.init();
 
+        PlayerInteractEvent.RIGHT_CLICK_BLOCK.register(LockInteractionManager::onRightClickBlock);
+        PlayerInteractEvent.LEFT_CLICK_BLOCK.register(LockInteractionManager::onLeftClickBlock);
         ServerLockManager.init();
-        LockInteractionManager.init();
     }
 
     public static void onCommonPostInit(Platform.ModSetupContext ctx) {

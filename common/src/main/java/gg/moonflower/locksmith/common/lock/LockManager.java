@@ -1,6 +1,6 @@
 package gg.moonflower.locksmith.common.lock;
 
-import gg.moonflower.locksmith.api.lock.LockData;
+import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.client.lock.ClientLockManager;
 import gg.moonflower.locksmith.common.world.lock.ServerLockManager;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -18,12 +18,12 @@ public interface LockManager {
         return level.isClientSide() ? ClientLockManager.getOrCreate((ClientLevel) level) : ServerLockManager.getOrCreate((ServerLevel) level);
     }
 
-    Collection<LockData> getLocks(ChunkPos chunkPos);
+    Collection<AbstractLock> getLocks(ChunkPos chunkPos);
 
     @Nullable
-    LockData getLock(BlockPos pos);
+    AbstractLock getLock(BlockPos pos);
 
-    void addLock(LockData data);
+    void addLock(AbstractLock data);
 
     void removeLock(BlockPos pos);
 

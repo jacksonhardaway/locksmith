@@ -1,6 +1,6 @@
 package gg.moonflower.locksmith.common.network.play.handler;
 
-import gg.moonflower.locksmith.api.lock.LockData;
+import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.client.lock.ClientLockManager;
 import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockSyncPacket;
@@ -22,14 +22,14 @@ public class LocksmithClientPlayPacketHandlerImpl implements LocksmithClientPlay
                 if (msg.getLocks() == null)
                     break;
                 ((ClientLockManager) manager).clearLocks(msg.getChunk());
-                for (LockData lock : msg.getLocks()) {
+                for (AbstractLock lock : msg.getLocks()) {
                     manager.addLock(lock);
                 }
                 break;
             case APPEND:
                 if (msg.getLocks() == null)
                     break;
-                for (LockData lock : msg.getLocks()) {
+                for (AbstractLock lock : msg.getLocks()) {
                     manager.addLock(lock);
                 }
                 break;

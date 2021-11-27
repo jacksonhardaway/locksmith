@@ -1,8 +1,10 @@
 package gg.moonflower.locksmith.common.item;
 
-import gg.moonflower.locksmith.api.lock.LockData;
+import gg.moonflower.locksmith.api.lock.AbstractLock;
+import gg.moonflower.locksmith.api.lock.types.KeyLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
+import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -11,6 +13,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -24,7 +27,6 @@ import java.util.UUID;
 public class KeyItem extends Item {
     private static final Component ORIGINAL = new TranslatableComponent("item.locksmith.key.original").withStyle(ChatFormatting.GRAY);
     private static final Component COPY = new TranslatableComponent("item.locksmith.key.copy").withStyle(ChatFormatting.GRAY);
-    private static final Component DOES_NOT_MATCH = new TranslatableComponent("iten.locksmith.key.does_not_match").withStyle(ChatFormatting.GRAY);
 
     public KeyItem(Properties properties) {
         super(properties);
@@ -70,29 +72,24 @@ public class KeyItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockPos pos = context.getClickedPos();
+        Player player = context.getPlayer();
 
         LockManager manager = LockManager.get(context.getLevel());
-        LockData lock = manager.getLock(pos);
-        if (lock == null)
+        AbstractLock abstractLock = manager.getLock(pos);
+        if (player == null || abstractLock == null || abstractLock.getType() != LocksmithLocks.KEY.get())
             return InteractionResult.PASS;
 
+        KeyLock lock = (KeyLock) abstractLock;
         Level level = context.getLevel();
         if (level.isClientSide())
+            return InteractionResult.SUCCESS;
+
+        if (lock.canRemove(player, level, context.getItemInHand())) {
+            lock.onRemove(level);
+            manager.removeLock(pos);
             return InteractionResult.CONSUME;
-
-        if (KeyItem.matchesLock(lock.getId(), context.getItemInHand())) {
-            if (context.isSecondaryUseActive()) {
-                ItemStack lockStack = lock.getStack().copy();
-                if (!lockStack.isEmpty()) {
-                    ItemEntity itemEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), lockStack);
-                    itemEntity.setDefaultPickUpDelay();
-                    level.addFreshEntity(itemEntity);
-                }
-
-                manager.removeLock(pos);
-            }
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResult.PASS;
     }
 
     @Override

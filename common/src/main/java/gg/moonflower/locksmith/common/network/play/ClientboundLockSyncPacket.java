@@ -1,6 +1,6 @@
 package gg.moonflower.locksmith.common.network.play;
 
-import gg.moonflower.locksmith.api.lock.LockData;
+import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.common.network.play.handler.LocksmithClientPlayPacketHandler;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
 import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
@@ -18,7 +18,7 @@ public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClie
     private final Action action;
     private final ChunkPos chunk;
     private BlockPos pos;
-    private Collection<LockData> locks;
+    private Collection<AbstractLock> locks;
 
     public ClientboundLockSyncPacket(ChunkPos chunk, BlockPos pos) {
         this.action = Action.REMOVE;
@@ -26,7 +26,7 @@ public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClie
         this.pos = pos;
     }
 
-    public ClientboundLockSyncPacket(ChunkPos chunk, Collection<LockData> locks, boolean replace) {
+    public ClientboundLockSyncPacket(ChunkPos chunk, Collection<AbstractLock> locks, boolean replace) {
         this.action = replace ? Action.REPLACE : Action.APPEND;
         this.chunk = chunk;
         this.locks = locks;
@@ -44,7 +44,7 @@ public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClie
                 int size = buf.readVarInt();
                 this.locks = new HashSet<>();
                 for (int i = 0; i < size; i++)
-                    this.locks.add(buf.readWithCodec(LockData.CODEC));
+                    this.locks.add(buf.readWithCodec(AbstractLock.CODEC));
                 break;
         }
     }
@@ -60,8 +60,8 @@ public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClie
             case REPLACE:
             case APPEND:
                 buf.writeVarInt(this.locks.size());
-                for (LockData lock : this.locks) {
-                    buf.writeWithCodec(LockData.CODEC, lock);
+                for (AbstractLock lock : this.locks) {
+                    buf.writeWithCodec(AbstractLock.CODEC, lock);
                 }
                 break;
         }
@@ -86,7 +86,7 @@ public class ClientboundLockSyncPacket implements PollinatedPacket<LocksmithClie
     }
 
     @Nullable
-    public Collection<LockData> getLocks() {
+    public Collection<AbstractLock> getLocks() {
         return locks;
     }
 

@@ -1,6 +1,6 @@
 package gg.moonflower.locksmith.common.world.lock;
 
-import gg.moonflower.locksmith.api.lock.LockData;
+import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockSyncPacket;
@@ -42,7 +42,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
             if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
                 return;
 
-            Collection<LockData> locks = LockManager.get(player.level).getLocks(chunk);
+            Collection<AbstractLock> locks = LockManager.get(player.level).getLocks(chunk);
             if (locks.isEmpty())
                 return;
 
@@ -51,7 +51,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
     }
 
     @Override
-    public Collection<LockData> getLocks(ChunkPos chunkPos) {
+    public Collection<AbstractLock> getLocks(ChunkPos chunkPos) {
         ChunkLockData chunk = this.locks.get(chunkPos);
         if (chunk == null)
             return Collections.emptySet();
@@ -60,7 +60,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
 
     @Override
     @Nullable
-    public LockData getLock(BlockPos pos) {
+    public AbstractLock getLock(BlockPos pos) {
         ChunkLockData chunk = this.locks.get(new ChunkPos(pos));
         if (chunk == null)
             return null;
@@ -69,7 +69,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
     }
 
     @Override
-    public void addLock(LockData data) {
+    public void addLock(AbstractLock data) {
         ChunkPos chunk = new ChunkPos(data.getPos());
         this.locks.compute(chunk, (chunkPos, chunkLockData) -> {
             ChunkLockData chunkData = chunkLockData == null ? new ChunkLockData() : chunkLockData;
@@ -120,36 +120,36 @@ public final class ServerLockManager extends SavedData implements LockManager {
     }
 
     private static class ChunkLockData {
-        private final Map<BlockPos, LockData> locks = new HashMap<>();
+        private final Map<BlockPos, AbstractLock> locks = new HashMap<>();
 
         public void load(CompoundTag compoundTag) {
             ListTag tag = compoundTag.getList("Locks", 10);
             for (int i = 0; i < tag.size(); i++) {
-                LockData lock = LockData.CODEC.parse(NbtOps.INSTANCE, tag.getCompound(i)).getOrThrow(false, LOGGER::error);
+                AbstractLock lock = AbstractLock.CODEC.parse(NbtOps.INSTANCE, tag.getCompound(i)).getOrThrow(false, LOGGER::error);
                 this.locks.put(lock.getPos(), lock);
             }
         }
 
         public CompoundTag save(CompoundTag compoundTag) {
             ListTag list = new ListTag();
-            for (LockData lock : this.locks.values()) {
-                list.add(LockData.CODEC.encodeStart(NbtOps.INSTANCE, lock).getOrThrow(false, LOGGER::error));
+            for (AbstractLock lock : this.locks.values()) {
+                list.add(AbstractLock.CODEC.encodeStart(NbtOps.INSTANCE, lock).getOrThrow(false, LOGGER::error));
             }
 
             compoundTag.put("Locks", list);
             return compoundTag;
         }
 
-        public Collection<LockData> getLocks() {
+        public Collection<AbstractLock> getLocks() {
             return locks.values();
         }
 
         @Nullable
-        public LockData getLock(BlockPos pos) {
+        public AbstractLock getLock(BlockPos pos) {
             return this.locks.get(pos);
         }
 
-        public void addLock(LockData lock) {
+        public void addLock(AbstractLock lock) {
             this.locks.put(lock.getPos(), lock);
         }
 

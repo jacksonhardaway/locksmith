@@ -1,6 +1,6 @@
 package gg.moonflower.locksmith.common.item;
 
-import gg.moonflower.locksmith.api.lock.LockData;
+import gg.moonflower.locksmith.api.lock.types.KeyLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -35,13 +35,13 @@ public class LockItem extends Item {
             return InteractionResult.PASS;
 
         if (level.isClientSide())
-            return InteractionResult.CONSUME;
+            return InteractionResult.SUCCESS;
 
-        manager.addLock(new LockData(lockId, pos, stack.copy(), true));
+        manager.addLock(new KeyLock(lockId, pos, stack.copy()));
         Player player = context.getPlayer();
         if (player != null && !player.isCreative())
             stack.shrink(1);
-        return InteractionResult.SUCCESS;
+        return InteractionResult.CONSUME;
     }
 
     @Override
