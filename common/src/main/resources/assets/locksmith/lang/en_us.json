@@ -12,12 +12,12 @@
   "container.locksmith.locksmithing_table": "Locksmithing Table",
   "screen.locksmith.locksmithing_table.missing_key": "Key Missing",
   "screen.locksmith.locksmithing_table.missing_key.tooltip": "You must provide a key in the top slot.",
-  "screen.locksmith.locksmithing_table.missing_input": "Blank Item missing",
+  "screen.locksmith.locksmithing_table.missing_input": "Blank Item Missing",
   "screen.locksmith.locksmithing_table.missing_input.tooltip": "You must provide a blank key or lock in the bottom slot to create or copy the key onto.",
   "screen.locksmith.locksmithing_table.unoriginal_key": "Copied Key",
   "screen.locksmith.locksmithing_table.unoriginal_key.tooltip": "Only the original key can create copies.",
   "screen.locksmith.locksmithing_table.invalid_key": "Invalid Key",
   "screen.locksmith.locksmithing_table.invalid_key.tooltip": "The key you provided is missing a lock id. This usually happens when a key is spawned in and not from a blank key in the Locksmithing Table.",
   "lock.locksmith.locked": "It's locked.",
-  "lock.locksmith.opened": "Opened with [Key Name]."
+  "lock.locksmith.opened": "Opened with %s."
 }
