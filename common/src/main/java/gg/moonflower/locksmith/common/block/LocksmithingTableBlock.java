@@ -1,6 +1,7 @@
 package gg.moonflower.locksmith.common.block;
 
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
+import gg.moonflower.locksmith.core.registry.LocksmithStats;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -27,7 +28,7 @@ public class LocksmithingTableBlock extends Block {
             return InteractionResult.SUCCESS;
         } else {
             player.openMenu(state.getMenuProvider(level, pos));
-            // TODO: Stats
+            player.awardStat(LocksmithStats.INTERACT_WITH_LOCKSMITHING_TABLE);
             return InteractionResult.CONSUME;
         }
     }

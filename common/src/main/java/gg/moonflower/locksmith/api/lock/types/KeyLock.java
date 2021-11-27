@@ -9,6 +9,7 @@ import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SerializableUUID;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -35,16 +36,26 @@ public class KeyLock extends AbstractLock {
     }
 
     @Override
-    public boolean onRightClick(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
-        return KeyItem.matchesLock(this.getId(), player.getItemInHand(hand));
+    public boolean canUnlock(Player player, Level level, ItemStack stack) {
+        return KeyItem.matchesLock(this.getId(), stack);
     }
 
     @Override
-    public boolean onLeftClick(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction) {
+    public boolean onRightClick(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (KeyItem.matchesLock(this.getId(), stack)) {
+            player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
+            return true;
+        }
         return false;
     }
 
     @Override
-    public void onLockpick(UseOnContext ctx) {
+    public boolean onLeftClick(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction) {
+        return KeyItem.matchesLock(this.getId(), player.getItemInHand(hand));
+    }
+
+    @Override
+    public void onLockpick(Player player, Level level) {
     }
 }

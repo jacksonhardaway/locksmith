@@ -8,7 +8,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -58,10 +57,10 @@ public abstract class AbstractLock {
         return type;
     }
 
-    public void onRemove(Level level) {
+    public void onRemove(Level level, BlockPos pos) {
         ItemStack lockStack = this.stack;
         if (!lockStack.isEmpty()) {
-            ItemEntity itemEntity = new ItemEntity(level, this.pos.getX(), this.pos.getY(), this.pos.getZ(), lockStack);
+            ItemEntity itemEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), lockStack);
             itemEntity.setDefaultPickUpDelay();
             level.addFreshEntity(itemEntity);
         }
@@ -76,6 +75,16 @@ public abstract class AbstractLock {
      * @return Whether the lock can be removed.
      */
     public abstract boolean canRemove(Player player, Level level, ItemStack stack);
+
+    /**
+     * Checks if this lock can be unlocked by the player.
+     *
+     * @param player The player attempting to unlock the lock.
+     * @param level  The level of the lock.
+     * @param stack  The stack being used to unlock the lock.
+     * @return Whether the lock can be unlocked.
+     */
+    public abstract boolean canUnlock(Player player, Level level, ItemStack stack);
 
     /**
      * Fires when a player right-clicks on a locked block.
@@ -95,5 +104,5 @@ public abstract class AbstractLock {
      * Fires when a player right-clicks a locked block with a lockpick on the client.
      * <p>Used to open the lockpick minigame.
      */
-    public abstract void onLockpick(UseOnContext ctx);
+    public abstract void onLockpick(Player player, Level level);
 }

@@ -65,9 +65,14 @@ public class CodeLock extends AbstractLock {
     }
 
     @Override
+    public boolean canUnlock(Player player, Level level, ItemStack stack) {
+        return false;
+    }
+
+    @Override
     public boolean onRightClick(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
         if (this.canRemove(player, level, player.getItemInHand(hand))) {
-            this.onRemove(level);
+            this.onRemove(level, hitResult.getBlockPos());
             return true;
         }
         return false;
@@ -79,6 +84,6 @@ public class CodeLock extends AbstractLock {
     }
 
     @Override
-    public void onLockpick(UseOnContext ctx) {
+    public void onLockpick(Player player, Level level) {
     }
 }

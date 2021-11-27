@@ -2,7 +2,6 @@ package gg.moonflower.locksmith.core.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
-import gg.moonflower.locksmith.common.item.KeyItem;
 import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.core.Locksmith;
 import net.minecraft.client.AttackIndicatorStatus;
@@ -45,13 +44,10 @@ public class GuiMixin extends GuiComponent {
             return;
 
         BlockHitResult blockHit = (BlockHitResult) hit;
-        LockManager manager = LockManager.get(level);
-        AbstractLock lock = manager.getLock(blockHit.getBlockPos());
+        AbstractLock lock = LockManager.getLock(level, blockHit.getBlockPos());
         if (lock == null)
             return;
 
-
-        boolean matches = KeyItem.matchesLock(lock.getId(), player.getMainHandItem());
         boolean moveDown = false;
         if (this.minecraft.options.attackIndicator == AttackIndicatorStatus.CROSSHAIR) {
             float strengthScale = player.getAttackStrengthScale(0.0F);
@@ -66,7 +62,7 @@ public class GuiMixin extends GuiComponent {
         int y = this.screenHeight / 2 + 9 + (moveDown ? 9 : 0);
         int x = this.screenWidth / 2 - 5;
         this.minecraft.getTextureManager().bind(LOCK_ICONS);
-        blit(matrixStack, x, y, matches ? 9 : 0, 0, 9, 9, 32, 32);
+        blit(matrixStack, x, y, lock.canUnlock(player, level, player.getMainHandItem()) ? 9 : 0, 0, 9, 9, 32, 32);
 
         this.minecraft.getTextureManager().bind(GUI_ICONS_LOCATION);
     }

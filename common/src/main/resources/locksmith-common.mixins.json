@@ -8,7 +8,8 @@
   ],
   "mixins": [
     "GrindstoneMenuMixin",
-    "GrindstoneMenuSlotMixin"
+    "GrindstoneMenuSlotMixin",
+    "ServerPlayerGameModeMixin"
   ],
   "injectors": {
     "defaultRequire": 1
