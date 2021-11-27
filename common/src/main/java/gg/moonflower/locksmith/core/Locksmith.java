@@ -2,15 +2,13 @@ package gg.moonflower.locksmith.core;
 
 import gg.moonflower.locksmith.client.lock.ClientLockManager;
 import gg.moonflower.locksmith.client.screen.LocksmithingTableScreen;
+import gg.moonflower.locksmith.common.lock.ServerLockManager;
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
-import gg.moonflower.locksmith.common.world.lock.LockInteractionManager;
-import gg.moonflower.locksmith.common.world.lock.ServerLockManager;
 import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import gg.moonflower.locksmith.core.registry.LocksmithMenus;
-import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
 import gg.moonflower.pollen.api.event.events.registry.RegisterAtlasSpriteEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ClientRegistries;
@@ -31,10 +29,10 @@ public class Locksmith {
         ClientRegistries.registerScreenFactory(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
         RegisterAtlasSpriteEvent.event(InventoryMenu.BLOCK_ATLAS).register((atlas, registry) -> registry.accept(LocksmithingTableMenu.EMPTY_SLOT_KEY));
         ClientRegistries.registerItemOverride(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity) -> Mth.clamp(4 / 4F, 0, 1));
-        ClientLockManager.init();
     }
 
     public static void onClientPostInit(Platform.ModSetupContext ctx) {
+        ClientLockManager.init();
     }
 
     public static void onCommonInit() {
@@ -42,16 +40,9 @@ public class Locksmith {
         LocksmithItems.ITEMS.register(Locksmith.PLATFORM);
         LocksmithLocks.LOCKS.register(Locksmith.PLATFORM);
         LocksmithMessages.init();
-
-        PlayerInteractEvent.RIGHT_CLICK_BLOCK.register(LockInteractionManager::onRightClickBlock);
-        PlayerInteractEvent.LEFT_CLICK_BLOCK.register(LockInteractionManager::onLeftClickBlock);
         ServerLockManager.init();
     }
 
     public static void onCommonPostInit(Platform.ModSetupContext ctx) {
     }
-
-
-
-
 }

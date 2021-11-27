@@ -1,7 +1,6 @@
-package gg.moonflower.locksmith.common.world.lock;
+package gg.moonflower.locksmith.common.lock;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
-import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockSyncPacket;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;

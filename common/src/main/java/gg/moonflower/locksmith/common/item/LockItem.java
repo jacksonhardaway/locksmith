@@ -29,15 +29,15 @@ public class LockItem extends Item {
         UUID lockId = KeyItem.getLockId(stack);
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
-
-        LockManager manager = LockManager.get(level);
-        if (manager.getLock(pos) != null || lockId == null)
+        if (LockManager.getLock(level, pos) != null || lockId == null)
             return InteractionResult.PASS;
 
         if (level.isClientSide())
             return InteractionResult.SUCCESS;
 
-        manager.addLock(new KeyLock(lockId, pos, stack.copy()));
+        ItemStack lockStack = stack.copy();
+        lockStack.setCount(1);
+        LockManager.get(level).addLock(new KeyLock(lockId, pos, lockStack));
         Player player = context.getPlayer();
         if (player != null && !player.isCreative())
             stack.shrink(1);

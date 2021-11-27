@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -73,20 +72,18 @@ public class KeyItem extends Item {
     public InteractionResult useOn(UseOnContext context) {
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
-
-        LockManager manager = LockManager.get(context.getLevel());
-        AbstractLock abstractLock = manager.getLock(pos);
+        Level level = context.getLevel();
+        AbstractLock abstractLock = LockManager.getLock(level, pos);
         if (player == null || abstractLock == null || abstractLock.getType() != LocksmithLocks.KEY.get())
             return InteractionResult.PASS;
 
         KeyLock lock = (KeyLock) abstractLock;
-        Level level = context.getLevel();
         if (level.isClientSide())
             return InteractionResult.SUCCESS;
 
         if (lock.canRemove(player, level, context.getItemInHand())) {
-            lock.onRemove(level);
-            manager.removeLock(pos);
+            lock.onRemove(level, pos);
+            LockManager.get(level).removeLock(lock.getPos());
             return InteractionResult.CONSUME;
         }
         return InteractionResult.PASS;

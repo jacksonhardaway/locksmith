@@ -35,16 +35,21 @@ public class KeyLock extends AbstractLock {
     }
 
     @Override
+    public boolean canUnlock(Player player, Level level, ItemStack stack) {
+        return KeyItem.matchesLock(this.getId(), stack);
+    }
+
+    @Override
     public boolean onRightClick(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
         return KeyItem.matchesLock(this.getId(), player.getItemInHand(hand));
     }
 
     @Override
     public boolean onLeftClick(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction) {
-        return false;
+        return KeyItem.matchesLock(this.getId(), player.getItemInHand(hand));
     }
 
     @Override
-    public void onLockpick(UseOnContext ctx) {
+    public void onLockpick(Player player, Level level) {
     }
 }
