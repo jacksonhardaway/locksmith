@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.common.item.KeyItem;
+import gg.moonflower.locksmith.core.Locksmith;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import net.minecraft.core.BlockPos;
@@ -52,7 +53,7 @@ public class KeyLock extends AbstractLock {
 
     @Override
     public boolean onLeftClick(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction) {
-        return true;
+        return Locksmith.CONFIG.allowLocksToBeBroken.get();
     }
 
     @Override

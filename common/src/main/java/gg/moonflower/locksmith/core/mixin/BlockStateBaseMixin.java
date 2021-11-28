@@ -1,6 +1,7 @@
 package gg.moonflower.locksmith.core.mixin;
 
 import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.core.Locksmith;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -15,8 +16,8 @@ public class BlockStateBaseMixin {
 
     @Inject(method = "getDestroySpeed", at = @At("RETURN"), cancellable = true)
     public void getDestroyProgress(BlockGetter level, BlockPos pos, CallbackInfoReturnable<Float> cir) {
-        if (!(level instanceof Level) || LockManager.get((Level) level).getLock(pos) == null)
+        if (!(level instanceof Level)|| !Locksmith.CONFIG.allowLocksToBeBroken.get() || LockManager.get((Level) level).getLock(pos) == null)
             return;
-        cir.setReturnValue(cir.getReturnValue() * 3);
+        cir.setReturnValue(cir.getReturnValue() * Locksmith.CONFIG.lockBreakingMultiplier.get().floatValue());
     }
 }

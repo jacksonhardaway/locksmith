@@ -6,6 +6,8 @@ import gg.moonflower.locksmith.common.lock.ServerLockManager;
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.core.registry.*;
+import gg.moonflower.pollen.api.config.ConfigManager;
+import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.event.events.registry.RegisterAtlasSpriteEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ClientRegistries;
@@ -15,6 +17,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 
 public class Locksmith {
     public static final String MOD_ID = "locksmith";
+    public static final LocksmithConfig CONFIG = ConfigManager.register(MOD_ID, PollinatedConfigType.SERVER, LocksmithConfig::new);
     public static final Platform PLATFORM = Platform.builder(MOD_ID)
             .clientInit(Locksmith::onClientInit)
             .clientPostInit(Locksmith::onClientPostInit)
