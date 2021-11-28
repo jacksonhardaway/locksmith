@@ -52,7 +52,7 @@ public class KeyLock extends AbstractLock {
 
     @Override
     public boolean onLeftClick(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction) {
-        return KeyItem.matchesLock(this.getId(), player.getItemInHand(hand));
+        return true;
     }
 
     @Override
