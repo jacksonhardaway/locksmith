@@ -1,11 +1,20 @@
 package gg.moonflower.locksmith.common.item;
 
+import gg.moonflower.locksmith.common.menu.KeyringMenu;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.pollen.api.util.NbtConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +27,32 @@ public class KeyringItem extends Item {
 
     public KeyringItem(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (player.isSecondaryUseActive()) {
+            int index = player.inventory.findSlotMatchingItem(stack);
+            if (index == -1)
+                return InteractionResultHolder.pass(stack);
+
+            if (!level.isClientSide()) {
+                player.openMenu(new MenuProvider() {
+                    @Override
+                    public Component getDisplayName() {
+                        return stack.getHoverName();
+                    }
+
+                    @Override
+                    public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
+                        return new KeyringMenu(containerId, player.inventory, index);
+                    }
+                });
+            }
+            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        }
+        return InteractionResultHolder.pass(stack);
     }
 
     public static List<ItemStack> getKeys(ItemStack stack) {
@@ -50,6 +85,8 @@ public class KeyringItem extends Item {
         ListTag keysNbt = new ListTag();
         int i = 0;
         for (ItemStack key : keys) {
+            if (key.isEmpty())
+                continue;
             if (i >= MAX_KEYS)
                 break;
             keysNbt.add(key.save(new CompoundTag()));

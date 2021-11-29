@@ -1,6 +1,7 @@
 package gg.moonflower.locksmith.core;
 
 import gg.moonflower.locksmith.client.lock.ClientLockManager;
+import gg.moonflower.locksmith.client.screen.KeyringScreen;
 import gg.moonflower.locksmith.client.screen.LocksmithingTableScreen;
 import gg.moonflower.locksmith.common.item.KeyringItem;
 import gg.moonflower.locksmith.common.lock.LockInteractionManager;
@@ -35,6 +36,7 @@ public class Locksmith {
     public static void onClientPostInit(Platform.ModSetupContext ctx) {
         ClientLockManager.init();
         ClientRegistries.registerScreenFactory(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
+        ClientRegistries.registerScreenFactory(LocksmithMenus.KEYRING_MENU.get(), KeyringScreen::new);
         ClientRegistries.registerItemOverride(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity) -> Mth.clamp(KeyringItem.getKeys(stack).size() / (float) KeyringItem.MAX_KEYS, 0, 1));
     }
 

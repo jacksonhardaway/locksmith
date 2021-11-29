@@ -52,7 +52,9 @@ public class KeyringRecipe extends CustomRecipe {
             ItemStack itemStack2 = inv.getItem(j);
             if (!itemStack2.isEmpty()) {
                 if (itemStack2.getItem() == LocksmithItems.KEY.get()) {
-                    keys.add(itemStack2);
+                    ItemStack copy = itemStack2.copy();
+                    copy.setCount(1);
+                    keys.add(copy);
                 } else if (itemStack2.getItem() == LocksmithItems.KEYRING.get()) {
                     if (!ring.isEmpty())
                         return ItemStack.EMPTY;

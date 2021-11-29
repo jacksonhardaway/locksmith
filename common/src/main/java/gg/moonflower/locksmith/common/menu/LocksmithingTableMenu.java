@@ -24,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.UUID;
 
 public class LocksmithingTableMenu extends AbstractContainerMenu {
+
     public static final ResourceLocation EMPTY_SLOT_KEY = new ResourceLocation(Locksmith.MOD_ID, "item/empty_locksmithing_table_slot_key");
     private static final QuickMoveHelper MOVE_HELPER = new QuickMoveHelper().
             add(0, 4, 4, 36, true). // to Inventory
