@@ -21,6 +21,6 @@ public class LocksmithItems {
     public static final Supplier<Item> LOCK = ITEMS.register("lock", () -> new LockItem(new Item.Properties()));
     public static final Supplier<Item> KEY = ITEMS.register("key", () -> new KeyItem(new Item.Properties()));
 
-    public static final Supplier<Item> KEYRING = ITEMS.register("keyring", () -> new KeyringItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS)));
+    public static final Supplier<Item> KEYRING = ITEMS.register("keyring", () -> new KeyringItem(new Item.Properties()));
     public static final Supplier<Item> LOCKPICK = ITEMS.register("lockpick", () -> new LockpickItem(new Item.Properties().durability(3).tab(CreativeModeTab.TAB_TOOLS)));
 }
