@@ -73,6 +73,11 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
             }
 
             @Override
+            public int getMaxStackSize() {
+                return 1;
+            }
+
+            @Override
             public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
                 return Pair.of(InventoryMenu.BLOCK_ATLAS, EMPTY_SLOT_KEY);
             }
