@@ -17,7 +17,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 
 public class Locksmith {
     public static final String MOD_ID = "locksmith";
-    public static final LocksmithConfig CONFIG = ConfigManager.register(MOD_ID, PollinatedConfigType.SERVER, LocksmithConfig::new);
+    public static final LocksmithConfig CONFIG = ConfigManager.register(MOD_ID, PollinatedConfigType.COMMON, LocksmithConfig::new);
     public static final Platform PLATFORM = Platform.builder(MOD_ID)
             .clientInit(Locksmith::onClientInit)
             .clientPostInit(Locksmith::onClientPostInit)

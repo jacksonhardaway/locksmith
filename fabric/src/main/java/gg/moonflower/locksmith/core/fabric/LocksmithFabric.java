@@ -4,7 +4,6 @@ import gg.moonflower.locksmith.common.lock.LockInteractionManager;
 import gg.moonflower.locksmith.core.Locksmith;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 
 public class LocksmithFabric implements ModInitializer {

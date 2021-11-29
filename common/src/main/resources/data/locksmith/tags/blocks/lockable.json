@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:doors",
+    "#minecraft:trapdoors",
+    "#minecraft:fence_gates",
+    { "id": "#c:chest", "required": false },
+    { "id": "#forge:chests", "required": false },
+    { "id": "#c:barrel", "required": false },
+    { "id": "#forge:barrels", "required": false }
+  ]
+}

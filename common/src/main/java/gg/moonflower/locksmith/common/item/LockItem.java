@@ -2,6 +2,7 @@ package gg.moonflower.locksmith.common.item;
 
 import gg.moonflower.locksmith.api.lock.types.KeyLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.core.registry.LocksmithTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -30,7 +31,7 @@ public class LockItem extends Item {
         UUID lockId = KeyItem.getLockId(stack);
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
-        if (LockManager.getLock(level, pos) != null || lockId == null)
+        if (LockManager.getLock(level, pos) != null || lockId == null || !level.getBlockState(pos).is(LocksmithTags.LOCKABLE))
             return InteractionResult.PASS;
 
         if (level.isClientSide())
