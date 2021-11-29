@@ -16,6 +16,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,18 +35,22 @@ public class LockInteractionManager {
         if (lock == null || player.isCreative())
             return InteractionResult.PASS;
 
-        if (player.getItemInHand(hand).getItem() == LocksmithItems.LOCKPICK.get() && Locksmith.CONFIG.enableLockpicking.get()) {
+        ItemStack item = player.getMainHandItem();
+        if (item.getItem() == LocksmithItems.LOCKPICK.get() && Locksmith.CONFIG.enableLockpicking.get()) {
             lock.onLockpick(player, level);
             player.awardStat(Stats.ITEM_USED.get(LocksmithItems.LOCKPICK.get()));
             return InteractionResult.SUCCESS;
         }
 
-        if (lock.onRightClick(player, level, hand, hitResult))
+        if (lock.onRightClick(player, level, item, hitResult))
             return InteractionResult.PASS;
         else {
             player.displayClientMessage(LOCKED, true);
-            player.playNotifySound(SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 1.0F, 1.0F);
-            return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+            if (level.isClientSide()) {
+                player.playNotifySound(SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 1.0F, 1.0F);
+                return InteractionResult.SUCCESS;
+            }
+            return InteractionResult.FAIL;
         }
     }
 

@@ -42,8 +42,7 @@ public class KeyLock extends AbstractLock {
     }
 
     @Override
-    public boolean onRightClick(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
-        ItemStack stack = player.getItemInHand(hand);
+    public boolean onRightClick(Player player, Level level, ItemStack stack, BlockHitResult hitResult) {
         if (KeyItem.matchesLock(this.getId(), stack)) {
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
             return true;

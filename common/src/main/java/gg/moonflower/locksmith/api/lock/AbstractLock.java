@@ -91,7 +91,7 @@ public abstract class AbstractLock {
      *
      * @return Whether the right-click action should succeed.
      */
-    public abstract boolean onRightClick(Player player, Level level, InteractionHand hand, BlockHitResult hitResult);
+    public abstract boolean onRightClick(Player player, Level level, ItemStack stack, BlockHitResult hitResult);
 
     /**
      * Fires when a player left-clicks on a locked block.
