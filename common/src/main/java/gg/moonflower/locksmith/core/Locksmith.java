@@ -2,12 +2,14 @@ package gg.moonflower.locksmith.core;
 
 import gg.moonflower.locksmith.client.lock.ClientLockManager;
 import gg.moonflower.locksmith.client.screen.LocksmithingTableScreen;
+import gg.moonflower.locksmith.common.lock.LockInteractionManager;
 import gg.moonflower.locksmith.common.lock.ServerLockManager;
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.core.registry.*;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
+import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
 import gg.moonflower.pollen.api.event.events.registry.RegisterAtlasSpriteEvent;
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.ClientRegistries;
@@ -26,13 +28,13 @@ public class Locksmith {
             .build();
 
     public static void onClientInit() {
-        ClientRegistries.registerScreenFactory(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
         RegisterAtlasSpriteEvent.event(InventoryMenu.BLOCK_ATLAS).register((atlas, registry) -> registry.accept(LocksmithingTableMenu.EMPTY_SLOT_KEY));
-        ClientRegistries.registerItemOverride(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity) -> Mth.clamp(4 / 4F, 0, 1));
     }
 
     public static void onClientPostInit(Platform.ModSetupContext ctx) {
         ClientLockManager.init();
+        ClientRegistries.registerScreenFactory(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
+        ClientRegistries.registerItemOverride(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity) -> Mth.clamp(4 / 4F, 0, 1));
     }
 
     public static void onCommonInit() {
@@ -45,5 +47,7 @@ public class Locksmith {
 
     public static void onCommonPostInit(Platform.ModSetupContext ctx) {
         ctx.enqueueWork(() -> LocksmithStats.STATS.register(Locksmith.PLATFORM));
+        PlayerInteractEvent.RIGHT_CLICK_BLOCK.register(LockInteractionManager::onRightClickBlock);
+        PlayerInteractEvent.LEFT_CLICK_BLOCK.register(LockInteractionManager::onLeftClickBlock);
     }
 }

@@ -11,5 +11,5 @@ import java.util.function.Supplier;
 public class LocksmithLocks {
     public static final PollinatedRegistry<LockType> LOCKS = PollinatedRegistry.createDefaulted(LockType.class, new ResourceLocation(Locksmith.MOD_ID, "lock_types"), new ResourceLocation(Locksmith.MOD_ID, "key"));
 
-    public static final Supplier<LockType> KEY = LOCKS.register("key", () -> new LockType(KeyLock.CODEC));
+    public static final Supplier<LockType> KEY = LOCKS.register("key", () -> LockType.of(KeyLock.CODEC));
 }

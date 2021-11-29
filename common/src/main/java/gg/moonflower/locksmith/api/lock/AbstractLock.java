@@ -18,7 +18,7 @@ import java.util.UUID;
  * @since 1.0.0
  */
 public abstract class AbstractLock {
-    public static final Codec<AbstractLock> CODEC = LocksmithLocks.LOCKS.dispatch(AbstractLock::getType, LockType::getCodec);
+    public static final Codec<AbstractLock> CODEC = LocksmithLocks.LOCKS.dispatch(AbstractLock::getType, LockType::codec);
 
     private final LockType type;
     private final UUID id;

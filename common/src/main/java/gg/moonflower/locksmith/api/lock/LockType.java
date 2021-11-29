@@ -1,20 +1,29 @@
 package gg.moonflower.locksmith.api.lock;
 
 import com.mojang.serialization.Codec;
+import dev.architectury.injectables.annotations.ExpectPlatform;
+import gg.moonflower.pollen.api.platform.Platform;
 
-public class LockType {
-    private final Codec<? extends AbstractLock> codec;
+/**
+ * A type of body that can be serialized and deserialized.
+ *
+ * @author Ocelot
+ */
+public interface LockType {
 
-    public LockType(Codec<? extends AbstractLock> codec)
-    {
-        this.codec = codec;
+    /**
+     * Constructs a new type for each platform.
+     *
+     * @param codec The codec of the type
+     * @return A new type with the codec
+     */
+    @ExpectPlatform
+    static LockType of(Codec<? extends AbstractLock> codec) {
+        return Platform.error();
     }
 
     /**
-     * @return The codec to use for serializing and deserializing locks.
+     * @return The codec for the lock type
      */
-    public Codec<? extends AbstractLock> getCodec()
-    {
-        return codec;
-    }
+    Codec<? extends AbstractLock> codec();
 }
