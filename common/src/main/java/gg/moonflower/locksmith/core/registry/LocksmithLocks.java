@@ -1,7 +1,6 @@
 package gg.moonflower.locksmith.core.registry;
 
 import gg.moonflower.locksmith.api.lock.LockType;
-import gg.moonflower.locksmith.api.lock.types.CodeLock;
 import gg.moonflower.locksmith.api.lock.types.KeyLock;
 import gg.moonflower.locksmith.core.Locksmith;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
@@ -13,5 +12,4 @@ public class LocksmithLocks {
     public static final PollinatedRegistry<LockType> LOCKS = PollinatedRegistry.createDefaulted(LockType.class, new ResourceLocation(Locksmith.MOD_ID, "lock_types"), new ResourceLocation(Locksmith.MOD_ID, "key"));
 
     public static final Supplier<LockType> KEY = LOCKS.register("key", () -> new LockType(KeyLock.CODEC));
-    public static final Supplier<LockType> CODE = LOCKS.register("code", () -> new LockType(CodeLock.CODEC));
 }
