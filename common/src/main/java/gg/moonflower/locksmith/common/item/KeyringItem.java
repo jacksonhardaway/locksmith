@@ -1,12 +1,19 @@
 package gg.moonflower.locksmith.common.item;
 
+import gg.moonflower.locksmith.api.lock.AbstractLock;
+import gg.moonflower.locksmith.api.lock.types.KeyLock;
+import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.common.menu.KeyringMenu;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
+import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import gg.moonflower.pollen.api.util.NbtConstants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
@@ -38,6 +46,7 @@ public class KeyringItem extends Item {
                 return InteractionResultHolder.pass(stack);
 
             if (!level.isClientSide()) {
+                player.awardStat(Stats.ITEM_USED.get(this));
                 player.openMenu(new MenuProvider() {
                     @Override
                     public Component getDisplayName() {
@@ -53,6 +62,30 @@ public class KeyringItem extends Item {
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
         }
         return InteractionResultHolder.pass(stack);
+    }
+
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        BlockPos pos = context.getClickedPos();
+        Player player = context.getPlayer();
+        Level level = context.getLevel();
+        AbstractLock abstractLock = LockManager.getLock(level, pos);
+        if (player == null || abstractLock == null || abstractLock.getType() != LocksmithLocks.KEY.get())
+            return InteractionResult.PASS;
+
+        KeyLock lock = (KeyLock) abstractLock;
+        for (ItemStack key : KeyringItem.getKeys(context.getItemInHand())) {
+            if (lock.canRemove(player, level, key)) {
+                if (level.isClientSide())
+                    return InteractionResult.SUCCESS;
+
+                lock.onRemove(level, pos);
+                LockManager.get(level).removeLock(lock.getPos());
+                player.awardStat(Stats.ITEM_USED.get(this));
+                return InteractionResult.CONSUME;
+            }
+        }
+        return InteractionResult.PASS;
     }
 
     public static List<ItemStack> getKeys(ItemStack stack) {

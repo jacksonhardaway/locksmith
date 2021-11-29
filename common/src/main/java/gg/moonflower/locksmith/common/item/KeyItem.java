@@ -33,10 +33,15 @@ public class KeyItem extends Item {
     }
 
     public static boolean matchesLock(UUID id, ItemStack stack) {
-        if (stack.getItem() != LocksmithItems.KEY.get())
-            return false;
-
-        return id.equals(KeyItem.getLockId(stack));
+        if (stack.getItem() == LocksmithItems.KEYRING.get()) {
+            for (ItemStack key : KeyringItem.getKeys(stack)) {
+                if (id.equals(KeyItem.getLockId(key)))
+                    return true;
+            }
+        } else if (stack.getItem() == LocksmithItems.KEY.get()) {
+            return id.equals(KeyItem.getLockId(stack));
+        }
+        return false;
     }
 
     @Nullable
@@ -79,11 +84,10 @@ public class KeyItem extends Item {
             return InteractionResult.PASS;
 
         KeyLock lock = (KeyLock) abstractLock;
-        boolean canRemove = lock.canRemove(player, level, context.getItemInHand());
-        if (level.isClientSide())
-            return canRemove ? InteractionResult.SUCCESS : InteractionResult.PASS;
+        if (lock.canRemove(player, level, context.getItemInHand())) {
+            if (level.isClientSide())
+                return InteractionResult.SUCCESS;
 
-        if (canRemove) {
             lock.onRemove(level, pos);
             LockManager.get(level).removeLock(lock.getPos());
             player.awardStat(Stats.ITEM_USED.get(this));
