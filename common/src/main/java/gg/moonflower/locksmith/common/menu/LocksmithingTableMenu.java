@@ -26,12 +26,13 @@ import java.util.UUID;
 public class LocksmithingTableMenu extends AbstractContainerMenu {
     public static final ResourceLocation EMPTY_SLOT_KEY = new ResourceLocation(Locksmith.MOD_ID, "item/empty_locksmithing_table_slot_key");
     private static final QuickMoveHelper MOVE_HELPER = new QuickMoveHelper().
-            add(0, 4, 4, 36, false). // to Inventory
+            add(0, 4, 4, 36, true). // to Inventory
                     add(4, 36, 0, 2, false); // from Inventory
 
     private final ContainerLevelAccess access;
     private final Slot keyInputSlot;
-    private final Slot inputSlot;    private final Container inputSlots = new SimpleContainer(2) {
+    private final Slot inputSlot;
+    private final Container inputSlots = new SimpleContainer(2) {
         @Override
         public void setChanged() {
             super.setChanged();
@@ -41,16 +42,19 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
         // TODO: make result
     };
     private long lastSoundTime;
-    private boolean pendingResult;    private final Container resultSlots = new SimpleContainer(2) {
+    private boolean pendingResult;
+    private final Container resultSlots = new SimpleContainer(2) {
         @Override
         public void setChanged() {
             super.setChanged();
             LocksmithingTableMenu.this.slotsChanged(this);
         }
     };
+
     public LocksmithingTableMenu(int containerId, Inventory inventory) {
         this(containerId, inventory, ContainerLevelAccess.NULL);
     }
+
     public LocksmithingTableMenu(int containerId, Inventory inventory, ContainerLevelAccess access) {
         super(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), containerId);
         this.access = access;
@@ -112,12 +116,15 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int slot) {
-        return MOVE_HELPER.performAction(this, slot);
+        return MOVE_HELPER.quickMoveStack(this, player, slot);
     }
 
     @Override
     public void slotsChanged(Container inventory) {
         super.slotsChanged(inventory);
+
+        LocksmithingTableMenu.this.pendingResult = LocksmithingTableMenu.this.resultSlots.getItem(0).isEmpty() ^ LocksmithingTableMenu.this.resultSlots.getItem(1).isEmpty();
+
         if (inventory == this.inputSlots) {
             this.createResult();
         }
@@ -167,8 +174,6 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
             this.resultSlots.setItem(0, keyStack.copy());
             this.resultSlots.setItem(1, result);
         }
-
-        this.pendingResult = true;
     }
 
     private boolean isValid() {
@@ -205,11 +210,6 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
 
             super.onTake(player, stack);
 
-            LocksmithingTableMenu.this.pendingResult = !LocksmithingTableMenu.this.resultSlots.getItem(0).isEmpty() || !LocksmithingTableMenu.this.resultSlots.getItem(1).isEmpty();
-
-            LocksmithingTableMenu.this.createResult();
-            LocksmithingTableMenu.this.broadcastChanges();
-
             LocksmithingTableMenu.this.access.execute((level, pos) -> {
                 long l = level.getGameTime();
                 if (LocksmithingTableMenu.this.lastSoundTime != l) {
@@ -221,10 +221,4 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
             return stack;
         }
     }
-
-
-
-
-
-
 }
