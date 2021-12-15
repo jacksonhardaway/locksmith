@@ -20,7 +20,7 @@ subprojects {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
         mappings loom.layered() {
             officialMojangMappings()
-            parchment("org.parchmentmc.data:parchment-${rootProject.minecraft_version}:${rootProject.parchment_version}")
+//            parchment("org.parchmentmc.data:parchment-${rootProject.minecraft_version}:${rootProject.parchment_version}")
         }
     }
 }
@@ -49,9 +49,7 @@ allprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-        if (JavaVersion.current().isJava9Compatible()) {
-            options.release.set(8)
-        }
+        options.release.set(17)
     }
 
     java {

@@ -10,20 +10,20 @@ displayName = "${name}"
 authors = "Moonflower"
 credits = "Jackson"
 description = "A mod about locks"
-updateJSONURL = "https://github.com/MoonflowerTeam/${repo}/update.json"
+#updateJSONURL = ""
 #logoFile = ""
 
 [[dependencies.${id}]]
 modId = "forge"
 mandatory = true
-versionRange = "[36,)"
+versionRange = "[39,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${id}]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.16.5,)"
+versionRange = "[1.18,)"
 ordering = "NONE"
 side = "BOTH"
 

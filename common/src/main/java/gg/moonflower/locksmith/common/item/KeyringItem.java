@@ -41,7 +41,7 @@ public class KeyringItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isSecondaryUseActive()) {
-            int index = player.inventory.findSlotMatchingItem(stack);
+            int index = player.getInventory().findSlotMatchingItem(stack);
             if (index == -1)
                 return InteractionResultHolder.pass(stack);
 
@@ -55,7 +55,7 @@ public class KeyringItem extends Item {
 
                     @Override
                     public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-                        return new KeyringMenu(containerId, player.inventory, index);
+                        return new KeyringMenu(containerId, player.getInventory(), index);
                     }
                 });
             }

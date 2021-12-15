@@ -56,27 +56,16 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
     }
 
     @Override
-    public void refreshContainer(AbstractContainerMenu container, NonNullList<ItemStack> inventory) {
-        this.slotChanged(container, 0, container.getSlot(0).getItem());
-        this.slotChanged(container, 1, container.getSlot(1).getItem());
-    }
-
-    @Override
     public void slotChanged(AbstractContainerMenu container, int slot, ItemStack stack) {
         switch (slot) {
-            case 0:
-                this.keyStack = stack;
-                break;
-            case 1:
-                this.inputStack = stack;
-                break;
+            case 0 -> this.keyStack = stack;
+            case 1 -> this.inputStack = stack;
         }
     }
 
     @Override
-    public void setContainerData(AbstractContainerMenu container, int varToUpdate, int newValue) {
+    public void dataChanged(AbstractContainerMenu container, int varToUpdate, int newValue) {
     }
-
 
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(poseStack);
@@ -85,8 +74,8 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
     }
 
     protected void renderBg(PoseStack poseStack, float partialTicks, int mouseX, int mouseY) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bind(LOCKSMITHING_LOCATION);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, LOCKSMITHING_LOCATION);
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
         this.blit(poseStack, i, j, 0, 0, this.imageWidth, this.imageHeight);

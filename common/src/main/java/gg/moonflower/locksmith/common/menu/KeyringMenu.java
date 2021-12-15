@@ -99,7 +99,7 @@ public class KeyringMenu extends AbstractContainerMenu {
         }
 
         this.inventory.setItem(this.keyringIndex, ItemStack.EMPTY);
-        this.clearContainer(player, player.level, this.keyringInventory);
+        this.clearContainer(player, this.keyringInventory);
     }
 
     @Override

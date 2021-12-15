@@ -29,12 +29,23 @@ public final class ServerLockManager extends SavedData implements LockManager {
     private final ServerLevel level;
 
     private ServerLockManager(ServerLevel level) {
-        super("locksmithLocks");
         this.level = level;
     }
 
+    private ServerLockManager(ServerLevel level, CompoundTag tag) {
+        this(level);
+        ListTag chunks = tag.getList("Chunks", 10);
+        for (int i = 0; i < chunks.size(); i++) {
+            CompoundTag lock = chunks.getCompound(i);
+            ChunkLockData data = new ChunkLockData();
+            data.load(lock);
+
+            this.locks.put(new ChunkPos(lock.getInt("X"), lock.getInt("Z")), data);
+        }
+    }
+
     public static ServerLockManager getOrCreate(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(() -> new ServerLockManager(level), "locksmithLocks");
+        return level.getDataStorage().computeIfAbsent(tag -> new ServerLockManager(level, tag), () -> new ServerLockManager(level), "locksmithLocks");
     }
 
     public static void init() {
@@ -90,18 +101,6 @@ public final class ServerLockManager extends SavedData implements LockManager {
         chunkData.removeLock(pos);
         this.setDirty();
         LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundDeleteLockPacket(pos));
-    }
-
-    @Override
-    public void load(CompoundTag compoundTag) {
-        ListTag tag = compoundTag.getList("Chunks", 10);
-        for (int i = 0; i < tag.size(); i++) {
-            CompoundTag lock = tag.getCompound(i);
-            ChunkLockData data = new ChunkLockData();
-            data.load(lock);
-
-            this.locks.put(new ChunkPos(lock.getInt("X"), lock.getInt("Z")), data);
-        }
     }
 
     @Override

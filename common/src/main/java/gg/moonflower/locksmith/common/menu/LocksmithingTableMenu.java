@@ -67,9 +67,9 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
             }
 
             @Override
-            public ItemStack onTake(Player player, ItemStack stack) {
+            public void onTake(Player player, ItemStack stack) {
                 LocksmithingTableMenu.this.pendingResult = false;
-                return super.onTake(player, stack);
+                super.onTake(player, stack);
             }
 
             @Override
@@ -89,9 +89,9 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
             }
 
             @Override
-            public ItemStack onTake(Player player, ItemStack stack) {
+            public void onTake(Player player, ItemStack stack) {
                 LocksmithingTableMenu.this.pendingResult = false;
-                return super.onTake(player, stack);
+                super.onTake(player, stack);
             }
         });
 
@@ -117,7 +117,7 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
     @Override
     public void removed(Player player) {
         super.removed(player);
-        this.access.execute((level, blockPos) -> this.clearContainer(player, level, this.inputSlots));
+        this.access.execute((level, blockPos) -> this.clearContainer(player, this.inputSlots));
     }
 
     @Override
@@ -210,11 +210,9 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public ItemStack onTake(Player player, ItemStack stack) {
+        public void onTake(Player player, ItemStack stack) {
             LocksmithingTableMenu.this.keyInputSlot.remove(1);
             LocksmithingTableMenu.this.inputSlot.remove(1);
-
-            super.onTake(player, stack);
 
             LocksmithingTableMenu.this.access.execute((level, pos) -> {
                 long l = level.getGameTime();
@@ -222,9 +220,9 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
                     level.playSound(null, pos, LocksmithSounds.UI_LOCKSMITHING_TABLE_TAKE_RESULT.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
                     LocksmithingTableMenu.this.lastSoundTime = l;
                 }
-
             });
-            return stack;
+
+            super.onTake(player, stack);
         }
     }
 }

@@ -1,5 +1,6 @@
 package gg.moonflower.locksmith.core.mixin.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
@@ -61,9 +62,9 @@ public class GuiMixin extends GuiComponent {
 
         int y = this.screenHeight / 2 + 9 + (moveDown ? 9 : 0);
         int x = this.screenWidth / 2 - 5;
-        this.minecraft.getTextureManager().bind(LOCK_ICONS);
+        RenderSystem.setShaderTexture(0, LOCK_ICONS);
         blit(matrixStack, x, y, lock.canUnlock(player, level, player.getMainHandItem()) ? 9 : 0, 0, 9, 9, 32, 32);
 
-        this.minecraft.getTextureManager().bind(GUI_ICONS_LOCATION);
+        RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
     }
 }
