@@ -10,9 +10,6 @@ archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
 loom {
     forge {
         mixinConfig "${project.mod_id}-common.mixins.json"
-
-        convertAccessWideners.set(true)
-        extraAccessWideners.add("${project.mod_id}.accesswidener")
     }
     mixin {
         defaultRefmapName = "${project.mod_id}-refmap.json"
