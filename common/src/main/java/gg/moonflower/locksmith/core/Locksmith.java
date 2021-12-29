@@ -43,7 +43,7 @@ public class Locksmith {
         ClientLockManager.init();
         ScreenRegistry.register(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
         ScreenRegistry.register(LocksmithMenus.KEYRING_MENU.get(), KeyringScreen::new);
-        ItemPredicateRegistry.register(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity) -> Mth.clamp(KeyringItem.getKeys(stack).size() / (float) KeyringItem.MAX_KEYS, 0, 1));
+        ItemPredicateRegistry.register(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity, i) -> Mth.clamp(KeyringItem.getKeys(stack).size() / (float) KeyringItem.MAX_KEYS, 0, 1));
     }
 
     public static void onCommonInit() {
