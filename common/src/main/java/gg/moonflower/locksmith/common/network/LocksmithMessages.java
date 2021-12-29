@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class LocksmithMessages {
 
-    public static final PollinatedPlayNetworkChannel PLAY = NetworkRegistry.createPlay(new ResourceLocation(Locksmith.MOD_ID, "play"), "1", LocksmithClientPlayPacketHandlerImpl::new, Object::new);
+    public static final PollinatedPlayNetworkChannel PLAY = NetworkRegistry.createPlay(new ResourceLocation(Locksmith.MOD_ID, "play"), "1", () -> new LocksmithClientPlayPacketHandlerImpl(), () -> new Object());
 
     public static void init() {
         PLAY.register(ClientboundAddLocksPacket.class, ClientboundAddLocksPacket::new, PollinatedPacketDirection.PLAY_CLIENTBOUND);
