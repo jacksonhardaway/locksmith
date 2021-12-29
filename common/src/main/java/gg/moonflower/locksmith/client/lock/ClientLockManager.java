@@ -2,8 +2,8 @@ package gg.moonflower.locksmith.client.lock;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
-import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvent;
-import gg.moonflower.pollen.api.event.events.world.ChunkEvent;
+import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
+import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
@@ -27,8 +27,8 @@ public final class ClientLockManager implements LockManager {
     }
 
     public static void init() {
-        ClientNetworkEvent.LOGOUT.register((controller, player, connection) -> INSTANCES.clear());
-        ChunkEvent.UNLOAD.register((level, chunk) -> {
+        ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> INSTANCES.clear());
+        ChunkEvents.UNLOAD.register((level, chunk) -> {
             if (level instanceof Level) {
                 ClientLockManager manager = INSTANCES.get(((Level) level).dimension());
                 if (manager == null)

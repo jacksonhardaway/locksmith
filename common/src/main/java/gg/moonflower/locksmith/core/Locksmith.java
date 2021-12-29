@@ -8,13 +8,19 @@ import gg.moonflower.locksmith.common.lock.LockInteractionManager;
 import gg.moonflower.locksmith.common.lock.ServerLockManager;
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
-import gg.moonflower.locksmith.core.registry.*;
+import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
+import gg.moonflower.locksmith.core.registry.LocksmithItems;
+import gg.moonflower.locksmith.core.registry.LocksmithLocks;
+import gg.moonflower.locksmith.core.registry.LocksmithMenus;
+import gg.moonflower.locksmith.core.registry.LocksmithRecipes;
+import gg.moonflower.locksmith.core.registry.LocksmithStats;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
-import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractEvent;
-import gg.moonflower.pollen.api.event.events.registry.RegisterAtlasSpriteEvent;
+import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractionEvents;
+import gg.moonflower.pollen.api.event.events.registry.client.RegisterAtlasSpriteEvent;
 import gg.moonflower.pollen.api.platform.Platform;
-import gg.moonflower.pollen.api.registry.ClientRegistries;
+import gg.moonflower.pollen.api.registry.client.ItemPredicateRegistry;
+import gg.moonflower.pollen.api.registry.client.ScreenRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -35,9 +41,9 @@ public class Locksmith {
 
     public static void onClientPostInit(Platform.ModSetupContext ctx) {
         ClientLockManager.init();
-        ClientRegistries.registerScreenFactory(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
-        ClientRegistries.registerScreenFactory(LocksmithMenus.KEYRING_MENU.get(), KeyringScreen::new);
-        ClientRegistries.registerItemOverride(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity) -> Mth.clamp(KeyringItem.getKeys(stack).size() / (float) KeyringItem.MAX_KEYS, 0, 1));
+        ScreenRegistry.register(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
+        ScreenRegistry.register(LocksmithMenus.KEYRING_MENU.get(), KeyringScreen::new);
+        ItemPredicateRegistry.register(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity) -> Mth.clamp(KeyringItem.getKeys(stack).size() / (float) KeyringItem.MAX_KEYS, 0, 1));
     }
 
     public static void onCommonInit() {
@@ -47,11 +53,12 @@ public class Locksmith {
         LocksmithRecipes.RECIPES.register(Locksmith.PLATFORM);
         LocksmithMessages.init();
         ServerLockManager.init();
+
+        PlayerInteractionEvents.RIGHT_CLICK_BLOCK.register(LockInteractionManager::onRightClickBlock);
+        PlayerInteractionEvents.LEFT_CLICK_BLOCK.register(LockInteractionManager::onLeftClickBlock);
     }
 
     public static void onCommonPostInit(Platform.ModSetupContext ctx) {
         ctx.enqueueWork(() -> LocksmithStats.STATS.register(Locksmith.PLATFORM));
-        PlayerInteractEvent.RIGHT_CLICK_BLOCK.register(LockInteractionManager::onRightClickBlock);
-        PlayerInteractEvent.LEFT_CLICK_BLOCK.register(LockInteractionManager::onLeftClickBlock);
     }
 }
