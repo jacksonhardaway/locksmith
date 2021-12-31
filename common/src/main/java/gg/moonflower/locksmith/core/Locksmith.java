@@ -13,6 +13,7 @@ import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import gg.moonflower.locksmith.core.registry.LocksmithMenus;
 import gg.moonflower.locksmith.core.registry.LocksmithRecipes;
+import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import gg.moonflower.locksmith.core.registry.LocksmithStats;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
@@ -41,14 +42,17 @@ public class Locksmith {
 
     public static void onClientPostInit(Platform.ModSetupContext ctx) {
         ClientLockManager.init();
-        ScreenRegistry.register(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
-        ScreenRegistry.register(LocksmithMenus.KEYRING_MENU.get(), KeyringScreen::new);
-        ItemPredicateRegistry.register(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity) -> Mth.clamp(KeyringItem.getKeys(stack).size() / (float) KeyringItem.MAX_KEYS, 0, 1));
+        ctx.enqueueWork(() -> {
+            ScreenRegistry.register(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
+            ScreenRegistry.register(LocksmithMenus.KEYRING_MENU.get(), KeyringScreen::new);
+            ItemPredicateRegistry.register(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity) -> Mth.clamp(KeyringItem.getKeys(stack).size() / (float) KeyringItem.MAX_KEYS, 0, 1));
+        });
     }
 
     public static void onCommonInit() {
         LocksmithBlocks.BLOCKS.register(Locksmith.PLATFORM);
         LocksmithItems.ITEMS.register(Locksmith.PLATFORM);
+        LocksmithSounds.SOUNDS.register(Locksmith.PLATFORM);
         LocksmithLocks.LOCKS.register(Locksmith.PLATFORM);
         LocksmithRecipes.RECIPES.register(Locksmith.PLATFORM);
         LocksmithMessages.init();
