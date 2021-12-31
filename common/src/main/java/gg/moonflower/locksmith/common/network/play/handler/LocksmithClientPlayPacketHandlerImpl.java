@@ -18,10 +18,12 @@ public class LocksmithClientPlayPacketHandlerImpl implements LocksmithClientPlay
             return;
 
         LockManager manager = LockManager.get(level);
-        if (msg.isReplace())
-            ((ClientLockManager) manager).clearLocks(msg.getChunk());
-        for (AbstractLock lock : msg.getLocks())
-            manager.addLock(lock);
+        ctx.enqueueWork(() -> {
+            if (msg.isReplace())
+                ((ClientLockManager) manager).clearLocks(msg.getChunk());
+            for (AbstractLock lock : msg.getLocks())
+                manager.addLock(lock);
+        });
     }
 
     @Override
@@ -30,6 +32,6 @@ public class LocksmithClientPlayPacketHandlerImpl implements LocksmithClientPlay
         if (level == null)
             return;
 
-        LockManager.get(level).removeLock(msg.getPos());
+        ctx.enqueueWork(() -> LockManager.get(level).removeLock(msg.getPos()));
     }
 }
