@@ -1,8 +1,8 @@
 {
   "replace": false,
   "values": [
-    "#minecraft:doors",
-    "#minecraft:trapdoors",
+    "#minecraft:wooden_doors",
+    "#minecraft:wooden_trapdoors",
     "#minecraft:fence_gates",
     { "id": "#c:chest", "required": false },
     { "id": "#forge:chests", "required": false },
