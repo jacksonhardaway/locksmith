@@ -11,7 +11,12 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public final class ClientLockManager implements LockManager {
     private static final Map<ResourceKey<Level>, ClientLockManager> INSTANCES = new HashMap<>();

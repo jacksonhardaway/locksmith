@@ -12,6 +12,7 @@ import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import gg.moonflower.locksmith.core.registry.LocksmithMenus;
+import gg.moonflower.locksmith.core.registry.LocksmithParticles;
 import gg.moonflower.locksmith.core.registry.LocksmithRecipes;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import gg.moonflower.locksmith.core.registry.LocksmithStats;
@@ -38,6 +39,7 @@ public class Locksmith {
 
     public static void onClientInit() {
         RegisterAtlasSpriteEvent.event(InventoryMenu.BLOCK_ATLAS).register((atlas, registry) -> registry.accept(LocksmithingTableMenu.EMPTY_SLOT_KEY));
+        LocksmithParticles.setupClient();
     }
 
     public static void onClientPostInit(Platform.ModSetupContext ctx) {

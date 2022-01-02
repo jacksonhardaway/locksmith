@@ -12,6 +12,7 @@ public class LocksmithSounds {
     public static final PollinatedRegistry<SoundEvent> SOUNDS = PollinatedRegistry.create(Registry.SOUND_EVENT, Locksmith.MOD_ID);
 
     public static final Supplier<SoundEvent> UI_LOCKSMITHING_TABLE_TAKE_RESULT = registerSound("ui.locksmithing_table.take_result");
+    public static final Supplier<SoundEvent> ITEM_LOCK_PLACE = registerSound("item.lock.place");
 
     private static Supplier<SoundEvent> registerSound(String id) {
         return SOUNDS.register(id, () -> new SoundEvent(new ResourceLocation(Locksmith.MOD_ID, id)));
