@@ -2,11 +2,15 @@ package gg.moonflower.locksmith.common.item;
 
 import gg.moonflower.locksmith.api.lock.types.KeyLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.core.registry.LocksmithParticles;
+import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import gg.moonflower.locksmith.core.registry.LocksmithTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -40,6 +44,15 @@ public class LockItem extends Item {
         ItemStack lockStack = stack.copy();
         lockStack.setCount(1);
         LockManager.get(level).addLock(new KeyLock(lockId, pos, lockStack));
+        level.playSound(null, pos, LocksmithSounds.ITEM_LOCK_PLACE.get(), SoundSource.BLOCKS, 0.75F, 1.0F);
+
+        for (int i = 0; i < 10; i++) {
+            double particleX = pos.getX() + level.random.nextDouble();
+            double particleY = pos.getY() + level.random.nextDouble();
+            double particleZ = pos.getZ() + level.random.nextDouble();
+            ((ServerLevel) level).sendParticles(LocksmithParticles.LOCK_SPARK.get(), particleX, particleY, particleZ, 2, 0.15, 0.15, 0.15, 1);
+        }
+
         Player player = context.getPlayer();
         if (player != null) {
             player.awardStat(Stats.ITEM_USED.get(this));

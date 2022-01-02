@@ -1,0 +1,8 @@
+{
+  "item.lock.place": {
+    "sounds": [
+      "locksmith:item/lock/place"
+    ],
+    "subtitle": "subtitles.locksmith.item.lock.place"
+  }
+}
