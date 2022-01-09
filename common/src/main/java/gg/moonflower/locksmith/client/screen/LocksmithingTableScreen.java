@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class LocksmithingTableScreen extends AbstractContainerScreen<LocksmithingTableMenu> implements ContainerListener {
+
     private static final ResourceLocation LOCKSMITHING_LOCATION = new ResourceLocation(Locksmith.MOD_ID, "textures/gui/container/locksmithing_table.png");
     private static final Component MISSING_KEY = new TextComponent("")
             .append(new TranslatableComponent("screen.locksmith.locksmithing_table.missing_key"))
@@ -77,13 +78,14 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
     public void setContainerData(AbstractContainerMenu container, int varToUpdate, int newValue) {
     }
 
-
+    @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(poseStack);
         super.render(poseStack, mouseX, mouseY, partialTicks);
         this.renderTooltip(poseStack, mouseX, mouseY);
     }
 
+    @Override
     protected void renderBg(PoseStack poseStack, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bind(LOCKSMITHING_LOCATION);
