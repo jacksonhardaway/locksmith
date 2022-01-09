@@ -24,7 +24,7 @@ public class KeyringContainer implements Container {
         this.inventory = inventory;
         this.index = index;
         this.keyring = inventory.getItem(index);
-        this.keys = NonNullList.withSize(4, ItemStack.EMPTY);
+        this.keys = NonNullList.withSize(KeyringItem.MAX_KEYS, ItemStack.EMPTY);
 
         List<ItemStack> keys = KeyringItem.getKeys(this.keyring);
         for (int i = 0; i < keys.size(); i++)
@@ -37,7 +37,7 @@ public class KeyringContainer implements Container {
 
     @Override
     public int getContainerSize() {
-        return KeyringItem.MAX_KEYS;
+        return this.keys.size();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class KeyringContainer implements Container {
 
     @Override
     public void setItem(int index, ItemStack stack) {
-        if (index < 0 || index >= KeyringItem.MAX_KEYS)
+        if (index < 0 || index >= this.keys.size())
             return;
         this.keys.set(index, stack);
         this.update();
