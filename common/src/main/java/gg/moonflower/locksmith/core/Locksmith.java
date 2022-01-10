@@ -3,11 +3,13 @@ package gg.moonflower.locksmith.core;
 import gg.moonflower.locksmith.client.lock.ClientLockManager;
 import gg.moonflower.locksmith.client.screen.KeyringScreen;
 import gg.moonflower.locksmith.client.screen.LocksmithingTableScreen;
+import gg.moonflower.locksmith.client.tooltip.ClientKeyringTooltip;
 import gg.moonflower.locksmith.common.item.KeyringItem;
 import gg.moonflower.locksmith.common.lock.LockInteractionManager;
 import gg.moonflower.locksmith.common.lock.ServerLockManager;
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
+import gg.moonflower.locksmith.common.tooltip.KeyringTooltip;
 import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;
@@ -21,6 +23,7 @@ import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractionEvents;
 import gg.moonflower.pollen.api.event.events.registry.client.RegisterAtlasSpriteEvent;
 import gg.moonflower.pollen.api.platform.Platform;
+import gg.moonflower.pollen.api.registry.client.ClientTooltipComponentRegistry;
 import gg.moonflower.pollen.api.registry.client.ItemPredicateRegistry;
 import gg.moonflower.pollen.api.registry.client.ScreenRegistry;
 import net.minecraft.resources.ResourceLocation;
@@ -43,6 +46,7 @@ public class Locksmith {
 
     public static void onClientPostInit(Platform.ModSetupContext ctx) {
         ClientLockManager.init();
+        ClientTooltipComponentRegistry.register(KeyringTooltip.class, ClientKeyringTooltip::new);
         ctx.enqueueWork(() -> {
             ScreenRegistry.register(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
             ScreenRegistry.register(LocksmithMenus.KEYRING_MENU.get(), KeyringScreen::new);
