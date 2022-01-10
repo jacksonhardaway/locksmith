@@ -19,6 +19,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
@@ -191,15 +192,24 @@ public class KeyringItem extends Item {
 
         if (keysNbt.size() == 1) {
             ItemStack last = ItemStack.of(keysNbt.getCompound(0));
-            for (int i = 0; i < player.getInventory().items.size(); ++i) {
-                if (!player.getInventory().items.get(i).isEmpty() && keyRing == player.getInventory().items.get(i)) {
+
+            ItemStack carried = player.inventoryMenu.getCarried();
+            if (!carried.isEmpty() && carried == keyRing) {
+                keyRing.setCount(0);
+                player.inventoryMenu.setCarried(last);
+                return Optional.of(keyStack);
+            }
+
+            Inventory inventory = player.getInventory();
+            for (int i = 0; i < inventory.items.size(); ++i) {
+                if (!inventory.items.get(i).isEmpty() && keyRing == inventory.items.get(i)) {
                     keyRing.setCount(0);
-                    player.getInventory().setItem(i, last);
+                    inventory.setItem(i, last);
                     return Optional.of(keyStack);
                 }
             }
 
-            player.getInventory().placeItemBackInInventory(last);
+            inventory.placeItemBackInInventory(last);
         }
 
         if (keysNbt.isEmpty())
@@ -224,8 +234,11 @@ public class KeyringItem extends Item {
         return true;
     }
 
-    private static void add(ItemStack stack, ItemStack key) {
-        CompoundTag tag = stack.getOrCreateTag();
+    private static void add(ItemStack keyRing, ItemStack key) {
+        if (!keyRing.is(LocksmithItems.KEYRING.get()) || !key.is(LocksmithItems.KEY.get()))
+            return;
+
+        CompoundTag tag = keyRing.getOrCreateTag();
         if (!tag.contains("Keys"))
             tag.put("Keys", new ListTag());
 
