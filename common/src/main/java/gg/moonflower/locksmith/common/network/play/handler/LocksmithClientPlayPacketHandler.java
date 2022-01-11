@@ -10,6 +10,6 @@ public interface LocksmithClientPlayPacketHandler {
     void handleAddLocks(ClientboundAddLocksPacket msg, PollinatedPacketContext ctx);
 
     void handleDeleteLock(ClientboundDeleteLockPacket msg, PollinatedPacketContext ctx);
-
+    
     void handleLockPicking(ClientboundLockPickingPacket msg, PollinatedPacketContext ctx);
 }

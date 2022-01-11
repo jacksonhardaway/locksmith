@@ -43,7 +43,7 @@ public class LockInteractionManager {
         if (lock == null || player.isCreative())
             return InteractionResult.PASS;
 
-        ItemStack stack = player.getMainHandItem();
+        ItemStack stack = player.getItemInHand(hand);
         if (stack.getItem() == LocksmithItems.LOCKPICK.get() && Locksmith.CONFIG.enableLockpicking.get() && lock.canPick(player, level)) {
             if (!level.isClientSide()) {
                 player.awardStat(Stats.ITEM_USED.get(LocksmithItems.LOCKPICK.get()));
@@ -55,7 +55,7 @@ public class LockInteractionManager {
 
                     @Override
                     public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-                        return new LockpickingMenu(containerId, LockPickingContext.of((ServerPlayer) player, stack));
+                        return new LockpickingMenu(containerId, LockPickingContext.server(pos, (ServerPlayer) player, stack, hand));
                     }
                 });
             }

@@ -16,17 +16,8 @@ import java.util.*;
 public final class ClientLockManager implements LockManager {
     private static final Map<ResourceKey<Level>, ClientLockManager> INSTANCES = new HashMap<>();
     private final Map<ChunkPos, Set<AbstractLock>> locks = new HashMap<>();
-    private final ClientLevel level;
 
-    private ClientLockManager(ClientLevel level) {
-        this.level = level;
-    }
-
-    public static ClientLockManager getOrCreate(ClientLevel level) {
-        return INSTANCES.computeIfAbsent(level.dimension(), levelResourceKey -> new ClientLockManager(level));
-    }
-
-    public static void init() {
+    static {
         ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> INSTANCES.clear());
         ChunkEvents.UNLOAD.register((level, chunk) -> {
             if (level instanceof Level) {
@@ -36,6 +27,13 @@ public final class ClientLockManager implements LockManager {
                 manager.locks.remove(chunk.getPos());
             }
         });
+    }
+
+    private ClientLockManager() {
+    }
+
+    public static ClientLockManager getOrCreate(ClientLevel level) {
+        return INSTANCES.computeIfAbsent(level.dimension(), levelResourceKey -> new ClientLockManager());
     }
 
     @Override

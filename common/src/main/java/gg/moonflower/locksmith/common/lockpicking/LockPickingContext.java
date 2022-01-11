@@ -1,61 +1,74 @@
 package gg.moonflower.locksmith.common.lockpicking;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Ocelot
  */
 public abstract class LockPickingContext {
 
-    private static final int PIN_SIZE = Mth.smallestEncompassingPowerOfTwo(PinState.values().length);
+    private static final byte ALL_PINS = 0b11111;
 
-    protected final Set<LockPickingListener> listeners;
-    private int pinStates;
+    private byte pinStates;
+    private byte pickDamage;
 
     protected LockPickingContext() {
-        this.listeners = new HashSet<>();
         this.pinStates = 0;
-    }
-
-    public void addListener(LockPickingListener listener) {
-        this.listeners.add(listener);
-    }
-
-    public void removeListener(LockPickingListener listener) {
-        this.listeners.add(listener);
+        this.pickDamage = 0;
     }
 
     public abstract void pick(int pin);
 
-    public PinState getPinState(int pin) {
-        if (pin < 0 || pin >= 5)
-            return PinState.SET;
-        return PinState.values()[(this.pinStates >> (pin * PIN_SIZE)) & (PIN_SIZE - 1)];
+    public void reset() {
+        this.pinStates = 0;
     }
 
-    public void setPinState(int pin, PinState state) {
+    public abstract void stop(boolean success);
+
+    public abstract GameState getState();
+
+    protected boolean areAllPinsSet(){
+        return this.pinStates == ALL_PINS;
+    }
+
+    public boolean getPinState(int pin) {
+        if (pin < 0 || pin >= 5)
+            return false;
+        return ((this.pinStates >> pin) & 1) > 0;
+    }
+
+    public int getPickDamage() {
+        return pickDamage;
+    }
+
+    public void setPinState(int pin, boolean set) {
         if (pin < 0 || pin >= 5)
             return;
-        PinState oldState = this.getPinState(pin);
-        this.pinStates &= ~((PIN_SIZE - 1) << (pin * PIN_SIZE));
-        this.pinStates |= state.ordinal() << (pin * PIN_SIZE);
-        if (oldState != state)
-            this.listeners.forEach(listener -> listener.onStateChange(state, pin));
+        this.pinStates &= ~(1 << pin);
+        if (set)
+            this.pinStates |= 1 << pin;
+    }
+
+    public void setPickDamage(int pickDamage) {
+        this.pickDamage = (byte) pickDamage;
     }
 
     public abstract boolean stillValid(Player player);
 
-    public static LockPickingContext dummy() {
-        return new ClientPickingContext();
+    public static LockPickingContext client(int containerId) {
+        return new ClientPickingContext(containerId);
     }
 
-    public static LockPickingContext of(ServerPlayer player, ItemStack pickStack) {
-        return new ServerPickingContext(player, pickStack);
+    public static LockPickingContext server(BlockPos pos, ServerPlayer player, ItemStack pickStack, InteractionHand pickHand) {
+        return new ServerPickingContext(ContainerLevelAccess.create(player.level, pos), player, pickStack, pickHand);
+    }
+
+    public enum GameState {
+        RUNNING, SUCCESS, FAIL
     }
 }

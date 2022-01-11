@@ -46,6 +46,23 @@ public class LocksmithClientPlayPacketHandlerImpl implements LocksmithClientPlay
             return;
 
         LockPickingContext context = ((LockPickingScreen) screen).getMenu().getContext();
-        ctx.enqueueWork(() -> context.setPinState(msg.getPin(), msg.getState()));
+        ctx.enqueueWork(() -> {
+            switch (msg.getType()) {
+                case SET:
+                    context.setPinState(msg.getPin(), msg.isSet());
+                    ((LockPickingScreen) screen).lowerPick();
+                    break;
+                case RESET:
+                    context.reset();
+                    ((LockPickingScreen) screen).lowerPick();
+                    break;
+                case SUCCESS:
+                    context.stop(true);
+                    break;
+                case FAIL:
+                    context.stop(false);
+                    break;
+            }
+        });
     }
 }

@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.jetbrains.annotations.Nullable;
@@ -54,8 +55,8 @@ public interface LockManager {
             return manager.getLock(pos.relative(chestDirection));
         }
 
-        if (state.getBlock() instanceof DoorBlock) {
-            boolean top = state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER;
+        if (state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
+            boolean top = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER;
             if (top) {
                 return manager.getLock(pos.relative(Direction.DOWN));
             } else {

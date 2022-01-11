@@ -44,7 +44,6 @@ public class Locksmith {
     }
 
     public static void onClientPostInit(Platform.ModSetupContext ctx) {
-        ClientLockManager.init();
         ctx.enqueueWork(() -> {
             ScreenRegistry.register(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
             ScreenRegistry.register(LocksmithMenus.KEYRING_MENU.get(), KeyringScreen::new);
