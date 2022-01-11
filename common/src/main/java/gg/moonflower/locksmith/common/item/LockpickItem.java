@@ -17,22 +17,21 @@ public class LockpickItem extends Item {
         super(properties);
     }
 
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        BlockPos pos = context.getClickedPos();
-        Player player = context.getPlayer();
-        Level level = context.getLevel();
-        AbstractLock abstractLock = LockManager.getLock(level, pos);
-        if (player == null || abstractLock == null || abstractLock.getType() != LocksmithLocks.KEY.get() || !player.isCreative())
-            return InteractionResult.PASS;
-
-        if (level.isClientSide())
-            return InteractionResult.SUCCESS;
-
-        KeyLock lock = (KeyLock) abstractLock;
-        lock.onRemove(level, pos);
-        LockManager.get(level).removeLock(lock.getPos());
-        player.awardStat(Stats.ITEM_USED.get(this));
-        return InteractionResult.CONSUME;
-    }
+//    @Override
+//    public InteractionResult useOn(UseOnContext context) {
+//        BlockPos pos = context.getClickedPos();
+//        Player player = context.getPlayer();
+//        Level level = context.getLevel();
+//        AbstractLock abstractLock = LockManager.getLock(level, pos);
+//        if (player == null || abstractLock == null || abstractLock.getType() != LocksmithLocks.KEY.get() || !player.isCreative())
+//            return InteractionResult.PASS;
+//
+//        if (level.isClientSide())
+//            return InteractionResult.SUCCESS;
+//
+//        KeyLock lock = (KeyLock) abstractLock;
+//        LockManager.get(level).removeLock(lock.getPos());
+//        player.awardStat(Stats.ITEM_USED.get(this));
+//        return InteractionResult.CONSUME;
+//    }
 }

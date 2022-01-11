@@ -57,6 +57,12 @@ public abstract class AbstractLock {
         return type;
     }
 
+    /**
+     * Only called on the server when a lock is removed from the world.
+     *
+     * @param level The level the lock was removed from
+     * @param pos   The position of the locked block
+     */
     public void onRemove(Level level, BlockPos pos) {
         ItemStack lockStack = this.stack;
         if (!lockStack.isEmpty()) {
@@ -75,6 +81,15 @@ public abstract class AbstractLock {
      * @return Whether the lock can be removed.
      */
     public abstract boolean canRemove(Player player, Level level, ItemStack stack);
+
+    /**
+     * Checks to see if this lock can actually be removed using a lock pick.
+     *
+     * @param player The player removing the lock.
+     * @param level  The level of the lock.
+     * @return Whether the lock can be removed by picking
+     */
+    public abstract boolean canPick(Player player, Level level);
 
     /**
      * Checks if this lock can be unlocked by the player.
@@ -99,10 +114,4 @@ public abstract class AbstractLock {
      * @return Whether the left-click action should succeed.
      */
     public abstract boolean onLeftClick(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction);
-
-    /**
-     * Fires when a player right-clicks a locked block with a lockpick on the client.
-     * <p>Used to open the lockpick minigame.
-     */
-    public abstract void onLockpick(Player player, Level level);
 }

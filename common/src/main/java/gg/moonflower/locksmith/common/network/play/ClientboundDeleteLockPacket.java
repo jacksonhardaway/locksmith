@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 
 public class ClientboundDeleteLockPacket  implements PollinatedPacket<LocksmithClientPlayPacketHandler> {
+
     private final BlockPos pos;
 
     public ClientboundDeleteLockPacket(BlockPos pos) {
