@@ -1,9 +1,8 @@
-package gg.moonflower.locksmith.core.mixin;
+package gg.moonflower.locksmith.core.mixin.fabric;
 
 import gg.moonflower.locksmith.common.lock.LockInteractionManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,9 +17,6 @@ public class ServerPlayerGameModeMixin {
 
     @Shadow
     public ServerLevel level;
-
-    @Shadow
-    public ServerPlayer player;
 
     @Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
     public void destroyBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state) {

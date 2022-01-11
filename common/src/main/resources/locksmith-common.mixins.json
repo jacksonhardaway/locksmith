@@ -13,8 +13,7 @@
     "ChestBlockMixin$DoubleBlockCombinerMixin",
     "ChestBlockMixin$MenuProviderMixin",
     "GrindstoneMenuMixin",
-    "GrindstoneMenuSlotMixin",
-    "ServerPlayerGameModeMixin"
+    "GrindstoneMenuSlotMixin"
   ],
   "injectors": {
     "defaultRequire": 1

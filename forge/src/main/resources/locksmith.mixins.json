@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "gg.moonflower.locksmith.core.mixin.forge",
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.8",
+  "client": [
+  ],
+  "mixins": [
+    "ServerPlayerGameModeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
