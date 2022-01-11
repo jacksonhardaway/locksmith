@@ -92,6 +92,30 @@ public class LockPickingScreen extends AbstractContainerScreen<LockpickingMenu> 
     }
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && this.context.getState() == LockPickingContext.GameState.RUNNING && !this.raised) {
+            int selectedIndex = (int) ((mouseX - this.leftPos - 11) / 18);
+            if (selectedIndex >= 0 && selectedIndex < 5 && this.isHovering(12 + selectedIndex * 18, 32, 8, 10, mouseX, mouseY)) {
+                this.lastPickIndex = this.getRenderPickIndex(1.0F);
+                this.pickProgress = this.lastPickProgress = 0.0F;
+                this.pickIndex = selectedIndex;
+
+                if (!this.context.getPinState(this.pickIndex)) {
+                    this.raised = true;
+                    if (this.pickProgress == 1.0F) {
+                        this.context.pick(this.pickIndex);
+                    } else {
+                        this.deferRaised = true;
+                    }
+                }
+
+                return true;
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (this.context.getState() == LockPickingContext.GameState.RUNNING && !this.raised) {
             if (keyCode == GLFW.GLFW_KEY_A || keyCode == GLFW.GLFW_KEY_LEFT) {
