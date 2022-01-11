@@ -61,7 +61,7 @@ public class ServerPickingContext extends LockPickingContext {
         }
 
         if (this.game.shouldDrop(pin)) {
-            this.access.execute((level, pos) -> level.playSound(this.player, pos, LocksmithSounds.ITEM_LOCK_PLACE.get(), SoundSource.PLAYERS, 1.0F, 1.0F));
+            this.access.execute((level, pos) -> level.playSound(this.player, pos, LocksmithSounds.ITEM_LOCK_PLACE.get(), SoundSource.PLAYERS, 1.0F, 0.8F + level.getRandom().nextFloat() * 0.4F));
             this.setPinState(pin, true);
             this.game.next(this);
             if (this.areAllPinsSet())
@@ -74,7 +74,6 @@ public class ServerPickingContext extends LockPickingContext {
     @Override
     public void reset() {
         this.game.reset();
-        this.access.execute((level, pos) -> level.playSound(this.player, pos, SoundEvents.CHEST_LOCKED, SoundSource.PLAYERS, 1.0F, 1.0F));
         super.reset();
         LocksmithMessages.PLAY.sendTo(this.player, new ClientboundLockPickingPacket(ClientboundLockPickingPacket.Type.RESET));
     }

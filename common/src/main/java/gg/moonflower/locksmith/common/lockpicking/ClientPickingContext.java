@@ -21,15 +21,9 @@ public class ClientPickingContext extends LockPickingContext {
 
     @Override
     public void pick(int pin) {
-        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(LocksmithSounds.ITEM_LOCK_PLACE.get(), 1.0F, 1.0F)); // TODO sounds
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(LocksmithSounds.ITEM_LOCK_PLACE.get(), 1.0F, 0.8F + Minecraft.getInstance().player.getRandom().nextFloat() * 0.4F)); // TODO sounds
         super.setPinState(pin, true);
         Minecraft.getInstance().gameMode.handleInventoryButtonClick(this.containerId, pin);
-    }
-
-    @Override
-    public void reset() {
-        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.CHEST_LOCKED, 1.0F, 1.0F)); // TODO sounds
-        super.reset();
     }
 
     @Override
