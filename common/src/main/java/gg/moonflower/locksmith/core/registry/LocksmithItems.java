@@ -3,7 +3,6 @@ package gg.moonflower.locksmith.core.registry;
 import gg.moonflower.locksmith.common.item.KeyItem;
 import gg.moonflower.locksmith.common.item.KeyringItem;
 import gg.moonflower.locksmith.common.item.LockItem;
-import gg.moonflower.locksmith.common.item.LockpickItem;
 import gg.moonflower.locksmith.core.Locksmith;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
 import net.minecraft.core.Registry;
@@ -22,5 +21,5 @@ public class LocksmithItems {
     public static final Supplier<Item> KEY = ITEMS.register("key", () -> new KeyItem(new Item.Properties()));
 
     public static final Supplier<Item> KEYRING = ITEMS.register("keyring", () -> new KeyringItem(new Item.Properties()));
-    public static final Supplier<Item> LOCKPICK = ITEMS.register("lockpick", () -> new LockpickItem(new Item.Properties().durability(3).tab(CreativeModeTab.TAB_TOOLS)));
+    public static final Supplier<Item> LOCKPICK = ITEMS.register("lockpick", () -> new Item(new Item.Properties().durability(3).tab(CreativeModeTab.TAB_TOOLS)));
 }
