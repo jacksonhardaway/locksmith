@@ -88,7 +88,6 @@ public class LockPickingScreen extends AbstractContainerScreen<LockpickingMenu> 
 
     @Override
     protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
-        this.font.draw(poseStack, this.title, this.titleLabelX, this.titleLabelY, 4210752);
     }
 
     @Override
