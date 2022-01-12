@@ -43,6 +43,10 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
             .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_key"))
             .append("\n")
             .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_key.tooltip").withStyle(ChatFormatting.GRAY));
+    private static final Component INVALID_BLANK_KEY = new TextComponent("")
+            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_blank_key"))
+            .append("\n")
+            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_blank_key.tooltip").withStyle(ChatFormatting.GRAY));
 
     private ItemStack keyStack = ItemStack.EMPTY;
     private ItemStack inputStack = ItemStack.EMPTY;
@@ -116,16 +120,19 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
         if (key != LocksmithItems.KEY.get() && key != LocksmithItems.BLANK_KEY.get())
             return this.font.split(MISSING_KEY, 200);
 
+        if (key == LocksmithItems.KEY.get()) {
+            if (KeyItem.getLockId(this.keyStack) == null) {
+                return this.font.split(INVALID_KEY, 200);
+            } else if (!KeyItem.isOriginal(this.keyStack)) {
+                return this.font.split(UNORIGINAL_KEY, 200);
+            }
+        }
+
         if (input != LocksmithItems.BLANK_KEY.get() && input != LocksmithItems.BLANK_LOCK.get())
             return this.font.split(MISSING_INPUT, 200);
 
-        if (key == LocksmithItems.KEY.get()) {
-            if (!KeyItem.isOriginal(this.keyStack)) {
-                return this.font.split(UNORIGINAL_KEY, 200);
-            } else if (KeyItem.getLockId(this.keyStack) == null) {
-                return this.font.split(INVALID_KEY, 200);
-            }
-        }
+        if (key == LocksmithItems.BLANK_KEY.get() && input == LocksmithItems.BLANK_KEY.get())
+            return this.font.split(INVALID_BLANK_KEY, 200);
 
         return Collections.emptyList();
     }
