@@ -138,7 +138,7 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
 
         ItemStack keyStack = this.keyInputSlot.getItem();
         ItemStack inputStack = this.inputSlot.getItem();
-        boolean blank = this.keyInputSlot.getItem().getItem() == LocksmithItems.BLANK_KEY.get();
+        boolean blank = keyStack.getItem() == LocksmithItems.BLANK_KEY.get();
 
         ItemStack result;
         if (inputStack.getItem() == LocksmithItems.BLANK_LOCK.get()) {
@@ -150,7 +150,7 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
         if (inputStack.hasCustomHoverName())
             result.setHoverName(keyStack.getHoverName());
 
-        if (blank && this.isValidInputItem(inputStack)) {
+        if (blank && inputStack.getItem() == LocksmithItems.BLANK_LOCK.get()) {
             UUID id = UUID.randomUUID();
 
             ItemStack newKey = new ItemStack(LocksmithItems.KEY.get());
@@ -162,7 +162,7 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
 
             this.resultSlots.setItem(0, newKey);
             this.resultSlots.setItem(1, result);
-        } else if (!blank && this.isValidInputItem(inputStack)) {
+        } else if (!blank && inputStack.getItem() == LocksmithItems.BLANK_KEY.get()) {
             UUID id = KeyItem.getLockId(keyStack);
             if (id == null)
                 return;
@@ -202,6 +202,11 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
 
         @Override
         public void onTake(Player player, ItemStack stack) {
+            if (LocksmithingTableMenu.this.pendingTake) {
+                super.onTake(player, stack);
+                return;
+            }
+
             LocksmithingTableMenu.this.pendingTake = true;
             LocksmithingTableMenu.this.keyInputSlot.remove(1);
             LocksmithingTableMenu.this.inputSlot.remove(1);

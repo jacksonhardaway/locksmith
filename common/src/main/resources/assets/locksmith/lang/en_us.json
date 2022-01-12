@@ -21,6 +21,8 @@
   "screen.locksmith.locksmithing_table.unoriginal_key.tooltip": "Only the original key can create copies.",
   "screen.locksmith.locksmithing_table.invalid_key": "Invalid Key",
   "screen.locksmith.locksmithing_table.invalid_key.tooltip": "The key you provided is missing a lock id. This usually happens when a key is spawned in and not from a blank key in the Locksmithing Table.",
+  "screen.locksmith.locksmithing_table.invalid_blank_key": "Invalid Key",
+  "screen.locksmith.locksmithing_table.invalid_blank_key.tooltip": "The key you provided does not have a lock and cannot be copied. It must be crafted with a blank lock before it can be copied.",
   "lock.locksmith.locked": "It's locked.",
   "subtitles.locksmith.item.lock.place": "Lock placed"
 }
