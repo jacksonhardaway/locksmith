@@ -1,6 +1,7 @@
 package gg.moonflower.locksmith.core;
 
 import gg.moonflower.locksmith.client.screen.KeyringScreen;
+import gg.moonflower.locksmith.client.screen.LockPickingScreen;
 import gg.moonflower.locksmith.client.screen.LocksmithingTableScreen;
 import gg.moonflower.locksmith.client.tooltip.ClientKeyringTooltip;
 import gg.moonflower.locksmith.common.item.KeyringItem;
@@ -46,6 +47,7 @@ public class Locksmith {
         ctx.enqueueWork(() -> {
             ScreenRegistry.register(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
             ScreenRegistry.register(LocksmithMenus.KEYRING_MENU.get(), KeyringScreen::new);
+            ScreenRegistry.register(LocksmithMenus.LOCK_PICKING_MENU.get(), LockPickingScreen::new);
             ItemPredicateRegistry.register(LocksmithItems.KEYRING.get(), new ResourceLocation(Locksmith.MOD_ID, "keys"), (stack, level, livingEntity, i) -> KeyringItem.getKeys(stack).size() / (float) KeyringItem.MAX_KEYS);
         });
     }
