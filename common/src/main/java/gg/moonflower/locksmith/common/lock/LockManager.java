@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
-import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
@@ -74,6 +73,10 @@ public interface LockManager {
 
     void addLock(AbstractLock data);
 
-    void removeLock(BlockPos pos);
+    default void removeLock(BlockPos pos) {
+        this.removeLock(pos, pos);
+    }
+
+    void removeLock(BlockPos pos, BlockPos clickPos);
 
 }

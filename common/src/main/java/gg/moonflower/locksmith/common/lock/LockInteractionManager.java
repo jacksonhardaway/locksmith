@@ -92,7 +92,6 @@ public class LockInteractionManager {
         if (lock == null)
             return;
 
-        // FIXME: make this better
         if (state.hasProperty(ChestBlock.TYPE) && state.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
             Tag tag = AbstractLock.CODEC.encodeStart(NbtOps.INSTANCE, lock).getOrThrow(false, LOGGER::error);
             if (!(tag instanceof CompoundTag))
@@ -105,6 +104,6 @@ public class LockInteractionManager {
             return;
         }
 
-        LockManager.get(level).removeLock(lock.getPos());
+        LockManager.get(level).removeLock(lock.getPos(), pos);
     }
 }

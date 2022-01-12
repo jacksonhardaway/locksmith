@@ -63,7 +63,7 @@ public final class ClientLockManager implements LockManager {
     }
 
     @Override
-    public void removeLock(BlockPos pos) {
+    public void removeLock(BlockPos pos, BlockPos clickPos) {
         Set<AbstractLock> locks = this.locks.get(new ChunkPos(pos));
         if (locks == null)
             return;

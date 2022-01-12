@@ -20,19 +20,16 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(ParticleEngine.class)
 public abstract class ParticleEngineMixin {
 
-    @Shadow protected ClientLevel level;
-
-    @Shadow public abstract void add(Particle effect);
+    @Shadow
+    protected ClientLevel level;
+    @Shadow
+    public abstract void add(Particle effect);
 
     @Inject(method = "crack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/ParticleEngine;add(Lnet/minecraft/client/particle/Particle;)V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     public void crack(BlockPos pos, Direction side, CallbackInfo ci, BlockState state, int x, int y, int z, float f, AABB shape, double randX, double randY, double randZ) {
         AbstractLock lock = LockManager.getLock(this.level, pos);
         if (lock == null)
             return;
-
-        double particleX = pos.getX() + level.random.nextDouble();
-        double particleY = pos.getY() + level.random.nextDouble();
-        double particleZ = pos.getZ() + level.random.nextDouble();
-        this.level.addParticle(LocksmithParticles.LOCK_BREAK.get(), particleX, particleY, particleZ, 0, 0, 0);
+        this.level.addParticle(LocksmithParticles.LOCK_BREAK.get(), randX, randY, randZ, 0, 0, 0);
     }
 }

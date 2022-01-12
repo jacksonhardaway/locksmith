@@ -1,7 +1,7 @@
 {
   "textures": [
-    "locksmith:lock_break_2",
+    "locksmith:lock_break_0",
     "locksmith:lock_break_1",
-    "locksmith:lock_break_0"
+    "locksmith:lock_break_2"
   ]
 }

@@ -12,6 +12,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -19,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -46,12 +48,16 @@ public class LockItem extends Item {
         LockManager.get(level).addLock(new KeyLock(lockId, pos, lockStack));
         level.playSound(null, pos, LocksmithSounds.ITEM_LOCK_PLACE.get(), SoundSource.BLOCKS, 0.75F, 1.0F);
 
-        for (int i = 0; i < 10; i++) {
-            double particleX = pos.getX() + level.random.nextDouble();
-            double particleY = pos.getY() + level.random.nextDouble();
-            double particleZ = pos.getZ() + level.random.nextDouble();
-            ((ServerLevel) level).sendParticles(LocksmithParticles.LOCK_SPARK.get(), particleX, particleY, particleZ, 2, 0.15, 0.15, 0.15, 1);
-        }
+        level.getBlockState(pos).getVisualShape(level, pos, CollisionContext.empty()).forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
+            double d1 = Math.min(1.0, maxX - minX);
+            double d2 = Math.min(1.0, maxY - minY);
+            double d3 = Math.min(1.0, maxZ - minZ);
+            int i = Math.max(2, Mth.ceil(d1 / 0.4));
+            int j = Math.max(2, Mth.ceil(d2 / 0.4));
+            int k = Math.max(2, Mth.ceil(d3 / 0.4));
+
+            ((ServerLevel) level).sendParticles(LocksmithParticles.LOCK_SPARK.get(), pos.getX() + minX + maxX / 2.0, pos.getY() + minY + maxY / 2.0, pos.getZ() + minZ + maxZ / 2.0, i * j * k, (maxX - minX) / 4.0 + 0.0625, (maxY - minY) / 4.0 + 0.0625, (maxZ - minZ) / 4.0 + 0.0625, 0.0);
+        });
 
         Player player = context.getPlayer();
         if (player != null) {

@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -60,16 +60,14 @@ public abstract class AbstractLock {
     /**
      * Only called on the server when a lock is removed from the world.
      *
-     * @param level The level the lock was removed from
-     * @param pos   The position of the locked block
+     * @param level    The level the lock was removed from
+     * @param clickPos The position to spawn the lock at
+     * @param pos      The position of the lock in the world
      */
-    public void onRemove(Level level, BlockPos pos) {
+    public void onRemove(Level level, BlockPos pos, BlockPos clickPos) {
         ItemStack lockStack = this.stack;
-        if (!lockStack.isEmpty()) {
-            ItemEntity itemEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), lockStack);
-            itemEntity.setDefaultPickUpDelay();
-            level.addFreshEntity(itemEntity);
-        }
+        if (!lockStack.isEmpty())
+            Containers.dropItemStack(level, clickPos.getX(), clickPos.getY(), clickPos.getZ(), lockStack);
     }
 
     /**
