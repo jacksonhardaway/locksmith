@@ -58,6 +58,7 @@ public class Locksmith {
         LocksmithBlocks.BLOCKS.register(Locksmith.PLATFORM);
         LocksmithItems.ITEMS.register(Locksmith.PLATFORM);
         LocksmithSounds.SOUNDS.register(Locksmith.PLATFORM);
+        LocksmithMenus.MENUS.register(Locksmith.PLATFORM);
         LocksmithParticles.PARTICLES.register(Locksmith.PLATFORM);
         LocksmithLocks.LOCKS.register(Locksmith.PLATFORM);
         LocksmithRecipes.RECIPES.register(Locksmith.PLATFORM);
