@@ -88,7 +88,6 @@ public class KeyItem extends Item {
             if (level.isClientSide())
                 return InteractionResult.SUCCESS;
 
-            lock.onRemove(level, pos);
             LockManager.get(level).removeLock(lock.getPos());
             player.awardStat(Stats.ITEM_USED.get(this));
             return InteractionResult.CONSUME;

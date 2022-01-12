@@ -87,9 +87,12 @@ public final class ServerLockManager extends SavedData implements LockManager {
         if (chunkData == null)
             return;
 
-        chunkData.removeLock(pos);
-        this.setDirty();
-        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundDeleteLockPacket(pos));
+        AbstractLock lock = chunkData.removeLock(pos);
+        if (lock != null) {
+            lock.onRemove(this.level, pos);
+            this.setDirty();
+            LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundDeleteLockPacket(pos));
+        }
     }
 
     @Override
@@ -153,8 +156,9 @@ public final class ServerLockManager extends SavedData implements LockManager {
             this.locks.put(lock.getPos(), lock);
         }
 
-        public void removeLock(BlockPos pos) {
-            this.locks.remove(pos);
+        @Nullable
+        public AbstractLock removeLock(BlockPos pos) {
+            return this.locks.remove(pos);
         }
     }
 }

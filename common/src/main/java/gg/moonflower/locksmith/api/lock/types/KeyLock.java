@@ -20,6 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import java.util.UUID;
 
 public class KeyLock extends AbstractLock {
+
     public static final Codec<KeyLock> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             SerializableUUID.CODEC.fieldOf("id").forGetter(KeyLock::getId),
             BlockPos.CODEC.fieldOf("pos").forGetter(KeyLock::getPos),
@@ -41,6 +42,11 @@ public class KeyLock extends AbstractLock {
     }
 
     @Override
+    public boolean canPick(Player player, Level level) {
+        return true;
+    }
+
+    @Override
     public boolean onRightClick(Player player, Level level, ItemStack stack, BlockHitResult hitResult) {
         if (KeyItem.matchesLock(this.getId(), stack)) {
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
@@ -52,9 +58,5 @@ public class KeyLock extends AbstractLock {
     @Override
     public boolean onLeftClick(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction) {
         return Locksmith.CONFIG.allowLocksToBeBroken.get();
-    }
-
-    @Override
-    public void onLockpick(Player player, Level level) {
     }
 }
