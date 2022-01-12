@@ -3,7 +3,6 @@ package gg.moonflower.locksmith.common.lockpicking;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -21,15 +20,20 @@ public class ClientPickingContext extends LockPickingContext {
 
     @Override
     public void pick(int pin) {
-        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(LocksmithSounds.ITEM_LOCK_PLACE.get(), 1.0F, 0.8F + Minecraft.getInstance().player.getRandom().nextFloat() * 0.4F)); // TODO sounds
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(LocksmithSounds.LOCK_PICKING_SET.get(), 1.0F));
         super.setPinState(pin, true);
         Minecraft.getInstance().gameMode.handleInventoryButtonClick(this.containerId, pin);
     }
 
     @Override
+    public void reset() {
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(LocksmithSounds.LOCK_PICKING_PINS_DROP.get(), 1.0F));
+        super.reset();
+    }
+
+    @Override
     public void stop(boolean success) {
-        if (!success)
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ITEM_BREAK, 1.0F, 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(success ? LocksmithSounds.LOCK_PICKING_SUCCESS.get() : LocksmithSounds.LOCK_PICKING_FAIL.get(), 1.0F, 1.0F));
         this.state = success ? GameState.SUCCESS : GameState.FAIL;
     }
 

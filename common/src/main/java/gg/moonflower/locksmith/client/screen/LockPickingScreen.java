@@ -6,8 +6,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import gg.moonflower.locksmith.common.lockpicking.LockPickingContext;
 import gg.moonflower.locksmith.common.menu.LockpickingMenu;
 import gg.moonflower.locksmith.core.Locksmith;
+import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import gg.moonflower.pollen.api.client.render.ShapeRenderer;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -58,12 +60,9 @@ public class LockPickingScreen extends AbstractContainerScreen<LockpickingMenu> 
 
     @Override
     public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        if (this.context.getState() != LockPickingContext.GameState.FAIL)
-            this.renderBackground(matrixStack);
+        this.renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         this.renderTooltip(matrixStack, mouseX, mouseY);
-        if (this.context.getState() == LockPickingContext.GameState.FAIL)
-            this.renderBackground(matrixStack);
     }
 
     @Override
@@ -75,8 +74,14 @@ public class LockPickingScreen extends AbstractContainerScreen<LockpickingMenu> 
         VertexConsumer builder = ShapeRenderer.begin();
         ShapeRenderer.drawRectWithTexture(builder, matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight, 128, 128);
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++)
             ShapeRenderer.drawRectWithTexture(builder, matrixStack, this.leftPos + i * 18 + 10, this.topPos + this.imageHeight - 3, 104 + (this.context.getPinState(i) ? 12 : 0), 0, 12, 10, 12, 10, 128, 128);
+
+        if (this.context.getState() == LockPickingContext.GameState.RUNNING) {
+            int selectedIndex = (mouseX - this.leftPos - 11) / 18;
+            if (selectedIndex >= 0 && selectedIndex < 5 && this.isHovering(12 + selectedIndex * 18, 32, 8, 10, mouseX, mouseY)) {
+                ShapeRenderer.drawRectWithTexture(builder, matrixStack, this.leftPos + selectedIndex * 18 + 10, this.topPos + this.imageHeight - 3, 104 + (this.context.getPinState(selectedIndex) ? 12 : 0), 10, 12, 10, 12, 10, 128, 128);
+            }
         }
 
         float x = (this.getRenderPickIndex(partialTicks) * 18) - 27;
@@ -119,7 +124,7 @@ public class LockPickingScreen extends AbstractContainerScreen<LockpickingMenu> 
         if (this.context.getState() == LockPickingContext.GameState.RUNNING && !this.raised) {
             if (keyCode == GLFW.GLFW_KEY_A || keyCode == GLFW.GLFW_KEY_LEFT) {
                 if (this.pickIndex < 1) {
-                    // TODO play move too far sound
+                    this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(LocksmithSounds.LOCK_PICKING_TOO_NEAR.get(), 1.0F));
                     return true;
                 }
 
@@ -131,7 +136,7 @@ public class LockPickingScreen extends AbstractContainerScreen<LockpickingMenu> 
 
             if (keyCode == GLFW.GLFW_KEY_D || keyCode == GLFW.GLFW_KEY_RIGHT) {
                 if (this.pickIndex >= 4) {
-                    // TODO play move too far sound
+                    this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(LocksmithSounds.LOCK_PICKING_TOO_FAR.get(), 1.0F));
                     return true;
                 }
 

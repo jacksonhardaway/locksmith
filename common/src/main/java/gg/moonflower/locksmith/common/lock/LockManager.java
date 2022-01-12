@@ -66,17 +66,27 @@ public interface LockManager {
         return null;
     }
 
-    Collection<AbstractLock> getLocks(ChunkPos chunkPos);
-
-    @Nullable
-    AbstractLock getLock(BlockPos pos);
-
     void addLock(AbstractLock data);
 
     default void removeLock(BlockPos pos) {
-        this.removeLock(pos, pos);
+        this.removeLock(pos, pos, false);
     }
 
-    void removeLock(BlockPos pos, BlockPos clickPos);
+    void removeLock(BlockPos pos, BlockPos clickPos, boolean drop);
 
+    /**
+     * Retrieves the lock
+     * @param pos
+     * @return
+     */
+    @Nullable
+    AbstractLock getLock(BlockPos pos);
+
+    /**
+     * Retrieves all locks in the specified chunk.
+     *
+     * @param chunkPos The position to get locks for
+     * @return All locks in that chunk
+     */
+    Collection<AbstractLock> getLocks(ChunkPos chunkPos);
 }

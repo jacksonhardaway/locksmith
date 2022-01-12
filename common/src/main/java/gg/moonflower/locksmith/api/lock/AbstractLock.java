@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -65,9 +64,6 @@ public abstract class AbstractLock {
      * @param pos      The position of the lock in the world
      */
     public void onRemove(Level level, BlockPos pos, BlockPos clickPos) {
-        ItemStack lockStack = this.stack;
-        if (!lockStack.isEmpty())
-            Containers.dropItemStack(level, clickPos.getX(), clickPos.getY(), clickPos.getZ(), lockStack);
     }
 
     /**
@@ -83,11 +79,14 @@ public abstract class AbstractLock {
     /**
      * Checks to see if this lock can actually be removed using a lock pick.
      *
-     * @param player The player removing the lock.
-     * @param level  The level of the lock.
+     * @param player    The player removing the lock.
+     * @param level     The level of the lock.
+     * @param clickPos  The position the player clicked
+     * @param pickStack The lock pick stack
+     * @param hand      The hand the lock pick is in
      * @return Whether the lock can be removed by picking
      */
-    public abstract boolean canPick(Player player, Level level);
+    public abstract boolean pick(Player player, Level level, BlockPos clickPos, ItemStack pickStack, InteractionHand hand);
 
     /**
      * Checks if this lock can be unlocked by the player.

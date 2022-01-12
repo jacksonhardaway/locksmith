@@ -1,10 +1,7 @@
 package gg.moonflower.locksmith.common.lock;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
-import gg.moonflower.locksmith.common.lockpicking.LockPickingContext;
-import gg.moonflower.locksmith.common.menu.LockpickingMenu;
 import gg.moonflower.locksmith.core.Locksmith;
-import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -12,16 +9,12 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
@@ -35,7 +28,6 @@ public class LockInteractionManager {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Component LOCKED = new TranslatableComponent("lock." + Locksmith.MOD_ID + ".locked");
-    private static final Component LOCK_PICKING = new TranslatableComponent("container." + Locksmith.MOD_ID + ".lock_picking");
 
     public static InteractionResult onRightClickBlock(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
         BlockPos pos = hitResult.getBlockPos();
@@ -44,21 +36,8 @@ public class LockInteractionManager {
             return InteractionResult.PASS;
 
         ItemStack stack = player.getItemInHand(hand);
-        if (stack.getItem() == LocksmithItems.LOCKPICK.get() && Locksmith.CONFIG.enableLockpicking.get() && lock.canPick(player, level)) {
-            if (!level.isClientSide()) {
-                player.awardStat(Stats.ITEM_USED.get(LocksmithItems.LOCKPICK.get()));
-                player.openMenu(new MenuProvider() {
-                    @Override
-                    public Component getDisplayName() {
-                        return LOCK_PICKING;
-                    }
-
-                    @Override
-                    public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-                        return new LockpickingMenu(containerId, LockPickingContext.server(pos, (ServerPlayer) player, stack, hand));
-                    }
-                });
-            }
+        if (Locksmith.CONFIG.enableLockpicking.get() && lock.pick(player, level, pos, stack, hand)) {
+            player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
 
@@ -104,6 +83,6 @@ public class LockInteractionManager {
             return;
         }
 
-        LockManager.get(level).removeLock(lock.getPos(), pos);
+        LockManager.get(level).removeLock(lock.getPos(), pos, false);
     }
 }

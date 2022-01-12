@@ -11,6 +11,7 @@ public class LocksmithStats {
     public static final PollinatedRegistry<ResourceLocation> STATS = PollinatedRegistry.createVanilla(Registry.CUSTOM_STAT, Locksmith.MOD_ID);
 
     public static final ResourceLocation INTERACT_WITH_LOCKSMITHING_TABLE = registerStat("interact_with_locksmithing_table", StatFormatter.DEFAULT);
+    public static final ResourceLocation PICK_LOCK = registerStat("pick_lock", StatFormatter.DEFAULT);
 
     private static ResourceLocation registerStat(String key, StatFormatter formatter) {
         ResourceLocation stat = new ResourceLocation(Locksmith.MOD_ID, key);

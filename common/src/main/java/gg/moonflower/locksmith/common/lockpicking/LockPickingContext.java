@@ -32,7 +32,7 @@ public abstract class LockPickingContext {
 
     public abstract GameState getState();
 
-    protected boolean areAllPinsSet(){
+    protected boolean areAllPinsSet() {
         return this.pinStates == ALL_PINS;
     }
 
@@ -64,8 +64,8 @@ public abstract class LockPickingContext {
         return new ClientPickingContext(containerId);
     }
 
-    public static LockPickingContext server(BlockPos pos, ServerPlayer player, ItemStack pickStack, InteractionHand pickHand) {
-        return new ServerPickingContext(ContainerLevelAccess.create(player.level, pos), player, pickStack, pickHand);
+    public static LockPickingContext server(BlockPos pos, BlockPos clickPos, ServerPlayer player, ItemStack pickStack, InteractionHand pickHand) {
+        return new ServerPickingContext(ContainerLevelAccess.create(player.level, pos), clickPos, player, pickStack, pickHand);
     }
 
     public enum GameState {

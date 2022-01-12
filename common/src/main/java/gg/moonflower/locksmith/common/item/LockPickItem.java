@@ -27,7 +27,7 @@ public class LockPickItem extends Item {
         if (level.isClientSide())
             return InteractionResult.SUCCESS;
 
-        LockManager.get(level).removeLock(abstractLock.getPos(), pos);
+        LockManager.get(level).removeLock(abstractLock.getPos(), pos, true);
         player.awardStat(Stats.ITEM_USED.get(this));
         return InteractionResult.CONSUME;
     }

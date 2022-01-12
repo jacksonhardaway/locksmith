@@ -1,6 +1,5 @@
 package gg.moonflower.locksmith.core;
 
-import gg.moonflower.locksmith.client.lock.ClientLockManager;
 import gg.moonflower.locksmith.client.screen.KeyringScreen;
 import gg.moonflower.locksmith.client.screen.LockPickingScreen;
 import gg.moonflower.locksmith.client.screen.LocksmithingTableScreen;
@@ -9,14 +8,8 @@ import gg.moonflower.locksmith.common.lock.LockInteractionManager;
 import gg.moonflower.locksmith.common.lock.ServerLockManager;
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
-import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
-import gg.moonflower.locksmith.core.registry.LocksmithItems;
-import gg.moonflower.locksmith.core.registry.LocksmithLocks;
-import gg.moonflower.locksmith.core.registry.LocksmithMenus;
-import gg.moonflower.locksmith.core.registry.LocksmithParticles;
-import gg.moonflower.locksmith.core.registry.LocksmithRecipes;
-import gg.moonflower.locksmith.core.registry.LocksmithSounds;
-import gg.moonflower.locksmith.core.registry.LocksmithStats;
+import gg.moonflower.locksmith.core.datagen.LocksmithSoundProvider;
+import gg.moonflower.locksmith.core.registry.*;
 import gg.moonflower.pollen.api.config.ConfigManager;
 import gg.moonflower.pollen.api.config.PollinatedConfigType;
 import gg.moonflower.pollen.api.event.events.entity.player.PlayerInteractionEvents;
@@ -24,6 +17,8 @@ import gg.moonflower.pollen.api.event.events.registry.client.RegisterAtlasSprite
 import gg.moonflower.pollen.api.platform.Platform;
 import gg.moonflower.pollen.api.registry.client.ItemPredicateRegistry;
 import gg.moonflower.pollen.api.registry.client.ScreenRegistry;
+import gg.moonflower.pollen.api.util.PollinatedModContainer;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -36,6 +31,7 @@ public class Locksmith {
             .clientPostInit(Locksmith::onClientPostInit)
             .commonInit(Locksmith::onCommonInit)
             .commonPostInit(Locksmith::onCommonPostInit)
+            .dataInit(Locksmith::onDataInit)
             .build();
 
     public static void onClientInit() {
@@ -69,5 +65,11 @@ public class Locksmith {
 
     public static void onCommonPostInit(Platform.ModSetupContext ctx) {
         ctx.enqueueWork(() -> LocksmithStats.STATS.register(Locksmith.PLATFORM));
+    }
+
+    private static void onDataInit(Platform.DataSetupContext ctx) {
+        DataGenerator dataGenerator = ctx.getGenerator();
+        PollinatedModContainer container = ctx.getMod();
+        dataGenerator.addProvider(new LocksmithSoundProvider(dataGenerator, container));
     }
 }

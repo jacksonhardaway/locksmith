@@ -79,7 +79,7 @@ public class KeyringItem extends Item {
                 if (level.isClientSide())
                     return InteractionResult.SUCCESS;
 
-                LockManager.get(level).removeLock(lock.getPos(), pos);
+                LockManager.get(level).removeLock(lock.getPos(), pos, true);
                 player.awardStat(Stats.ITEM_USED.get(this));
                 return InteractionResult.CONSUME;
             }

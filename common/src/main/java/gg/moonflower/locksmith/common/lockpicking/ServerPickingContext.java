@@ -4,8 +4,9 @@ import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockPickingPacket;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
+import gg.moonflower.locksmith.core.registry.LocksmithStats;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -33,6 +34,7 @@ public class ServerPickingContext extends LockPickingContext {
     private static final int FAIL_THRESHOLD = 10;
 
     private final ContainerLevelAccess access;
+    private final BlockPos clickPos;
     private final ServerPlayer player;
     private final ItemStack pickStack;
     private final InteractionHand pickHand;
@@ -41,16 +43,16 @@ public class ServerPickingContext extends LockPickingContext {
     private GameState state;
     private int stop;
 
-    ServerPickingContext(ContainerLevelAccess access, ServerPlayer player, ItemStack pickStack, InteractionHand pickHand) {
+    ServerPickingContext(ContainerLevelAccess access, BlockPos clickPos, ServerPlayer player, ItemStack pickStack, InteractionHand pickHand) {
         this.access = access;
+        this.clickPos = clickPos;
         this.player = player;
         this.pickStack = pickStack;
         this.pickHand = pickHand;
         Random random = player.level.getRandom();
-        this.game = new Game(2 + random.nextInt(2), random); // 2-3 pins will drop
+        this.game = new Game(2, random);
         this.state = GameState.RUNNING;
         this.stop = 0;
-        player.server.execute(() -> this.setPickDamage(this.pickStack.getDamageValue()));
     }
 
     @Override
@@ -61,7 +63,7 @@ public class ServerPickingContext extends LockPickingContext {
         }
 
         if (this.game.shouldDrop(pin)) {
-            this.access.execute((level, pos) -> level.playSound(this.player, pos, LocksmithSounds.ITEM_LOCK_PLACE.get(), SoundSource.PLAYERS, 1.0F, 0.8F + level.getRandom().nextFloat() * 0.4F));
+            this.access.execute((level, pos) -> level.playSound(this.player, pos, LocksmithSounds.LOCK_PICKING_SET.get(), SoundSource.PLAYERS, 1.0F, 1.0F));
             this.setPinState(pin, true);
             this.game.next(this);
             if (this.areAllPinsSet())
@@ -74,6 +76,15 @@ public class ServerPickingContext extends LockPickingContext {
     @Override
     public void reset() {
         this.game.reset();
+        this.access.execute((level, pos) -> level.playSound(this.player, pos, LocksmithSounds.LOCK_PICKING_PINS_DROP.get(), SoundSource.PLAYERS, 1.0F, 1.0F));
+        this.pickStack.hurtAndBreak(1, this.player, contextPlayer -> {
+            this.state = GameState.FAIL;
+            this.stop = this.player.tickCount;
+            this.access.execute((level, pos) -> level.playSound(this.player, pos, LocksmithSounds.LOCK_PICKING_FAIL.get(), SoundSource.PLAYERS, 1.0F, 1.0F));
+            LocksmithMessages.PLAY.sendTo(this.player, new ClientboundLockPickingPacket(ClientboundLockPickingPacket.Type.FAIL));
+            contextPlayer.broadcastBreakEvent(this.pickHand);
+        });
+        this.player.inventoryMenu.broadcastChanges();
         super.reset();
         LocksmithMessages.PLAY.sendTo(this.player, new ClientboundLockPickingPacket(ClientboundLockPickingPacket.Type.RESET));
     }
@@ -82,14 +93,15 @@ public class ServerPickingContext extends LockPickingContext {
     public void stop(boolean success) {
         this.state = success ? GameState.SUCCESS : GameState.FAIL;
         this.stop = this.player.tickCount;
+        this.access.execute((level, pos) -> level.playSound(this.player, pos, success ? LocksmithSounds.LOCK_PICKING_SUCCESS.get() : LocksmithSounds.LOCK_PICKING_FAIL.get(), SoundSource.PLAYERS, 1.0F, 1.0F));
 
         if (success) {
             LocksmithMessages.PLAY.sendTo(this.player, new ClientboundLockPickingPacket(ClientboundLockPickingPacket.Type.SUCCESS));
-            this.access.execute((level, pos) -> LockManager.get(level).removeLock(pos));
+            this.player.awardStat(LocksmithStats.PICK_LOCK);
+            this.access.execute((level, pos) -> LockManager.get(level).removeLock(pos, this.clickPos, false));
             return;
         }
 
-        this.access.execute((level, pos) -> level.playSound(this.player, pos, SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1.0F, 1.0F));
         this.pickStack.hurtAndBreak(1, this.player, contextPlayer -> contextPlayer.broadcastBreakEvent(this.pickHand));
         LocksmithMessages.PLAY.sendTo(this.player, new ClientboundLockPickingPacket(ClientboundLockPickingPacket.Type.FAIL));
     }
@@ -106,6 +118,7 @@ public class ServerPickingContext extends LockPickingContext {
         super.setPinState(pin, set);
 
         if (this.player.tickCount - this.lastSetTime < FAIL_THRESHOLD) {
+            this.access.execute((level, pos) -> level.playSound(null, pos, LocksmithSounds.LOCK_PICKING_OVERSET.get(), SoundSource.PLAYERS, 1.0F, 1.0F));
             this.stop(false);
             return;
         }
