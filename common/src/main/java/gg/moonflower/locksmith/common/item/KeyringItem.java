@@ -96,11 +96,10 @@ public class KeyringItem extends Item {
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
         Level level = context.getLevel();
-        AbstractLock abstractLock = LockManager.getLock(level, pos);
-        if (player == null || abstractLock == null || abstractLock.getType() != LocksmithLocks.KEY.get())
+        AbstractLock lock = LockManager.getLock(level, pos);
+        if (player == null || lock == null || lock.getType() != LocksmithLocks.KEY.get())
             return InteractionResult.PASS;
 
-        KeyLock lock = (KeyLock) abstractLock;
         for (ItemStack key : KeyringItem.getKeys(context.getItemInHand())) {
             if (lock.canRemove(player, level, key)) {
                 if (level.isClientSide())
