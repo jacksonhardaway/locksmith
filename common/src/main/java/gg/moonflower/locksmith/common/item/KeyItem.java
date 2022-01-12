@@ -63,6 +63,8 @@ public class KeyItem extends Item {
 
     @Override
     public boolean overrideStackedOnOther(ItemStack key, Slot slot, ClickAction clickAction, Player player) {
+        if (Locksmith.CONFIG.useKeyringMenu.get())
+            return false;
         if (clickAction != ClickAction.SECONDARY)
             return false;
         return addKeyring(key, slot.getItem(), slot, player);
@@ -70,6 +72,8 @@ public class KeyItem extends Item {
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack key, ItemStack clickItem, Slot slot, ClickAction clickAction, Player player, SlotAccess slotAccess) {
+        if (Locksmith.CONFIG.useKeyringMenu.get())
+            return false;
         if (clickAction == ClickAction.SECONDARY && slot.allowModification(player))
             return addKeyring(key, clickItem, slot, player);
         return false;

@@ -41,8 +41,7 @@ public class LockPickingScreen extends AbstractContainerScreen<LockpickingMenu> 
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void containerTick() {
         this.lastPickProgress = this.pickProgress;
 
         if (this.context.getState() != LockPickingContext.GameState.RUNNING)
@@ -69,8 +68,8 @@ public class LockPickingScreen extends AbstractContainerScreen<LockpickingMenu> 
     @Override
     protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         partialTicks = this.minecraft.getFrameTime();
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bind(TEXTURE);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, TEXTURE);
 
         VertexConsumer builder = ShapeRenderer.begin();
         ShapeRenderer.drawRectWithTexture(builder, matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight, 128, 128);

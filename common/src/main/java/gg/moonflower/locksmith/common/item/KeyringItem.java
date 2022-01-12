@@ -1,26 +1,30 @@
 package gg.moonflower.locksmith.common.item;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
-import gg.moonflower.locksmith.api.lock.types.KeyLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.common.menu.KeyringMenu;
 import gg.moonflower.locksmith.common.tooltip.KeyringTooltip;
+import gg.moonflower.locksmith.core.Locksmith;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import gg.moonflower.pollen.api.util.NbtConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -46,7 +50,27 @@ public class KeyringItem extends Item {
         if (!player.isSecondaryUseActive())
             return InteractionResultHolder.pass(stack);
 
-        if (dropContents(stack, player)) {
+        if (Locksmith.CONFIG.useKeyringMenu.get()) {
+            int index = player.getInventory().findSlotMatchingItem(stack);
+            if (index == -1)
+                return InteractionResultHolder.pass(stack);
+
+            if (!level.isClientSide()) {
+                player.awardStat(Stats.ITEM_USED.get(this));
+                player.openMenu(new MenuProvider() {
+                    @Override
+                    public Component getDisplayName() {
+                        return stack.getHoverName();
+                    }
+
+                    @Override
+                    public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
+                        return new KeyringMenu(containerId, inventory, index);
+                    }
+                });
+            }
+            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        } else if (dropContents(stack, player)) {
             this.playDropContentsSound(player);
             player.awardStat(Stats.ITEM_USED.get(this));
             return InteractionResultHolder.sidedSuccess(ItemStack.EMPTY, level.isClientSide());
@@ -57,6 +81,8 @@ public class KeyringItem extends Item {
 
     @Override
     public boolean overrideStackedOnOther(ItemStack keyRing, Slot slot, ClickAction clickAction, Player player) {
+        if (Locksmith.CONFIG.useKeyringMenu.get())
+            return false;
         if (clickAction != ClickAction.SECONDARY)
             return false;
 
@@ -74,6 +100,8 @@ public class KeyringItem extends Item {
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack keyRing, ItemStack clickItem, Slot slot, ClickAction clickAction, Player player, SlotAccess slotAccess) {
+        if (Locksmith.CONFIG.useKeyringMenu.get())
+            return false;
         if (clickAction == ClickAction.SECONDARY && slot.allowModification(player)) {
             if (clickItem.isEmpty()) {
                 removeOne(player, keyRing).ifPresent(removedKey -> {
