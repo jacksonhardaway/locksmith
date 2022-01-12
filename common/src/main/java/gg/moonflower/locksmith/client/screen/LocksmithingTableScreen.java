@@ -25,7 +25,8 @@ import java.util.List;
 
 public class LocksmithingTableScreen extends AbstractContainerScreen<LocksmithingTableMenu> implements ContainerListener {
 
-    private static final ResourceLocation LOCKSMITHING_LOCATION = new ResourceLocation(Locksmith.MOD_ID, "textures/gui/container/locksmithing_table.png");
+    public static final ResourceLocation LOCKSMITHING_LOCATION = new ResourceLocation(Locksmith.MOD_ID, "textures/gui/container/locksmithing_table.png");
+
     private static final Component MISSING_KEY = new TextComponent("")
             .append(new TranslatableComponent("screen.locksmith.locksmithing_table.missing_key"))
             .append("\n")
