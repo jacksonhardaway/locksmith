@@ -42,6 +42,7 @@ public class LockPickingScreen extends AbstractContainerScreen<LockpickingMenu> 
 
     @Override
     public void tick() {
+        super.tick();
         this.lastPickProgress = this.pickProgress;
 
         if (this.context.getState() != LockPickingContext.GameState.RUNNING)
