@@ -36,13 +36,7 @@ public class LocksmithingTableCategory implements IRecipeCategory<LocksmithingTa
     }
 
     @Override
-    @Deprecated
-    public String getTitle() {
-        return this.getTitleAsTextComponent().getString();
-    }
-
-    @Override
-    public Component getTitleAsTextComponent() {
+    public Component getTitle() {
         return LocksmithBlocks.LOCKSMITHING_TABLE.get().getName();
     }
 
