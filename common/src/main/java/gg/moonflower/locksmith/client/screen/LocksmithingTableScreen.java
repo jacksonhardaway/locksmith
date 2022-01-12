@@ -28,21 +28,21 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
     public static final ResourceLocation LOCKSMITHING_LOCATION = new ResourceLocation(Locksmith.MOD_ID, "textures/gui/container/locksmithing_table.png");
 
     private static final Component MISSING_KEY = new TextComponent("")
-            .append(new TranslatableComponent("screen.locksmith.locksmithing_table.missing_key"))
+            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.missing_key"))
             .append("\n")
-            .append(new TranslatableComponent("screen.locksmith.locksmithing_table.missing_key.tooltip").withStyle(ChatFormatting.GRAY));
+            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.missing_key.tooltip").withStyle(ChatFormatting.GRAY));
     private static final Component MISSING_INPUT = new TextComponent("")
-            .append(new TranslatableComponent("screen.locksmith.locksmithing_table.missing_input"))
+            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.missing_input"))
             .append("\n")
-            .append(new TranslatableComponent("screen.locksmith.locksmithing_table.missing_input.tooltip").withStyle(ChatFormatting.GRAY));
+            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.missing_input.tooltip").withStyle(ChatFormatting.GRAY));
     private static final Component UNORIGINAL_KEY = new TextComponent("")
-            .append(new TranslatableComponent("screen.locksmith.locksmithing_table.unoriginal_key"))
+            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.unoriginal_key"))
             .append("\n")
-            .append(new TranslatableComponent("screen.locksmith.locksmithing_table.unoriginal_key.tooltip").withStyle(ChatFormatting.GRAY));
+            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.unoriginal_key.tooltip").withStyle(ChatFormatting.GRAY));
     private static final Component INVALID_KEY = new TextComponent("")
-            .append(new TranslatableComponent("screen.locksmith.locksmithing_table.invalid_key"))
+            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_key"))
             .append("\n")
-            .append(new TranslatableComponent("screen.locksmith.locksmithing_table.invalid_key.tooltip").withStyle(ChatFormatting.GRAY));
+            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_key.tooltip").withStyle(ChatFormatting.GRAY));
 
     private ItemStack keyStack = ItemStack.EMPTY;
     private ItemStack inputStack = ItemStack.EMPTY;
@@ -51,6 +51,7 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
         super(menu, inventory, name);
     }
 
+    @Override
     protected void init() {
         super.init();
         this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
@@ -91,11 +92,12 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
     @Override
     protected void renderTooltip(PoseStack poseStack, int x, int y) {
         super.renderTooltip(poseStack, x, y);
-        if (this.isHovering(54, 36, 22, 16, x, y) && this.getFailureTooltip() != null)
-            this.renderTooltip(poseStack, this.getFailureTooltip(), x, y);
+        List<? extends FormattedCharSequence> failureTooltip = this.getFailureTooltip();
+        if (this.isHovering(55, 37, 20, 13, x, y) && !failureTooltip.isEmpty())
+            this.renderTooltip(poseStack, failureTooltip, x, y);
     }
 
-    private List<? extends FormattedCharSequence> getFailureTooltip() {
+    public List<? extends FormattedCharSequence> getFailureTooltip() {
         if (this.keyStack.isEmpty() && this.inputStack.isEmpty())
             return Collections.emptyList();
 

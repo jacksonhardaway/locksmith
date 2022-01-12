@@ -1,17 +1,23 @@
 package gg.moonflower.locksmith.core.forge.compat.jei;
 
+import gg.moonflower.locksmith.client.screen.LockPickingScreen;
 import gg.moonflower.locksmith.client.screen.LocksmithingTableScreen;
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.core.Locksmith;
 import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.gui.handlers.IGuiClickableArea;
+import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.registration.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.Collection;
+import java.util.Collections;
 
 @JeiPlugin
 @ApiStatus.Internal
@@ -34,7 +40,13 @@ public class LocksmithJeiPlugin implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(LocksmithingTableScreen.class, 54, 36, 22, 15, LOCKSMITHING_TABLE_CATEGORY_ID);
+        registration.addGuiContainerHandler(LocksmithingTableScreen.class, new IGuiContainerHandler<LocksmithingTableScreen>() {
+            @Override
+            public Collection<IGuiClickableArea> getGuiClickableAreas(LocksmithingTableScreen containerScreen, double mouseX, double mouseY) {
+                return !containerScreen.getFailureTooltip().isEmpty() ? Collections.emptySet() : Collections.singleton(IGuiClickableArea.createBasic(54, 36, 22, 15, LOCKSMITHING_TABLE_CATEGORY_ID));
+            }
+        });
+        registration.addGuiScreenHandler(LockPickingScreen.class, guiScreen -> null); // block drawing JEI on lock picking
     }
 
     @Override

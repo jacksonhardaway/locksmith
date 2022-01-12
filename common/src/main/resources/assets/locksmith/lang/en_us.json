@@ -11,6 +11,7 @@
   "block.locksmith.lock_button": "Lock Button",
   "stat.locksmith.interact_with_locksmithing_table": "Interactions with Locksmithing Table",
   "container.locksmith.locksmithing_table": "Locksmithing Table",
+  "container.locksmith.lock_picking": "Lock Picking",
   "container.locksmith.locked": "Locked %s",
   "screen.locksmith.locksmithing_table.missing_key": "Key Missing",
   "screen.locksmith.locksmithing_table.missing_key.tooltip": "You must provide a key in the top slot.",

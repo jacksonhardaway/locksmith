@@ -5,7 +5,6 @@ import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -57,13 +56,14 @@ public abstract class AbstractLock {
         return type;
     }
 
-    public void onRemove(Level level, BlockPos pos) {
-        ItemStack lockStack = this.stack;
-        if (!lockStack.isEmpty()) {
-            ItemEntity itemEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), lockStack);
-            itemEntity.setDefaultPickUpDelay();
-            level.addFreshEntity(itemEntity);
-        }
+    /**
+     * Only called on the server when a lock is removed from the world.
+     *
+     * @param level    The level the lock was removed from
+     * @param clickPos The position to spawn the lock at
+     * @param pos      The position of the lock in the world
+     */
+    public void onRemove(Level level, BlockPos pos, BlockPos clickPos) {
     }
 
     /**
@@ -75,6 +75,18 @@ public abstract class AbstractLock {
      * @return Whether the lock can be removed.
      */
     public abstract boolean canRemove(Player player, Level level, ItemStack stack);
+
+    /**
+     * Checks to see if this lock can actually be removed using a lock pick.
+     *
+     * @param player    The player removing the lock.
+     * @param level     The level of the lock.
+     * @param clickPos  The position the player clicked
+     * @param pickStack The lock pick stack
+     * @param hand      The hand the lock pick is in
+     * @return Whether the lock can be removed by picking
+     */
+    public abstract boolean pick(Player player, Level level, BlockPos clickPos, ItemStack pickStack, InteractionHand hand);
 
     /**
      * Checks if this lock can be unlocked by the player.
@@ -99,10 +111,4 @@ public abstract class AbstractLock {
      * @return Whether the left-click action should succeed.
      */
     public abstract boolean onLeftClick(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction);
-
-    /**
-     * Fires when a player right-clicks a locked block with a lockpick on the client.
-     * <p>Used to open the lockpick minigame.
-     */
-    public abstract void onLockpick(Player player, Level level);
 }

@@ -2,7 +2,6 @@ package gg.moonflower.locksmith.common.lock;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.core.Locksmith;
-import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -26,8 +25,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class LockInteractionManager {
+
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Component LOCKED = new TranslatableComponent("lock.locksmith.locked");
+    private static final Component LOCKED = new TranslatableComponent("lock." + Locksmith.MOD_ID + ".locked");
 
     public static InteractionResult onRightClickBlock(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
         BlockPos pos = hitResult.getBlockPos();
@@ -35,16 +35,15 @@ public class LockInteractionManager {
         if (lock == null || player.isCreative())
             return InteractionResult.PASS;
 
-        ItemStack item = player.getMainHandItem();
-        if (item.getItem() == LocksmithItems.LOCKPICK.get() && Locksmith.CONFIG.enableLockpicking.get()) {
-            lock.onLockpick(player, level);
-            player.awardStat(Stats.ITEM_USED.get(LocksmithItems.LOCKPICK.get()));
-            return InteractionResult.SUCCESS;
+        ItemStack stack = player.getItemInHand(hand);
+        if (Locksmith.CONFIG.enableLockpicking.get() && lock.pick(player, level, pos, stack, hand)) {
+            player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
+            return InteractionResult.sidedSuccess(level.isClientSide());
         }
 
-        if (lock.onRightClick(player, level, item, hitResult))
+        if (lock.onRightClick(player, level, stack, hitResult)) {
             return InteractionResult.PASS;
-        else {
+        } else {
             player.displayClientMessage(LOCKED, true);
             if (level.isClientSide()) {
                 player.playNotifySound(SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -72,7 +71,6 @@ public class LockInteractionManager {
         if (lock == null)
             return;
 
-        // FIXME: make this better
         if (state.hasProperty(ChestBlock.TYPE) && state.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
             Tag tag = AbstractLock.CODEC.encodeStart(NbtOps.INSTANCE, lock).getOrThrow(false, LOGGER::error);
             if (!(tag instanceof CompoundTag))
@@ -85,6 +83,6 @@ public class LockInteractionManager {
             return;
         }
 
-        LockManager.get(level).removeLock(lock.getPos());
+        LockManager.get(level).removeLock(lock.getPos(), pos, false);
     }
 }

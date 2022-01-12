@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class ClientboundAddLocksPacket implements PollinatedPacket<LocksmithClientPlayPacketHandler> {
+
     private final ChunkPos chunk;
     private final Collection<AbstractLock> locks;
     private final boolean replace;

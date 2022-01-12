@@ -1,7 +1,7 @@
 {
   "textures": [
-    "locksmith:lock_spark_2",
+    "locksmith:lock_spark_0",
     "locksmith:lock_spark_1",
-    "locksmith:lock_spark_0"
+    "locksmith:lock_spark_2"
   ]
 }

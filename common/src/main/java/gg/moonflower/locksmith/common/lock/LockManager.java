@@ -9,8 +9,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
-import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.jetbrains.annotations.Nullable;
@@ -54,8 +54,8 @@ public interface LockManager {
             return manager.getLock(pos.relative(chestDirection));
         }
 
-        if (state.getBlock() instanceof DoorBlock) {
-            boolean top = state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER;
+        if (state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
+            boolean top = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER;
             if (top) {
                 return manager.getLock(pos.relative(Direction.DOWN));
             } else {
@@ -66,13 +66,27 @@ public interface LockManager {
         return null;
     }
 
-    Collection<AbstractLock> getLocks(ChunkPos chunkPos);
+    void addLock(AbstractLock data);
 
+    default void removeLock(BlockPos pos) {
+        this.removeLock(pos, pos, false);
+    }
+
+    void removeLock(BlockPos pos, BlockPos clickPos, boolean drop);
+
+    /**
+     * Retrieves the lock
+     * @param pos
+     * @return
+     */
     @Nullable
     AbstractLock getLock(BlockPos pos);
 
-    void addLock(AbstractLock data);
-
-    void removeLock(BlockPos pos);
-
+    /**
+     * Retrieves all locks in the specified chunk.
+     *
+     * @param chunkPos The position to get locks for
+     * @return All locks in that chunk
+     */
+    Collection<AbstractLock> getLocks(ChunkPos chunkPos);
 }

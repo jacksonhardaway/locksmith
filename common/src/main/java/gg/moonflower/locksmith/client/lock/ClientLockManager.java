@@ -11,27 +11,13 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class ClientLockManager implements LockManager {
     private static final Map<ResourceKey<Level>, ClientLockManager> INSTANCES = new HashMap<>();
     private final Map<ChunkPos, Set<AbstractLock>> locks = new HashMap<>();
-    private final ClientLevel level;
 
-    private ClientLockManager(ClientLevel level) {
-        this.level = level;
-    }
-
-    public static ClientLockManager getOrCreate(ClientLevel level) {
-        return INSTANCES.computeIfAbsent(level.dimension(), levelResourceKey -> new ClientLockManager(level));
-    }
-
-    public static void init() {
+    static {
         ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> INSTANCES.clear());
         ChunkEvents.UNLOAD.register((level, chunk) -> {
             if (level instanceof Level) {
@@ -41,6 +27,13 @@ public final class ClientLockManager implements LockManager {
                 manager.locks.remove(chunk.getPos());
             }
         });
+    }
+
+    private ClientLockManager() {
+    }
+
+    public static ClientLockManager getOrCreate(ClientLevel level) {
+        return INSTANCES.computeIfAbsent(level.dimension(), levelResourceKey -> new ClientLockManager());
     }
 
     @Override
@@ -70,7 +63,7 @@ public final class ClientLockManager implements LockManager {
     }
 
     @Override
-    public void removeLock(BlockPos pos) {
+    public void removeLock(BlockPos pos, BlockPos clickPos, boolean drop) {
         Set<AbstractLock> locks = this.locks.get(new ChunkPos(pos));
         if (locks == null)
             return;

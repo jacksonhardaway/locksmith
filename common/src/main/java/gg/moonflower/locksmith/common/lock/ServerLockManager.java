@@ -11,6 +11,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.apache.logging.log4j.LogManager;
@@ -92,15 +94,23 @@ public final class ServerLockManager extends SavedData implements LockManager {
     }
 
     @Override
-    public void removeLock(BlockPos pos) {
+    public void removeLock(BlockPos pos, BlockPos clickPos, boolean drop) {
         ChunkPos chunk = new ChunkPos(pos);
         ChunkLockData chunkData = this.locks.get(chunk);
         if (chunkData == null)
             return;
 
-        chunkData.removeLock(pos);
-        this.setDirty();
-        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundDeleteLockPacket(pos));
+        AbstractLock lock = chunkData.removeLock(pos);
+        if (lock != null) {
+            lock.onRemove(this.level, pos, clickPos);
+            if (drop) {
+                ItemStack lockStack = lock.getStack();
+                if (!lockStack.isEmpty())
+                    Containers.dropItemStack(level, clickPos.getX(), clickPos.getY(), clickPos.getZ(), lockStack);
+            }
+            this.setDirty();
+            LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundDeleteLockPacket(pos));
+        }
     }
 
     @Override
@@ -152,8 +162,9 @@ public final class ServerLockManager extends SavedData implements LockManager {
             this.locks.put(lock.getPos(), lock);
         }
 
-        public void removeLock(BlockPos pos) {
-            this.locks.remove(pos);
+        @Nullable
+        public AbstractLock removeLock(BlockPos pos) {
+            return this.locks.remove(pos);
         }
     }
 }
