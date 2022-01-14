@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -106,7 +107,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
             if (drop) {
                 ItemStack lockStack = lock.getStack();
                 if (!lockStack.isEmpty())
-                    Containers.dropItemStack(level, clickPos.getX(), clickPos.getY(), clickPos.getZ(), lockStack);
+                    Block.popResource(this.level, clickPos, lockStack);
             }
             this.setDirty();
             LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundDeleteLockPacket(pos));

@@ -125,7 +125,7 @@ public class KeyringItem extends Item {
         Player player = context.getPlayer();
         Level level = context.getLevel();
         AbstractLock lock = LockManager.getLock(level, pos);
-        if (player == null || lock == null || lock.getType() != LocksmithLocks.KEY.get())
+        if (player == null || lock == null || lock.getType() != LocksmithLocks.LOCK_BUTTON.get())
             return InteractionResult.PASS;
 
         for (ItemStack key : KeyringItem.getKeys(context.getItemInHand())) {

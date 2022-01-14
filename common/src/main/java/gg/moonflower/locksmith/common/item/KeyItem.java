@@ -1,11 +1,10 @@
 package gg.moonflower.locksmith.common.item;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
-import gg.moonflower.locksmith.api.lock.types.KeyLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.core.Locksmith;
+import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
-import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -45,15 +44,14 @@ public class KeyItem extends Item {
         Player player = context.getPlayer();
         Level level = context.getLevel();
         AbstractLock abstractLock = LockManager.getLock(level, pos);
-        if (player == null || abstractLock == null || abstractLock.getType() != LocksmithLocks.KEY.get())
+        if (player == null || abstractLock == null)
             return InteractionResult.PASS;
 
-        KeyLock lock = (KeyLock) abstractLock;
-        if (lock.canRemove(player, level, context.getItemInHand())) {
+        if (abstractLock.canRemove(player, level, context.getItemInHand())) {
             if (level.isClientSide())
                 return InteractionResult.SUCCESS;
 
-            LockManager.get(level).removeLock(lock.getPos(), pos, true);
+            LockManager.get(level).removeLock(abstractLock.getPos(), pos, true);
             player.awardStat(Stats.ITEM_USED.get(this));
             return InteractionResult.CONSUME;
         }
@@ -129,7 +127,7 @@ public class KeyItem extends Item {
 
     @Nullable
     public static UUID getLockId(ItemStack stack) {
-        if (stack.getItem() != LocksmithItems.KEY.get() && stack.getItem() != LocksmithItems.LOCK.get())
+        if (stack.getItem() != LocksmithItems.KEY.get() && stack.getItem() != LocksmithItems.LOCK.get() && stack.getItem() != LocksmithBlocks.LOCK_BUTTON.get().asItem())
             return null;
 
         CompoundTag tag = stack.getOrCreateTag();
@@ -140,7 +138,7 @@ public class KeyItem extends Item {
     }
 
     public static void setLockId(ItemStack stack, UUID id) {
-        if (stack.getItem() != LocksmithItems.KEY.get() && stack.getItem() != LocksmithItems.LOCK.get())
+        if (stack.getItem() != LocksmithItems.KEY.get() && stack.getItem() != LocksmithItems.LOCK.get() && stack.getItem() != LocksmithBlocks.LOCK_BUTTON.get().asItem())
             return;
 
         stack.getOrCreateTag().putUUID("Lock", id);

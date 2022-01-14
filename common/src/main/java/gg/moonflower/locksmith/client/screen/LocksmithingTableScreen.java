@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.locksmith.common.item.KeyItem;
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.core.Locksmith;
+import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -118,7 +119,7 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
             }
         }
 
-        if (input != LocksmithItems.BLANK_KEY.get() && input != LocksmithItems.BLANK_LOCK.get())
+        if (input != LocksmithItems.BLANK_KEY.get() && input != LocksmithItems.BLANK_LOCK.get() && input != LocksmithItems.BLANK_LOCK_BUTTON.get())
             return this.font.split(MISSING_INPUT, 200);
 
         if (key == LocksmithItems.BLANK_KEY.get() && input == LocksmithItems.BLANK_KEY.get())

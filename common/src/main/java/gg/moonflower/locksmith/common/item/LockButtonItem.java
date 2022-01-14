@@ -1,0 +1,38 @@
+package gg.moonflower.locksmith.common.item;
+
+import gg.moonflower.locksmith.api.lock.types.LockButtonLock;
+import gg.moonflower.locksmith.common.lock.LockManager;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
+
+public class LockButtonItem extends BlockItem {
+
+    public LockButtonItem(Block block, Properties properties) {
+        super(block, properties);
+    }
+
+    @Override
+    protected boolean canPlace(BlockPlaceContext context, BlockState state) {
+        return super.canPlace(context, state) && KeyItem.getLockId(context.getItemInHand()) != null;
+    }
+
+    @Override
+    protected boolean updateCustomBlockEntityTag(BlockPos pos, Level level, @Nullable Player player, ItemStack stack, BlockState state) {
+        UUID id = KeyItem.getLockId(stack);
+        if (id != null) {
+            ItemStack newStack = stack.copy();
+            newStack.setCount(1);
+            LockManager.get(level).addLock(new LockButtonLock(id, pos, newStack));
+        }
+        return super.updateCustomBlockEntityTag(pos, level, player, stack, state);
+    }
+}
