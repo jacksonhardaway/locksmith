@@ -1,5 +1,6 @@
 package gg.moonflower.locksmith.core.mixin;
 
+import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +13,7 @@ public class GrindstoneMenuSlotMixin {
 
     @Inject(method = "mayPlace(Lnet/minecraft/world/item/ItemStack;)Z", at = @At("RETURN"), cancellable = true)
     public void mayPlace(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (stack.getItem() == LocksmithItems.LOCK.get() || stack.getItem() == LocksmithItems.KEY.get())
+        if (stack.getItem() == LocksmithItems.LOCK.get() || stack.getItem() == LocksmithItems.KEY.get() || stack.getItem() == LocksmithBlocks.LOCK_BUTTON.get().asItem())
             cir.setReturnValue(true);
     }
 }

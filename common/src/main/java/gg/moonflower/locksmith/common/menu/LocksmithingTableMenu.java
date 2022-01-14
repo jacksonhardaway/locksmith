@@ -80,7 +80,7 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
         this.inputSlot = this.addSlot(new Slot(this.inputSlots, 1, 21, 54) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return stack.getItem() == LocksmithItems.BLANK_KEY.get() || stack.getItem() == LocksmithItems.BLANK_LOCK.get();
+                return stack.getItem() == LocksmithItems.BLANK_KEY.get() || stack.getItem() == LocksmithItems.BLANK_LOCK.get() || stack.getItem() == LocksmithItems.BLANK_LOCK_BUTTON.get();
             }
         });
 
@@ -145,12 +145,14 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
             result = new ItemStack(LocksmithItems.LOCK.get());
         } else if (inputStack.getItem() == LocksmithItems.BLANK_KEY.get()) {
             result = new ItemStack(LocksmithItems.KEY.get());
+        } else if (inputStack.getItem() == LocksmithItems.BLANK_LOCK_BUTTON.get()) {
+            result = new ItemStack(LocksmithBlocks.LOCK_BUTTON.get());
         } else return;
 
         if (inputStack.hasCustomHoverName())
             result.setHoverName(keyStack.getHoverName());
 
-        if (blank && inputStack.getItem() == LocksmithItems.BLANK_LOCK.get()) {
+        if (blank && (inputStack.getItem() == LocksmithItems.BLANK_LOCK.get() || inputStack.getItem() == LocksmithItems.BLANK_LOCK_BUTTON.get())) {
             UUID id = UUID.randomUUID();
 
             ItemStack newKey = new ItemStack(LocksmithItems.KEY.get());
@@ -162,7 +164,7 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
 
             this.resultSlots.setItem(0, newKey);
             this.resultSlots.setItem(1, result);
-        } else if (!blank && inputStack.getItem() == LocksmithItems.BLANK_KEY.get()) {
+        } else if (!blank && this.isValidInputItem(inputStack)) {
             UUID id = KeyItem.getLockId(keyStack);
             if (id == null)
                 return;
@@ -187,7 +189,7 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
     }
 
     private boolean isValidInputItem(ItemStack stack) {
-        return stack.getItem() == LocksmithItems.BLANK_LOCK.get() || stack.getItem() == LocksmithItems.BLANK_KEY.get();
+        return stack.getItem() == LocksmithItems.BLANK_LOCK.get() || stack.getItem() == LocksmithItems.BLANK_KEY.get() || stack.getItem() == LocksmithItems.BLANK_LOCK_BUTTON.get();
     }
 
     class ResultSlot extends Slot {

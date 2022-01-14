@@ -1,6 +1,7 @@
 package gg.moonflower.locksmith.core.forge.compat.jei;
 
 import gg.moonflower.locksmith.common.item.KeyItem;
+import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -22,6 +23,12 @@ public class LocksmithingTableRecipeMaker {
                 Collections.singletonList(new ItemStack(LocksmithItems.BLANK_LOCK.get())),
                 Collections.singletonList(originalKey.copy()),
                 Collections.singletonList(new ItemStack(LocksmithItems.LOCK.get()))
+        ));
+        recipes.add(new LocksmithingTableRecipe(
+                Collections.singletonList(new ItemStack(LocksmithItems.BLANK_KEY.get())),
+                Collections.singletonList(new ItemStack(LocksmithItems.BLANK_LOCK_BUTTON.get())),
+                Collections.singletonList(originalKey.copy()),
+                Collections.singletonList(new ItemStack(LocksmithBlocks.LOCK_BUTTON.get()))
         ));
         recipes.add(new LocksmithingTableRecipe(
                 Collections.singletonList(originalKey.copy()),

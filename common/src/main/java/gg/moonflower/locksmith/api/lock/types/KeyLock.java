@@ -3,6 +3,7 @@ package gg.moonflower.locksmith.api.lock.types;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
+import gg.moonflower.locksmith.api.lock.LockType;
 import gg.moonflower.locksmith.common.item.KeyItem;
 import gg.moonflower.locksmith.common.lockpicking.LockPickingContext;
 import gg.moonflower.locksmith.common.menu.LockpickingMenu;
@@ -36,8 +37,12 @@ public class KeyLock extends AbstractLock {
     ).apply(instance, KeyLock::new));
     private static final Component LOCK_PICKING = new TranslatableComponent("container." + Locksmith.MOD_ID + ".lock_picking");
 
+    public KeyLock(LockType type, UUID id, BlockPos pos, ItemStack stack) {
+        super(type, id, pos, stack);
+    }
+
     public KeyLock(UUID id, BlockPos pos, ItemStack stack) {
-        super(LocksmithLocks.KEY.get(), id, pos, stack);
+        this(LocksmithLocks.KEY.get(), id, pos, stack);
     }
 
     @Override

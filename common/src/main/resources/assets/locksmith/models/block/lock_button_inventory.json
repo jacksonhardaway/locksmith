@@ -1,9 +1,8 @@
 {
 	"credit": "Made by Farcr",
-	"parent": "block/block",
 	"textures": {
-		"particle": "block/lock_button",
-		"texture": "block/lock_button"
+		"particle": "locksmith:block/lock_button",
+		"texture": "locksmith:block/lock_button"
 	},
 	"elements": [
 		{

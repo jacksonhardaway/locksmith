@@ -1,5 +1,6 @@
 package gg.moonflower.locksmith.core.mixin;
 
+import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.GrindstoneMenu;
@@ -27,6 +28,8 @@ public abstract class GrindstoneMenuMixin {
             return new ItemStack(LocksmithItems.BLANK_LOCK.get());
         } else if (original.getItem() == LocksmithItems.KEY.get()) {
             return new ItemStack(LocksmithItems.BLANK_KEY.get());
+        } else if (original.getItem() == LocksmithBlocks.LOCK_BUTTON.get().asItem()) {
+            return new ItemStack(LocksmithItems.BLANK_LOCK_BUTTON.get());
         }
         return original;
     }

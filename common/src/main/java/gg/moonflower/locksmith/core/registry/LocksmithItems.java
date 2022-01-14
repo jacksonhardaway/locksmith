@@ -2,6 +2,7 @@ package gg.moonflower.locksmith.core.registry;
 
 import gg.moonflower.locksmith.common.item.KeyItem;
 import gg.moonflower.locksmith.common.item.KeyringItem;
+import gg.moonflower.locksmith.common.item.LockButtonItem;
 import gg.moonflower.locksmith.common.item.LockItem;
 import gg.moonflower.locksmith.common.item.LockPickItem;
 import gg.moonflower.locksmith.core.Locksmith;
@@ -17,6 +18,7 @@ public class LocksmithItems {
 
     public static final Supplier<Item> BLANK_LOCK = ITEMS.register("blank_lock", () -> new Item(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS)));
     public static final Supplier<Item> BLANK_KEY = ITEMS.register("blank_key", () -> new Item(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS)));
+    public static final Supplier<Item> BLANK_LOCK_BUTTON = ITEMS.register("blank_lock_button", () -> new Item(new Item.Properties().tab(CreativeModeTab.TAB_REDSTONE)));
 
     public static final Supplier<Item> LOCK = ITEMS.register("lock", () -> new LockItem(new Item.Properties()));
     public static final Supplier<Item> KEY = ITEMS.register("key", () -> new KeyItem(new Item.Properties()));
