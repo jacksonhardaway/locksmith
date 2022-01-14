@@ -27,6 +27,7 @@ public class LockButtonLock extends KeyLock {
 
     @Override
     public void onRemove(Level level, BlockPos pos, BlockPos clickPos) {
+        super.onRemove(level, pos, clickPos);
         BlockState state = level.getBlockState(pos);
         if (state.getBlock() instanceof LockButtonBlock)
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), 18);

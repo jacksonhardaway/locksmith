@@ -75,9 +75,9 @@ public interface LockManager {
     void removeLock(BlockPos pos, BlockPos clickPos, boolean drop);
 
     /**
-     * Retrieves the lock
-     * @param pos
-     * @return
+     * Retrieves a lock at a position
+     * @param pos The position of the lock
+     * @return The lock at the specified positon. null if there is no lock.
      */
     @Nullable
     AbstractLock getLock(BlockPos pos);
