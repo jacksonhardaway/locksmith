@@ -6,6 +6,7 @@
   "item.locksmith.blank_key": "Blank Key",
   "item.locksmith.lock": "Lock",
   "item.locksmith.blank_lock": "Blank Lock",
+  "item.locksmith.blank_lock_button": "Blank Lock Button",
   "item.locksmith.lockpick": "Lockpick",
   "block.locksmith.locksmithing_table": "Locksmithing Table",
   "block.locksmith.lock_button": "Lock Button",

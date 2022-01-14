@@ -1,7 +1,6 @@
 package gg.moonflower.locksmith.common.item;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
-import gg.moonflower.locksmith.api.lock.types.KeyLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.common.menu.KeyringMenu;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
@@ -70,7 +69,7 @@ public class KeyringItem extends Item {
         Player player = context.getPlayer();
         Level level = context.getLevel();
         AbstractLock lock = LockManager.getLock(level, pos);
-        if (player == null || lock == null || lock.getType() != LocksmithLocks.KEY.get())
+        if (player == null || lock == null || lock.getType() != LocksmithLocks.LOCK_BUTTON.get())
             return InteractionResult.PASS;
 
         for (ItemStack key : KeyringItem.getKeys(context.getItemInHand())) {
