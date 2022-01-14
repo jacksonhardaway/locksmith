@@ -2,13 +2,18 @@ package gg.moonflower.locksmith.api.lock;
 
 import com.mojang.serialization.Codec;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;
+import gg.moonflower.locksmith.core.registry.LocksmithParticles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
 
 import java.util.UUID;
 
@@ -64,6 +69,16 @@ public abstract class AbstractLock {
      * @param pos      The position of the lock in the world
      */
     public void onRemove(Level level, BlockPos pos, BlockPos clickPos) {
+        level.getBlockState(clickPos).getVisualShape(level, pos, CollisionContext.empty()).forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
+            double d1 = Math.min(1.0, maxX - minX);
+            double d2 = Math.min(1.0, maxY - minY);
+            double d3 = Math.min(1.0, maxZ - minZ);
+            int i = Math.max(2, Mth.ceil(d1 / 0.4));
+            int j = Math.max(2, Mth.ceil(d2 / 0.4));
+            int k = Math.max(2, Mth.ceil(d3 / 0.4));
+
+            ((ServerLevel) level).sendParticles(LocksmithParticles.LOCK_BREAK.get(), pos.getX() + minX + maxX / 2.0, pos.getY() + minY + maxY / 2.0, pos.getZ() + minZ + maxZ / 2.0, i * j * k, (maxX - minX) / 4.0 + 0.0625, (maxY - minY) / 4.0 + 0.0625, (maxZ - minZ) / 4.0 + 0.0625, 0.0);
+        });
     }
 
     /**
