@@ -6,6 +6,7 @@ import gg.moonflower.locksmith.common.recipe.LocksmithingRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -29,8 +30,8 @@ public class LocksmithingRecipeImpl implements RecipeSerializer<LocksmithingReci
         if (singleResult && (json.has("leftResult") || json.has("rightResult")))
             throw new JsonSyntaxException("'result' is not compatible with either 'leftResult' or 'rightResult'");
 
-        ItemStack leftResult = ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, singleResult ? "result" : "leftResult"));
-        ItemStack rightResult = singleResult ? ItemStack.EMPTY : ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "rightResult"));
+        ItemStack leftResult = new ItemStack(ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, singleResult ? "result" : "leftResult")));
+        ItemStack rightResult = singleResult ? ItemStack.EMPTY : new ItemStack(ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "rightResult")));
         return new LocksmithingRecipe(recipeId, group, topInput, bottomInput, leftResult, rightResult);
     }
 
