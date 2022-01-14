@@ -20,6 +20,7 @@ public class LocksmithSounds {
     public static final Supplier<SoundEvent> LOCK_PICKING_OVERSET = registerSound("lock_picking.overset");
     public static final Supplier<SoundEvent> LOCK_PICKING_PINS_DROP = registerSound("lock_picking.pins_drop");
     public static final Supplier<SoundEvent> ITEM_LOCK_PLACE = registerSound("item.lock.place");
+    public static final Supplier<SoundEvent> ITEM_LOCK_LOCKED = registerSound("item.lock.locked");
 
     private static Supplier<SoundEvent> registerSound(String id) {
         return SOUNDS.register(id, () -> new SoundEvent(new ResourceLocation(Locksmith.MOD_ID, id)));

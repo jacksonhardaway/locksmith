@@ -6,6 +6,8 @@ import gg.moonflower.pollen.api.datagen.SoundDefinitionBuilder;
 import gg.moonflower.pollen.api.datagen.provider.PollinatedSoundProvider;
 import gg.moonflower.pollen.api.util.PollinatedModContainer;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 
 import java.util.function.Consumer;
 
@@ -26,5 +28,6 @@ public class LocksmithSoundProvider extends PollinatedSoundProvider {
         registry.accept(SoundDefinitionBuilder.forSound(LocksmithSounds.LOCK_PICKING_OVERSET));
         registry.accept(SoundDefinitionBuilder.forSound(LocksmithSounds.LOCK_PICKING_PINS_DROP));
         registry.accept(SoundDefinitionBuilder.forSound(LocksmithSounds.ITEM_LOCK_PLACE).subtitle("subtitles." + Locksmith.MOD_ID + ".item.lock.place"));
+        registry.accept(SoundDefinitionBuilder.definition(LocksmithSounds.ITEM_LOCK_LOCKED).subtitle("subtitles." + Locksmith.MOD_ID + ".item.lock.locked").addSound(SoundDefinitionBuilder.sound(SoundEvents.CHEST_LOCKED.getLocation()).type(SoundDefinitionBuilder.SoundType.EVENT)));
     }
 }

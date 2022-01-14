@@ -2,11 +2,12 @@ package gg.moonflower.locksmith.common.item;
 
 import gg.moonflower.locksmith.api.key.Key;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
-import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.core.Locksmith;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.core.registry.LocksmithTags;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -79,14 +80,18 @@ public class KeyItem extends Item implements Key {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag advanced) {
-        tooltip.add(isOriginal(stack) ? ORIGINAL : COPY);
-        if (advanced.isAdvanced()) {
-            UUID id = getLockId(stack);
-            if (id == null)
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+        if (KeyItem.isOriginal(stack))
+            tooltipComponents.add(ORIGINAL);
+        else
+            tooltipComponents.add(COPY);
+
+        if (isAdvanced.isAdvanced()) {
+            UUID id = KeyItem.getLockId(stack);
+            if (id == null || Util.NIL_UUID.equals(id))
                 return;
 
-            tooltip.add(new TextComponent("Lock Id: " + id).withStyle(ChatFormatting.DARK_GRAY));
+            tooltipComponents.add(new TextComponent("Lock Id: " + id).withStyle(ChatFormatting.DARK_GRAY));
         }
     }
 

@@ -1,6 +1,6 @@
 package gg.moonflower.locksmith.core.mixin;
 
-import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BaseContainerBlockEntity.class)
 public abstract class BaseContainerBlockEntityMixin extends BlockEntity {
 
-    @Shadow private Component name;
+    @Shadow
+    private Component name;
 
     public BaseContainerBlockEntityMixin(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
         super(blockEntityType, pos, state);

@@ -1,7 +1,7 @@
 package gg.moonflower.locksmith.core.mixin.client;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
-import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.core.registry.LocksmithParticles;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;

@@ -2,6 +2,7 @@ package gg.moonflower.locksmith.common.lock.types;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import gg.moonflower.locksmith.api.key.Key;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.LockType;
 import gg.moonflower.locksmith.common.item.KeyItem;
@@ -48,12 +49,12 @@ public class KeyLock extends AbstractLock {
 
     @Override
     public boolean canRemove(Player player, Level level, ItemStack stack) {
-        return player.isSecondaryUseActive() && stack.getItem() == LocksmithItems.KEY.get() && ((KeyItem) stack.getItem()).matchesLock(this.getId(), stack);
+        return player.isSecondaryUseActive() && ((stack.getItem() == LocksmithItems.KEY.get() || stack.getItem() == LocksmithItems.KEYRING.get()) && ((Key) stack.getItem()).matchesLock(this.getId(), stack));
     }
 
     @Override
     public boolean canUnlock(Player player, Level level, ItemStack stack) {
-        return player.isCreative() || ((KeyItem) stack.getItem()).matchesLock(this.getId(), stack);
+        return player.isCreative() || ((stack.getItem() == LocksmithItems.KEY.get() || stack.getItem() == LocksmithItems.KEYRING.get()) && ((Key) stack.getItem()).matchesLock(this.getId(), stack));
     }
 
     @Override
