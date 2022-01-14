@@ -1,7 +1,7 @@
 package gg.moonflower.locksmith.common.item;
 
 import gg.moonflower.locksmith.common.lock.types.KeyLock;
-import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.core.registry.LocksmithParticles;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import gg.moonflower.locksmith.core.registry.LocksmithTags;

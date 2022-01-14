@@ -1,7 +1,7 @@
 package gg.moonflower.locksmith.client.lock;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
-import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
 import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
 import net.minecraft.client.multiplayer.ClientLevel;

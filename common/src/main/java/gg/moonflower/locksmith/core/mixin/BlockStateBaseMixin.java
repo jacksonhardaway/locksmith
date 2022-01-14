@@ -1,6 +1,6 @@
 package gg.moonflower.locksmith.core.mixin;
 
-import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.core.Locksmith;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;

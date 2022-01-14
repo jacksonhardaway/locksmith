@@ -1,6 +1,6 @@
 package gg.moonflower.locksmith.common.lockpicking;
 
-import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockPickingPacket;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;

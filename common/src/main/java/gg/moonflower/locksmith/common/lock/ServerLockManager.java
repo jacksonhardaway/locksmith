@@ -1,6 +1,7 @@
 package gg.moonflower.locksmith.common.lock;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.common.network.play.ClientboundAddLocksPacket;
 import gg.moonflower.locksmith.common.network.play.ClientboundDeleteLockPacket;
@@ -11,7 +12,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;

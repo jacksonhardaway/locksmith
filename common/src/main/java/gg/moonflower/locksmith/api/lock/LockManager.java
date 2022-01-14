@@ -1,7 +1,7 @@
-package gg.moonflower.locksmith.common.lock;
+package gg.moonflower.locksmith.api.lock;
 
-import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.client.lock.ClientLockManager;
+import gg.moonflower.locksmith.common.lock.ServerLockManager;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -2,7 +2,7 @@ package gg.moonflower.locksmith.common.item;
 
 import gg.moonflower.locksmith.api.key.Key;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
-import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.common.menu.KeyringMenu;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;

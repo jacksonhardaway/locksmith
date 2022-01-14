@@ -1,7 +1,7 @@
 package gg.moonflower.locksmith.common.item;
 
 import gg.moonflower.locksmith.common.lock.types.LockButtonLock;
-import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;

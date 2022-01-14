@@ -16,11 +16,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GrindstoneMenu.class)
 public abstract class GrindstoneMenuMixin {
 
-    @Shadow @Final private Container repairSlots;
+    @Shadow
+    @Final
+    private Container repairSlots;
 
-    @Shadow @Final private Container resultSlots;
+    @Shadow
+    @Final
+    private Container resultSlots;
 
-    @Shadow protected abstract ItemStack removeNonCurses(ItemStack stack, int damage, int count);
+    @Shadow
+    protected abstract ItemStack removeNonCurses(ItemStack stack, int damage, int count);
 
     @ModifyVariable(method = "removeNonCurses", index = 4, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;removeTagKey(Ljava/lang/String;)V", shift = At.Shift.BEFORE, ordinal = 0))
     public ItemStack removeNonCurses(ItemStack original) {
@@ -43,8 +48,8 @@ public abstract class GrindstoneMenuMixin {
             return;
 
         ItemStack modifiedStack = !slotOne.isEmpty() ? slotOne : slotTwo;
-        if ((slotOne.getItem() == LocksmithItems.KEY.get() || slotTwo.getItem() == LocksmithItems.KEY.get()) || (slotOne.getItem() == LocksmithItems.LOCK.get() || slotTwo.getItem() == LocksmithItems.LOCK.get())) {
-            this.resultSlots.setItem(0, removeNonCurses(modifiedStack, modifiedStack.getDamageValue(), modifiedStack.getCount()));
+        if (slotOne.getItem() == LocksmithItems.KEY.get() || slotTwo.getItem() == LocksmithItems.KEY.get() || slotOne.getItem() == LocksmithItems.LOCK.get() || slotTwo.getItem() == LocksmithItems.LOCK.get()|| slotOne.getItem() == LocksmithBlocks.LOCK_BUTTON.get().asItem() || slotTwo.getItem() == LocksmithBlocks.LOCK_BUTTON.get().asItem()) {
+            this.resultSlots.setItem(0, this.removeNonCurses(modifiedStack, modifiedStack.getDamageValue(), modifiedStack.getCount()));
             ci.cancel();
         }
     }

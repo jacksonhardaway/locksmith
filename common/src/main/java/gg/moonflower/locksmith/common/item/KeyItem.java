@@ -2,9 +2,10 @@ package gg.moonflower.locksmith.common.item;
 
 import gg.moonflower.locksmith.api.key.Key;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
-import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.core.registry.LocksmithTags;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -128,9 +129,10 @@ public class KeyItem extends Item implements Key {
             tooltipComponents.add(ORIGINAL);
         else
             tooltipComponents.add(COPY);
+
         if (isAdvanced.isAdvanced()) {
             UUID id = KeyItem.getLockId(stack);
-            if (id == null)
+            if (id == null || Util.NIL_UUID.equals(id))
                 return;
 
             tooltipComponents.add(new TextComponent("Lock Id: " + id).withStyle(ChatFormatting.DARK_GRAY));

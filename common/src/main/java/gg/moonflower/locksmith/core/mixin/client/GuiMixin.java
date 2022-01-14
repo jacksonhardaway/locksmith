@@ -2,7 +2,7 @@ package gg.moonflower.locksmith.core.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
-import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.core.Locksmith;
 import net.minecraft.client.AttackIndicatorStatus;
 import net.minecraft.client.Minecraft;

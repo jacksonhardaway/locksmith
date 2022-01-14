@@ -1,6 +1,6 @@
 package gg.moonflower.locksmith.core.mixin;
 
-import gg.moonflower.locksmith.common.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;

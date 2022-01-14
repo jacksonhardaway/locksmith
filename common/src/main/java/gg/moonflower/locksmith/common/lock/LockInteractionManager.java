@@ -1,6 +1,7 @@
 package gg.moonflower.locksmith.common.lock;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.core.Locksmith;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
