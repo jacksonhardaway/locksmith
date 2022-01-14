@@ -1,9 +1,12 @@
 package gg.moonflower.locksmith.core.mixin;
 
+import gg.moonflower.locksmith.api.lock.AbstractLock;
+import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.core.extension.ChestBlockExtension;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,7 +29,14 @@ public class ChestBlockMixin {
     static class MenuProviderMixin {
         @Inject(method = "getDisplayName()Lnet/minecraft/network/chat/Component;", at = @At("RETURN"), cancellable = true)
         public void getDisplayName(CallbackInfoReturnable<Component> cir) {
-            if (ChestBlockExtension.chestBlockEntity1.get().hasCustomName() || ChestBlockExtension.chestBlockEntity2.get().hasCustomName())
+            ChestBlockEntity left = ChestBlockExtension.chestBlockEntity1.get();
+            ChestBlockEntity right = ChestBlockExtension.chestBlockEntity2.get();
+            Level level = left.getLevel();
+            if (level == null)
+                return;
+
+            AbstractLock lock = LockManager.getLock(level, left.getBlockPos());
+            if (lock == null || left.hasCustomName() || right.hasCustomName())
                 return;
 
             cir.setReturnValue(new TranslatableComponent("container.locksmith.locked", cir.getReturnValue()));
