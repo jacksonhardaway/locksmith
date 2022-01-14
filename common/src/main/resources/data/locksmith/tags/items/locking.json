@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "locksmith:key",
+    "locksmith:lock",
+    "locksmith:lock_button"
+  ]
+}

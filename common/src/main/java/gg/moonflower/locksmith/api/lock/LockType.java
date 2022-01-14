@@ -5,9 +5,10 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.pollen.api.platform.Platform;
 
 /**
- * A type of body that can be serialized and deserialized.
+ * A type of lock that can be serialized and deserialized.
  *
  * @author Ocelot
+ * @since 1.0.0
  */
 public interface LockType {
 

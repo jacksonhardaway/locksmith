@@ -1,12 +1,8 @@
 {
-  "ui.locksmithing_table.take_result": {
+  "item.lock.place": {
+    "subtitle": "subtitles.locksmith.item.lock.place",
     "sounds": [
-      "locksmith:ui/locksmithing_table/take_result"
-    ]
-  },
-  "lock_picking.success": {
-    "sounds": [
-      "locksmith:lock_picking/success"
+      "locksmith:item/lock/place"
     ]
   },
   "lock_picking.fail": {
@@ -14,14 +10,9 @@
       "locksmith:lock_picking/fail"
     ]
   },
-  "lock_picking.set": {
+  "lock_picking.overset": {
     "sounds": [
-      "locksmith:lock_picking/set"
-    ]
-  },
-  "lock_picking.too_far": {
-    "sounds": [
-      "locksmith:lock_picking/too_far"
+      "locksmith:lock_picking/overset"
     ]
   },
   "lock_picking.pins_drop": {
@@ -29,10 +20,19 @@
       "locksmith:lock_picking/pins_drop"
     ]
   },
-  "item.lock.place": {
-    "subtitle": "subtitles.locksmith.item.lock.place",
+  "lock_picking.set": {
     "sounds": [
-      "locksmith:item/lock/place"
+      "locksmith:lock_picking/set"
+    ]
+  },
+  "lock_picking.success": {
+    "sounds": [
+      "locksmith:lock_picking/success"
+    ]
+  },
+  "lock_picking.too_far": {
+    "sounds": [
+      "locksmith:lock_picking/too_far"
     ]
   },
   "lock_picking.too_near": {
@@ -40,9 +40,9 @@
       "locksmith:lock_picking/too_near"
     ]
   },
-  "lock_picking.overset": {
+  "ui.locksmithing_table.take_result": {
     "sounds": [
-      "locksmith:lock_picking/overset"
+      "locksmith:ui/locksmithing_table/take_result"
     ]
   }
 }

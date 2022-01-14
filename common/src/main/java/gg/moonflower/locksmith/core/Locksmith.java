@@ -8,6 +8,8 @@ import gg.moonflower.locksmith.common.lock.LockInteractionManager;
 import gg.moonflower.locksmith.common.lock.ServerLockManager;
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
+import gg.moonflower.locksmith.core.datagen.LocksmithBlockTagsProvider;
+import gg.moonflower.locksmith.core.datagen.LocksmithItemTagsProvider;
 import gg.moonflower.locksmith.core.datagen.LocksmithSoundProvider;
 import gg.moonflower.locksmith.core.registry.*;
 import gg.moonflower.pollen.api.config.ConfigManager;
@@ -57,6 +59,7 @@ public class Locksmith {
         LocksmithParticles.PARTICLES.register(Locksmith.PLATFORM);
         LocksmithLocks.LOCKS.register(Locksmith.PLATFORM);
         LocksmithRecipes.RECIPES.register(Locksmith.PLATFORM);
+        LocksmithRecipes.RECIPE_TYPES.register(Locksmith.PLATFORM);
         LocksmithMessages.init();
         ServerLockManager.init();
 
@@ -71,6 +74,9 @@ public class Locksmith {
     private static void onDataInit(Platform.DataSetupContext ctx) {
         DataGenerator dataGenerator = ctx.getGenerator();
         PollinatedModContainer container = ctx.getMod();
+        LocksmithBlockTagsProvider blockTagsProvider = new LocksmithBlockTagsProvider(dataGenerator, container);
+        dataGenerator.addProvider(blockTagsProvider);
+        dataGenerator.addProvider(new LocksmithItemTagsProvider(dataGenerator, container, blockTagsProvider));
         dataGenerator.addProvider(new LocksmithSoundProvider(dataGenerator, container));
     }
 }

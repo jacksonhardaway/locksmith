@@ -1,4 +1,4 @@
-package gg.moonflower.locksmith.api.lock.types;
+package gg.moonflower.locksmith.common.lock.types;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -35,6 +35,7 @@ public class KeyLock extends AbstractLock {
             BlockPos.CODEC.fieldOf("pos").forGetter(KeyLock::getPos),
             ItemStack.CODEC.fieldOf("stack").forGetter(KeyLock::getStack)
     ).apply(instance, KeyLock::new));
+
     private static final Component LOCK_PICKING = new TranslatableComponent("container." + Locksmith.MOD_ID + ".lock_picking");
 
     public KeyLock(LockType type, UUID id, BlockPos pos, ItemStack stack) {
@@ -47,12 +48,12 @@ public class KeyLock extends AbstractLock {
 
     @Override
     public boolean canRemove(Player player, Level level, ItemStack stack) {
-        return player.isSecondaryUseActive() && stack.getItem() == LocksmithItems.KEY.get() && KeyItem.matchesLock(this.getId(), stack);
+        return player.isSecondaryUseActive() && stack.getItem() == LocksmithItems.KEY.get() && ((KeyItem) stack.getItem()).matchesLock(this.getId(), stack);
     }
 
     @Override
     public boolean canUnlock(Player player, Level level, ItemStack stack) {
-        return player.isCreative() || KeyItem.matchesLock(this.getId(), stack);
+        return player.isCreative() || ((KeyItem) stack.getItem()).matchesLock(this.getId(), stack);
     }
 
     @Override
