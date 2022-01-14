@@ -3,6 +3,7 @@ package gg.moonflower.locksmith.common.lock;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.core.Locksmith;
+import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -10,7 +11,6 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -42,16 +42,15 @@ public class LockInteractionManager {
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
 
-        if (lock.onRightClick(player, level, stack, hitResult)) {
-            return InteractionResult.PASS;
-        } else {
+        if (!lock.onRightClick(player, level, stack, hitResult) && (player.getOffhandItem().isEmpty() || hand == InteractionHand.OFF_HAND)) {
             player.displayClientMessage(LOCKED, true);
             if (level.isClientSide()) {
-                player.playNotifySound(SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 1.0F, 1.0F);
-                return InteractionResult.SUCCESS;
+                player.playNotifySound(LocksmithSounds.ITEM_LOCK_LOCKED.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                player.swing(hand); // so awful
             }
             return InteractionResult.FAIL;
         }
+        return InteractionResult.PASS;
     }
 
     public static InteractionResult onLeftClickBlock(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction) {

@@ -10,6 +10,7 @@ import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.core.datagen.LocksmithBlockTagsProvider;
 import gg.moonflower.locksmith.core.datagen.LocksmithItemTagsProvider;
+import gg.moonflower.locksmith.core.datagen.LocksmithLanguageProvider;
 import gg.moonflower.locksmith.core.datagen.LocksmithSoundProvider;
 import gg.moonflower.locksmith.core.registry.*;
 import gg.moonflower.pollen.api.config.ConfigManager;
@@ -77,6 +78,7 @@ public class Locksmith {
         LocksmithBlockTagsProvider blockTagsProvider = new LocksmithBlockTagsProvider(dataGenerator, container);
         dataGenerator.addProvider(blockTagsProvider);
         dataGenerator.addProvider(new LocksmithItemTagsProvider(dataGenerator, container, blockTagsProvider));
+        dataGenerator.addProvider(new LocksmithLanguageProvider(dataGenerator, container));
         dataGenerator.addProvider(new LocksmithSoundProvider(dataGenerator, container));
     }
 }
