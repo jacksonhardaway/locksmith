@@ -1,0 +1,21 @@
+{
+  "type": "locksmith:locksmithing",
+  "topInput": [
+    {
+      "item": "locksmith:key"
+    },
+    {
+      "item": "locksmith:blank_key"
+    }
+  ],
+  "bottomInput": {
+    "item": "locksmith:blank_key"
+  },
+  "leftResult": {
+    "item": "locksmith:key"
+  },
+  "rightResult": {
+    "item": "locksmith:key"
+  },
+  "group": "key"
+}

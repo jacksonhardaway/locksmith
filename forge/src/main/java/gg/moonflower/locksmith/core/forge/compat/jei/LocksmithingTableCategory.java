@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public class LocksmithingTableCategory implements IRecipeCategory<LocksmithingTableRecipe> {
+public class LocksmithingTableCategory implements IRecipeCategory<LocksmithingJeiRecipe> {
 
     private final IDrawable background;
     private final IDrawable icon;
@@ -31,8 +31,8 @@ public class LocksmithingTableCategory implements IRecipeCategory<LocksmithingTa
     }
 
     @Override
-    public Class<? extends LocksmithingTableRecipe> getRecipeClass() {
-        return LocksmithingTableRecipe.class;
+    public Class<? extends LocksmithingJeiRecipe> getRecipeClass() {
+        return LocksmithingJeiRecipe.class;
     }
 
     @Override
@@ -51,13 +51,13 @@ public class LocksmithingTableCategory implements IRecipeCategory<LocksmithingTa
     }
 
     @Override
-    public void setIngredients(LocksmithingTableRecipe recipe, IIngredients ingredients) {
+    public void setIngredients(LocksmithingJeiRecipe recipe, IIngredients ingredients) {
         ingredients.setInputLists(VanillaTypes.ITEM, recipe.getInputs());
         ingredients.setOutputLists(VanillaTypes.ITEM, recipe.getOutputs());
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, LocksmithingTableRecipe recipe, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, LocksmithingJeiRecipe recipe, IIngredients ingredients) {
         IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
 
         guiItemStacks.init(0, true, 0, 0);

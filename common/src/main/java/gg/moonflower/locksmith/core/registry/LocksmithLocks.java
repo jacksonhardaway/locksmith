@@ -1,8 +1,8 @@
 package gg.moonflower.locksmith.core.registry;
 
 import gg.moonflower.locksmith.api.lock.LockType;
-import gg.moonflower.locksmith.api.lock.types.KeyLock;
-import gg.moonflower.locksmith.api.lock.types.LockButtonLock;
+import gg.moonflower.locksmith.common.lock.types.KeyLock;
+import gg.moonflower.locksmith.common.lock.types.LockButtonLock;
 import gg.moonflower.locksmith.core.Locksmith;
 import gg.moonflower.pollen.api.registry.PollinatedRegistry;
 import net.minecraft.resources.ResourceLocation;

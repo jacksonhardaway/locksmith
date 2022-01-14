@@ -1,6 +1,6 @@
 package gg.moonflower.locksmith.common.item;
 
-import gg.moonflower.locksmith.api.lock.types.KeyLock;
+import gg.moonflower.locksmith.common.lock.types.KeyLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.core.registry.LocksmithParticles;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class LockItem extends Item {
+
     public LockItem(Properties properties) {
         super(properties);
     }

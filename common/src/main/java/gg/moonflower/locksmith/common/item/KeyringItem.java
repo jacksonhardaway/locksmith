@@ -1,5 +1,6 @@
 package gg.moonflower.locksmith.common.item;
 
+import gg.moonflower.locksmith.api.key.Key;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.common.lock.LockManager;
 import gg.moonflower.locksmith.common.menu.KeyringMenu;
@@ -36,12 +37,20 @@ import net.minecraft.world.level.Level;
 
 import java.util.*;
 
-public class KeyringItem extends Item {
+public class KeyringItem extends Item implements Key {
 
     public static final int MAX_KEYS = 4;
 
     public KeyringItem(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public boolean matchesLock(UUID id, ItemStack stack) {
+        for (ItemStack key : getKeys(stack))
+            if (id.equals(KeyItem.getLockId(key)))
+                return true;
+        return false;
     }
 
     @Override
