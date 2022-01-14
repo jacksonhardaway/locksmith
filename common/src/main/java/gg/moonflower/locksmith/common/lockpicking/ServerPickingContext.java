@@ -53,6 +53,7 @@ public class ServerPickingContext extends LockPickingContext {
         this.game = new Game(2, random);
         this.state = GameState.RUNNING;
         this.stop = 0;
+        this.setPickDamage(pickStack.getDamageValue());
     }
 
     @Override
@@ -84,6 +85,7 @@ public class ServerPickingContext extends LockPickingContext {
             LocksmithMessages.PLAY.sendTo(this.player, new ClientboundLockPickingPacket(ClientboundLockPickingPacket.Type.FAIL));
             contextPlayer.broadcastBreakEvent(this.pickHand);
         });
+        this.setPickDamage(this.pickStack.isEmpty() ? 2 : this.pickStack.getDamageValue());
         this.player.inventoryMenu.broadcastChanges();
         super.reset();
         LocksmithMessages.PLAY.sendTo(this.player, new ClientboundLockPickingPacket(ClientboundLockPickingPacket.Type.RESET));
@@ -103,6 +105,7 @@ public class ServerPickingContext extends LockPickingContext {
         }
 
         this.pickStack.hurtAndBreak(1, this.player, contextPlayer -> contextPlayer.broadcastBreakEvent(this.pickHand));
+        this.setPickDamage(this.pickStack.isEmpty() ? 2 : this.pickStack.getDamageValue());
         LocksmithMessages.PLAY.sendTo(this.player, new ClientboundLockPickingPacket(ClientboundLockPickingPacket.Type.FAIL));
     }
 
