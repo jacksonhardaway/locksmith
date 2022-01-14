@@ -4,7 +4,10 @@ import com.mojang.datafixers.util.Pair;
 import gg.moonflower.locksmith.common.item.KeyItem;
 import gg.moonflower.locksmith.common.recipe.LocksmithingRecipe;
 import gg.moonflower.locksmith.core.Locksmith;
-import gg.moonflower.locksmith.core.registry.*;
+import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
+import gg.moonflower.locksmith.core.registry.LocksmithMenus;
+import gg.moonflower.locksmith.core.registry.LocksmithRecipes;
+import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import gg.moonflower.pollen.api.util.QuickMoveHelper;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +17,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -51,7 +53,7 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
         this.keyInputSlot = this.addSlot(new Slot(this.craftSlots, 0, 21, 17) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return stack.getItem() == LocksmithItems.KEY.get() || stack.getItem() == LocksmithItems.BLANK_KEY.get();
+                return KeyItem.isKey(stack) || KeyItem.isBlankKey(stack);
             }
 
             @Override
@@ -103,8 +105,14 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
         super.slotsChanged(inventory);
 
         LocksmithingTableMenu.this.partialTake = LocksmithingTableMenu.this.resultSlots.getItem(0).isEmpty() ^ LocksmithingTableMenu.this.resultSlots.getItem(1).isEmpty();
-//        if (inventory == this.craftSlots)
-        this.createResult();
+        if (this.resultSlots.getRecipeUsed() != null && ((LocksmithingRecipe) this.resultSlots.getRecipeUsed()).getSecondResultItem().isEmpty())
+            LocksmithingTableMenu.this.partialTake = false;
+        if (inventory == this.craftSlots)
+            this.createResult();
+    }
+
+    public CraftingContainer getCraftSlots() {
+        return craftSlots;
     }
 
     protected static void slotChangedCraftingGrid(int containerId, Level level, Player player, CraftingContainer container, LocksmithResultContainer resultContainer) {
@@ -132,75 +140,22 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
         if (this.partialTake)
             return;
 
+        if (this.pendingTake && !this.resultSlots.isEmpty())
+            return;
+
         this.resultSlots.setItem(0, ItemStack.EMPTY);
         this.resultSlots.setItem(1, ItemStack.EMPTY);
-//        if (!this.isValid())
-//            return;
 
         this.pendingTake = false;
         this.access.execute((level, blockPos) -> slotChangedCraftingGrid(this.containerId, level, this.player, this.craftSlots, this.resultSlots));
-
-
-//        ItemStack keyStack = this.keyInputSlot.getItem();
-//        ItemStack inputStack = this.inputSlot.getItem();
-//        boolean blank = keyStack.getItem() == LocksmithItems.BLANK_KEY.get();
-//
-//        ItemStack result;
-//        if (inputStack.getItem() == LocksmithItems.BLANK_LOCK.get()) {
-//            result = new ItemStack(LocksmithItems.LOCK.get());
-//        } else if (inputStack.getItem() == LocksmithItems.BLANK_KEY.get()) {
-//            result = new ItemStack(LocksmithItems.KEY.get());
-//        } else if (inputStack.getItem() == LocksmithItems.BLANK_LOCK_BUTTON.get()) {
-//            result = new ItemStack(LocksmithBlocks.LOCK_BUTTON.get());
-//        } else return;
-//
-//        if (inputStack.hasCustomHoverName())
-//            result.setHoverName(keyStack.getHoverName());
-//
-//        if (blank && (inputStack.getItem() == LocksmithItems.BLANK_LOCK.get() || inputStack.getItem() == LocksmithItems.BLANK_LOCK_BUTTON.get())) {
-//            UUID id = UUID.randomUUID();
-//
-//            ItemStack newKey = new ItemStack(LocksmithItems.KEY.get());
-//            if (keyStack.hasCustomHoverName())
-//                newKey.setHoverName(keyStack.getHoverName());
-//            KeyItem.setOriginal(newKey, true);
-//            KeyItem.setLockId(newKey, id);
-//            KeyItem.setLockId(result, id);
-//
-//            this.resultSlots.setItem(0, newKey);
-//            this.resultSlots.setItem(1, result);
-//        } else if (!blank && this.isValidInputItem(inputStack)) {
-//            UUID id = KeyItem.getLockId(keyStack);
-//            if (id == null)
-//                return;
-//
-//            KeyItem.setLockId(result, id);
-//            this.resultSlots.setItem(0, keyStack.copy());
-//            this.resultSlots.setItem(1, result);
-//        }
     }
 
-    private boolean isValid() {
-        if (!this.keyInputSlot.hasItem() && !this.inputSlot.hasItem())
-            return false;
+    class LocksmithingResultSlot extends Slot {
 
-        Item key = this.keyInputSlot.getItem().getItem();
-        if (key != LocksmithItems.KEY.get() && key != LocksmithItems.BLANK_KEY.get())
-            return false;
-        if (!this.isValidInputItem(this.inputSlot.getItem()))
-            return false;
-
-        return key != LocksmithItems.KEY.get() || (KeyItem.isOriginal(this.keyInputSlot.getItem()) && KeyItem.getLockId(this.keyInputSlot.getItem()) != null);
-    }
-
-    private boolean isValidInputItem(ItemStack stack) {
-        return stack.getItem() == LocksmithItems.BLANK_LOCK.get() || stack.getItem() == LocksmithItems.BLANK_KEY.get() || stack.getItem() == LocksmithItems.BLANK_LOCK_BUTTON.get();
-    }
-
-    class LocksmithingResultSlot extends ResultSlot {
+        private int removeCount;
 
         public LocksmithingResultSlot(int index, int x, int y) {
-            super(LocksmithingTableMenu.this.player, LocksmithingTableMenu.this.craftSlots, LocksmithingTableMenu.this.resultSlots, index, x, y);
+            super(LocksmithingTableMenu.this.resultSlots, index, x, y);
         }
 
         @Override
@@ -209,15 +164,31 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public ItemStack onTake(Player player, ItemStack stack) {
-            if (LocksmithingTableMenu.this.pendingTake)
-                return super.onTake(player, stack);
+        public ItemStack remove(int amount) {
+            if (this.hasItem())
+                this.removeCount += Math.min(amount, this.getItem().getCount());
 
-            if (!LocksmithingTableMenu.this.keyInputSlot.getItem().isEmpty() && !LocksmithingTableMenu.this.inputSlot.getItem().isEmpty())
+            return super.remove(amount);
+        }
+
+        @Override
+        public ItemStack onTake(Player player, ItemStack stack) {
+            if (LocksmithingTableMenu.this.pendingTake) {
+                if (LocksmithingTableMenu.this.resultSlots.isEmpty()) {
+                    this.setChanged();
+                    LocksmithingTableMenu.this.pendingTake = false;
+                    if (!player.level.isClientSide())
+                        LocksmithingTableMenu.this.slotsChanged(LocksmithingTableMenu.this.craftSlots);
+                }
+                return stack;
+            }
+
+            if (LocksmithingTableMenu.this.resultSlots.getItem(0).isEmpty() ^ LocksmithingTableMenu.this.resultSlots.getItem(1).isEmpty())
                 LocksmithingTableMenu.this.pendingTake = true;
             LocksmithingTableMenu.this.keyInputSlot.remove(1);
             LocksmithingTableMenu.this.inputSlot.remove(1);
 
+            this.checkTakeAchievements(stack);
             super.onTake(player, stack);
 
             LocksmithingTableMenu.this.access.execute((level, pos) -> {
@@ -228,6 +199,23 @@ public class LocksmithingTableMenu extends AbstractContainerMenu {
                 }
             });
             return stack;
+        }
+
+        @Override
+        protected void onQuickCraft(ItemStack stack, int amount) {
+            this.removeCount += amount;
+            this.checkTakeAchievements(stack);
+        }
+
+        @Override
+        protected void checkTakeAchievements(ItemStack stack) {
+            if (this.removeCount > 0)
+                stack.onCraftedBy(LocksmithingTableMenu.this.player.level, LocksmithingTableMenu.this.player, this.removeCount);
+
+            if (this.container instanceof RecipeHolder)
+                ((RecipeHolder) this.container).awardUsedRecipes(LocksmithingTableMenu.this.player);
+
+            this.removeCount = 0;
         }
     }
 }

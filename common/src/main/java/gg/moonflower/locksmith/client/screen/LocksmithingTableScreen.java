@@ -5,10 +5,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.locksmith.common.item.KeyItem;
 import gg.moonflower.locksmith.common.menu.LocksmithingTableMenu;
 import gg.moonflower.locksmith.core.Locksmith;
-import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
-import gg.moonflower.locksmith.core.registry.LocksmithItems;
+import gg.moonflower.locksmith.core.registry.LocksmithRecipes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -18,7 +18,6 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Collections;
@@ -44,13 +43,10 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
             .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_key"))
             .append("\n")
             .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_key.tooltip").withStyle(ChatFormatting.GRAY));
-    private static final Component INVALID_BLANK_KEY = new TextComponent("")
-            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_blank_key"))
-            .append("\n")
-            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_blank_key.tooltip").withStyle(ChatFormatting.GRAY));
 
     private ItemStack keyStack = ItemStack.EMPTY;
     private ItemStack inputStack = ItemStack.EMPTY;
+    private boolean validRecipe;
 
     public LocksmithingTableScreen(LocksmithingTableMenu menu, Inventory inventory, Component name) {
         super(menu, inventory, name);
@@ -71,6 +67,10 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
 
     @Override
     public void slotChanged(AbstractContainerMenu container, int slot, ItemStack stack) {
+        ClientPacketListener connection = this.minecraft.getConnection();
+        if (connection != null && minecraft.level != null)
+            this.validRecipe = connection.getRecipeManager().getRecipeFor(LocksmithRecipes.LOCKSMITHING_TYPE.get(), this.menu.getCraftSlots(), this.minecraft.level).isPresent();
+
         switch (slot) {
             case 0:
                 this.keyStack = stack;
@@ -113,15 +113,13 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
     }
 
     public List<? extends FormattedCharSequence> getFailureTooltip() {
-        if (this.keyStack.isEmpty() && this.inputStack.isEmpty())
+        if (this.validRecipe || (this.keyStack.isEmpty() && this.inputStack.isEmpty()))
             return Collections.emptyList();
 
-        Item key = this.keyStack.getItem();
-        Item input = this.inputStack.getItem();
-        if (key != LocksmithItems.KEY.get() && key != LocksmithItems.BLANK_KEY.get())
+        if (!KeyItem.isKey(this.keyStack) && !KeyItem.isBlankKey(this.keyStack))
             return this.font.split(MISSING_KEY, 200);
 
-        if (key == LocksmithItems.KEY.get()) {
+        if (KeyItem.isKey(this.keyStack)) {
             if (KeyItem.getLockId(this.keyStack) == null) {
                 return this.font.split(INVALID_KEY, 200);
             } else if (!KeyItem.isOriginal(this.keyStack)) {
@@ -129,12 +127,6 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
             }
         }
 
-        if (input != LocksmithItems.BLANK_KEY.get() && input != LocksmithItems.BLANK_LOCK.get() && input != LocksmithItems.BLANK_LOCK_BUTTON.get())
-            return this.font.split(MISSING_INPUT, 200);
-
-        if (key == LocksmithItems.BLANK_KEY.get() && input == LocksmithItems.BLANK_KEY.get())
-            return this.font.split(INVALID_BLANK_KEY, 200);
-
-        return Collections.emptyList();
+        return this.font.split(MISSING_INPUT, 200);
     }
 }
