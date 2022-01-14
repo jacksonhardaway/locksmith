@@ -29,11 +29,11 @@ public abstract class GrindstoneMenuMixin {
     @Nullable
     private static ItemStack getResult(ItemStack stack) {
         if (stack.getItem() == LocksmithItems.LOCK.get()) {
-            return new ItemStack(LocksmithItems.BLANK_LOCK.get());
+            return new ItemStack(LocksmithItems.BLANK_LOCK.get(), stack.getCount());
         } else if (stack.getItem() == LocksmithItems.KEY.get()) {
-            return new ItemStack(LocksmithItems.BLANK_KEY.get());
+            return new ItemStack(LocksmithItems.BLANK_KEY.get(), stack.getCount());
         } else if (stack.getItem() == LocksmithBlocks.LOCK_BUTTON.get().asItem()) {
-            return new ItemStack(LocksmithItems.BLANK_LOCK_BUTTON.get());
+            return new ItemStack(LocksmithItems.BLANK_LOCK_BUTTON.get(), stack.getCount());
         }
         return null;
     }
