@@ -1,0 +1,11 @@
+{
+  "type": "pollen:grindstone",
+  "ingredients": [
+    {
+      "item": "locksmith:lock"
+    }
+  ],
+  "result": {
+    "item": "locksmith:blank_lock"
+  }
+}

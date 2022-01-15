@@ -11,9 +11,7 @@
     "BaseContainerBlockEntityMixin",
     "BlockStateBaseMixin",
     "ChestBlockMixin$DoubleBlockCombinerMixin",
-    "ChestBlockMixin$MenuProviderMixin",
-    "GrindstoneMenuMixin",
-    "GrindstoneMenuSlotMixin"
+    "ChestBlockMixin$MenuProviderMixin"
   ],
   "injectors": {
     "defaultRequire": 1
