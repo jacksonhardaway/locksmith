@@ -9,14 +9,9 @@
     "c": {
       "item": "minecraft:iron_ingot"
     },
-    "I": [
-      {
-        "item": "locksmith:blank_lock"
-      },
-      {
-        "item": "locksmith:lock"
-      }
-    ]
+    "I": {
+      "item": "locksmith:blank_lock"
+    }
   },
   "result": {
     "item": "locksmith:blank_lock_button",
