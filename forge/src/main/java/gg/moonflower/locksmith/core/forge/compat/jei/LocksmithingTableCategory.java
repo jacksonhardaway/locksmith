@@ -22,7 +22,7 @@ public class LocksmithingTableCategory implements IRecipeCategory<LocksmithingJe
 
     public LocksmithingTableCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.drawableBuilder(LocksmithingTableScreen.LOCKSMITHING_LOCATION, 20, 16, 136, 55).build();
-        this.icon = guiHelper.createDrawableIngredient(new ItemStack(LocksmithBlocks.LOCKSMITHING_TABLE.get()));
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(LocksmithBlocks.LOCKSMITHING_TABLE.get()));
     }
 
     @Override

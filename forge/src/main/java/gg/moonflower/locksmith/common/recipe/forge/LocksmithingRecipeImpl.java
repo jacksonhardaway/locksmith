@@ -30,8 +30,8 @@ public class LocksmithingRecipeImpl extends ForgeRegistryEntry<RecipeSerializer<
         if (singleResult && (json.has("leftResult") || json.has("rightResult")))
             throw new JsonSyntaxException("'result' is not compatible with either 'leftResult' or 'rightResult'");
 
-        ItemStack leftResult = ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, singleResult ? "result" : "leftResult"));
-        ItemStack rightResult = singleResult ? ItemStack.EMPTY : ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "rightResult"));
+        ItemStack leftResult = new ItemStack(ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, singleResult ? "result" : "leftResult")));
+        ItemStack rightResult = singleResult ? ItemStack.EMPTY : new ItemStack(ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "rightResult")));
         return new LocksmithingRecipe(recipeId, group, topInput, bottomInput, leftResult, rightResult);
     }
 
