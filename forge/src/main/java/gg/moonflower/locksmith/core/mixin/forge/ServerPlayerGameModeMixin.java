@@ -18,7 +18,7 @@ public class ServerPlayerGameModeMixin {
     @Shadow
     public ServerLevel level;
 
-    @Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT, remap = false)
+    @Inject(method = "destroyBlock(Lnet/minecraft/core/BlockPos;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
     public void destroyBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state) {
         LockInteractionManager.onBreakBlock(this.level, pos, state);
     }
