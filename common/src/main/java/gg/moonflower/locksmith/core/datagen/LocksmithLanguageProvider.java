@@ -19,6 +19,7 @@ public class LocksmithLanguageProvider extends PollinatedLanguageProvider {
         this.addItem(LocksmithItems.BLANK_KEY, "Blank Key");
         this.addItem(LocksmithItems.BLANK_LOCK_BUTTON, "Blank Lock Button");
         this.addItem(LocksmithItems.LOCK, "Lock");
+        this.add(LocksmithItems.LOCK.get().getDescriptionId() + ".key", "%s");
         this.addItem(LocksmithItems.KEY, "Key");
         this.add(LocksmithItems.KEY.get().getDescriptionId() + ".original", "Original");
         this.add(LocksmithItems.KEY.get().getDescriptionId() + ".copy", "Copy");

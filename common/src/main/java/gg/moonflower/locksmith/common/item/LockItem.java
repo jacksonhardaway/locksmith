@@ -1,14 +1,18 @@
 package gg.moonflower.locksmith.common.item;
 
-import gg.moonflower.locksmith.common.lock.types.KeyLock;
+import com.google.gson.JsonParseException;
 import gg.moonflower.locksmith.api.lock.LockManager;
+import gg.moonflower.locksmith.common.lock.types.KeyLock;
 import gg.moonflower.locksmith.core.registry.LocksmithParticles;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import gg.moonflower.locksmith.core.registry.LocksmithTags;
+import gg.moonflower.pollen.api.util.NbtConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -24,6 +28,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class LockItem extends Item {
@@ -71,6 +76,7 @@ public class LockItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+        getKeyName(stack).ifPresent(name -> tooltipComponents.add(new TranslatableComponent(this.getDescriptionId(stack) + ".key", name.copy().withStyle(ChatFormatting.GRAY))));
         if (isAdvanced.isAdvanced()) {
             UUID id = KeyItem.getLockId(stack);
             if (id == null)
@@ -78,5 +84,37 @@ public class LockItem extends Item {
 
             tooltipComponents.add(new TextComponent("Lock Id: " + id).withStyle(ChatFormatting.DARK_GRAY));
         }
+    }
+
+    public static Optional<Component> getKeyName(ItemStack stack) {
+        if (!(stack.getItem() instanceof LockItem))
+            return Optional.empty();
+        CompoundTag nbt = stack.getTag();
+        if (nbt == null || !nbt.contains("KeyName", NbtConstants.STRING))
+            return Optional.empty();
+
+        try {
+            Component component = Component.Serializer.fromJson(nbt.getString("KeyName"));
+            if (component != null)
+                return Optional.of(component);
+
+            nbt.remove("KeyName");
+        } catch (JsonParseException e) {
+            nbt.remove("KeyName");
+        }
+
+        return Optional.empty();
+    }
+
+    public static void setKeyName(ItemStack stack, @Nullable Component name) {
+        if (!(stack.getItem() instanceof LockItem))
+            return;
+
+        if (name == null) {
+            stack.removeTagKey("KeyName");
+            return;
+        }
+
+        stack.getOrCreateTag().putString("KeyName", Component.Serializer.toJson(name));
     }
 }

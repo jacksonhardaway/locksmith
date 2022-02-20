@@ -2,10 +2,12 @@ package gg.moonflower.locksmith.common.recipe;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.locksmith.common.item.KeyItem;
+import gg.moonflower.locksmith.common.item.LockItem;
 import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithRecipes;
 import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -47,7 +49,7 @@ public class LocksmithingRecipe implements Recipe<Container> {
 
         if (!this.topInput.test(topInput) || !this.bottomInput.test(bottomInput))
             return false;
-        if (KeyItem.isKey(topInput) && !KeyItem.isOriginal(topInput))
+        if (KeyItem.isKey(topInput) && KeyItem.isKey(bottomInput) && !KeyItem.isOriginal(topInput)) // two keys cannot be used for crafting if the top is not original
             return false;
 
         return (!KeyItem.canHaveLock(topInput) || KeyItem.hasLockId(topInput)) && (!KeyItem.canHaveLock(bottomInput) || KeyItem.hasLockId(bottomInput));
@@ -63,8 +65,11 @@ public class LocksmithingRecipe implements Recipe<Container> {
 
         if (topInput.hasCustomHoverName())
             leftResult.setHoverName(topInput.getHoverName());
-        if (bottomInput.hasCustomHoverName())
+        if (bottomInput.hasCustomHoverName()) {
             rightResult.setHoverName(bottomInput.getHoverName());
+        } else if (topInput.hasCustomHoverName() && (KeyItem.isKey(topInput) || KeyItem.isBlankKey(topInput)) && (KeyItem.isKey(bottomInput) || KeyItem.isBlankKey(bottomInput))) {
+            rightResult.setHoverName(topInput.getHoverName());
+        }
 
         if (KeyItem.isKey(topInput) || KeyItem.isBlankKey(topInput)) {
             UUID lockId = KeyItem.hasLockId(topInput) ? KeyItem.getLockId(topInput) : UUID.randomUUID();
@@ -72,7 +77,15 @@ public class LocksmithingRecipe implements Recipe<Container> {
                 KeyItem.setLockId(leftResult, lockId);
             if (KeyItem.canHaveLock(rightResult))
                 KeyItem.setLockId(rightResult, lockId);
-            KeyItem.setOriginal(leftResult, true);
+
+            if (KeyItem.isOriginal(topInput) || KeyItem.isBlankKey(topInput))
+                KeyItem.setOriginal(leftResult, true);
+
+            if (topInput.hasCustomHoverName()) {
+                Component name = topInput.getHoverName();
+                LockItem.setKeyName(leftResult, name);
+                LockItem.setKeyName(rightResult, name);
+            }
         }
 
         this.rightAssembledResult = rightResult;

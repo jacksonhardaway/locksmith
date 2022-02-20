@@ -12,6 +12,7 @@
   "item.locksmith.key.original": "Original",
   "item.locksmith.keyring": "Keyring",
   "item.locksmith.lock": "Lock",
+  "item.locksmith.lock.key": "%s",
   "item.locksmith.lockpick": "Lockpick",
   "lock.locksmith.locked": "It's locked.",
   "screen.locksmith.locksmithing_table.invalid_key": "Invalid Key",
