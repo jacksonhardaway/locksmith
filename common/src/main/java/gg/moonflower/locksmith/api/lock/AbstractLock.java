@@ -1,6 +1,7 @@
 package gg.moonflower.locksmith.api.lock;
 
 import com.mojang.serialization.Codec;
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import gg.moonflower.locksmith.core.registry.LocksmithParticles;
 import net.minecraft.core.BlockPos;
@@ -8,11 +9,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 
 import java.util.UUID;
@@ -22,14 +24,15 @@ import java.util.UUID;
  * @since 1.0.0
  */
 public abstract class AbstractLock {
+
     public static final Codec<AbstractLock> CODEC = LocksmithLocks.LOCKS.dispatch(AbstractLock::getType, LockType::codec);
 
     private final LockType type;
     private final UUID id;
-    private final BlockPos pos;
+    private final LockPosition pos;
     private final ItemStack stack;
 
-    public AbstractLock(LockType type, UUID id, BlockPos pos, ItemStack stack) {
+    public AbstractLock(LockType type, UUID id, LockPosition pos, ItemStack stack) {
         this.type = type;
         this.id = id;
         this.pos = pos;
@@ -46,7 +49,7 @@ public abstract class AbstractLock {
     /**
      * @return The position of the lock.
      */
-    public BlockPos getPos() {
+    public LockPosition getPos() {
         return pos;
     }
 
@@ -82,6 +85,22 @@ public abstract class AbstractLock {
     }
 
     /**
+     * Only called on the server when a lock is removed from the world.
+     *
+     * @param entity The entity the lock is removed from
+     */
+    public void onRemove(Entity entity) {
+        double d1 = Math.min(1.0, entity.getBbWidth());
+        double d2 = Math.min(1.0, entity.getBbHeight());
+        double d3 = Math.min(1.0, entity.getBbWidth());
+        int i = Math.max(2, Mth.ceil(d1 / 0.4));
+        int j = Math.max(2, Mth.ceil(d2 / 0.4));
+        int k = Math.max(2, Mth.ceil(d3 / 0.4));
+
+        ((ServerLevel) entity.level).sendParticles(LocksmithParticles.LOCK_BREAK.get(), entity.getX(), entity.getY(0.5), entity.getZ(), i * j * k, entity.getBbWidth() / 4.0 + 0.0625, entity.getBbHeight() / 4.0 + 0.0625, entity.getBbWidth() / 4.0 + 0.0625, 0.0);
+    }
+
+    /**
      * Called when attempting to remove the lock.
      *
      * @param player The player removing the lock.
@@ -96,12 +115,12 @@ public abstract class AbstractLock {
      *
      * @param player    The player removing the lock.
      * @param level     The level of the lock.
-     * @param clickPos  The position the player clicked
+     * @param pos       The position the player clicked
      * @param pickStack The lock pick stack
      * @param hand      The hand the lock pick is in
      * @return Whether the lock can be removed by picking
      */
-    public abstract boolean pick(Player player, Level level, BlockPos clickPos, ItemStack pickStack, InteractionHand hand);
+    public abstract boolean pick(Player player, Level level, LockPosition pos, ItemStack pickStack, InteractionHand hand);
 
     /**
      * Checks if this lock can be unlocked by the player.
@@ -126,4 +145,18 @@ public abstract class AbstractLock {
      * @return Whether the left-click action should succeed.
      */
     public abstract boolean onLeftClick(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction);
+
+    /**
+     * Fires when a player right-clicks on a locked entity.
+     *
+     * @return Whether the right-click action should succeed.
+     */
+    public abstract boolean onRightClick(Player player, Level level, ItemStack stack, Entity hitResult);
+
+    /**
+     * Fires when a player left-clicks on a locked entity.
+     *
+     * @return Whether the left-click action should succeed.
+     */
+    public abstract boolean onLeftClick(Player player, Level level, InteractionHand hand, Entity entity);
 }

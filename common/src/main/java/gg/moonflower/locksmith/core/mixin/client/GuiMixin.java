@@ -3,6 +3,7 @@ package gg.moonflower.locksmith.core.mixin.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.core.Locksmith;
 import net.minecraft.client.AttackIndicatorStatus;
 import net.minecraft.client.Minecraft;
@@ -44,7 +45,7 @@ public class GuiMixin extends GuiComponent {
             return;
 
         BlockHitResult blockHit = (BlockHitResult) hit;
-        AbstractLock lock = LockManager.getLock(level, blockHit.getBlockPos());
+        AbstractLock lock = LockManager.get(level).getLock(LockPosition.of(blockHit.getBlockPos()));
         if (lock == null)
             return;
 

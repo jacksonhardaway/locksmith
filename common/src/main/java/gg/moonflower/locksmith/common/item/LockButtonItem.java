@@ -1,5 +1,6 @@
 package gg.moonflower.locksmith.common.item;
 
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.common.lock.types.LockButtonLock;
 import gg.moonflower.locksmith.api.lock.LockManager;
 import net.minecraft.core.BlockPos;
@@ -31,7 +32,7 @@ public class LockButtonItem extends BlockItem {
         if (id != null) {
             ItemStack newStack = stack.copy();
             newStack.setCount(1);
-            LockManager.get(level).addLock(new LockButtonLock(id, pos, newStack));
+            LockManager.get(level).addLock(new LockButtonLock(id, LockPosition.of(pos), newStack));
         }
         return super.updateCustomBlockEntityTag(pos, level, player, stack, state);
     }

@@ -13,18 +13,15 @@ import java.util.HashSet;
 
 public class ClientboundAddLocksPacket implements PollinatedPacket<LocksmithClientPlayPacketHandler> {
 
-    private final ChunkPos chunk;
     private final Collection<AbstractLock> locks;
     private final boolean replace;
 
-    public ClientboundAddLocksPacket(ChunkPos chunk, Collection<AbstractLock> locks, boolean replace) {
-        this.chunk = chunk;
+    public ClientboundAddLocksPacket(Collection<AbstractLock> locks, boolean replace) {
         this.locks = locks;
         this.replace = replace;
     }
 
     public ClientboundAddLocksPacket(FriendlyByteBuf buf) throws IOException {
-        this.chunk = new ChunkPos(buf.readLong());
         int size = buf.readVarInt();
         this.locks = new HashSet<>();
         for (int i = 0; i < size; i++)
@@ -34,7 +31,6 @@ public class ClientboundAddLocksPacket implements PollinatedPacket<LocksmithClie
 
     @Override
     public void writePacketData(FriendlyByteBuf buf) throws IOException {
-        buf.writeLong(this.chunk.toLong());
         buf.writeVarInt(this.locks.size());
         for (AbstractLock lock : this.locks)
             buf.writeWithCodec(AbstractLock.CODEC, lock);
@@ -44,10 +40,6 @@ public class ClientboundAddLocksPacket implements PollinatedPacket<LocksmithClie
     @Override
     public void processPacket(LocksmithClientPlayPacketHandler handler, PollinatedPacketContext ctx) {
         handler.handleAddLocks(this, ctx);
-    }
-
-    public ChunkPos getChunk() {
-        return chunk;
     }
 
     public Collection<AbstractLock> getLocks() {

@@ -2,6 +2,7 @@ package gg.moonflower.locksmith.common.lock.types;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.common.block.LockButtonBlock;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import net.minecraft.core.BlockPos;
@@ -17,11 +18,11 @@ public class LockButtonLock extends KeyLock {
 
     public static final Codec<LockButtonLock> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             SerializableUUID.CODEC.fieldOf("id").forGetter(LockButtonLock::getId),
-            BlockPos.CODEC.fieldOf("pos").forGetter(LockButtonLock::getPos),
+            LockPosition.CODEC.fieldOf("pos").forGetter(LockButtonLock::getPos),
             ItemStack.CODEC.fieldOf("stack").forGetter(LockButtonLock::getStack)
     ).apply(instance, LockButtonLock::new));
 
-    public LockButtonLock(UUID id, BlockPos pos, ItemStack stack) {
+    public LockButtonLock(UUID id, LockPosition pos, ItemStack stack) {
         super(LocksmithLocks.LOCK_BUTTON.get(), id, pos, stack);
     }
 

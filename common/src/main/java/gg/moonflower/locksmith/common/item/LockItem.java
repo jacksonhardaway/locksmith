@@ -2,6 +2,7 @@ package gg.moonflower.locksmith.common.item;
 
 import com.google.gson.JsonParseException;
 import gg.moonflower.locksmith.api.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.common.lock.types.KeyLock;
 import gg.moonflower.locksmith.core.registry.LocksmithParticles;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
@@ -43,7 +44,7 @@ public class LockItem extends Item {
         UUID lockId = KeyItem.getLockId(stack);
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
-        if (LockManager.getLock(level, pos) != null || lockId == null || !level.getBlockState(pos).is(LocksmithTags.LOCKABLE))
+        if (LockManager.get(level).getLock(LockPosition.of(pos)) != null || lockId == null || !level.getBlockState(pos).is(LocksmithTags.LOCKABLE_BLOCKS))
             return InteractionResult.PASS;
 
         if (level.isClientSide())
@@ -51,7 +52,7 @@ public class LockItem extends Item {
 
         ItemStack lockStack = stack.copy();
         lockStack.setCount(1);
-        LockManager.get(level).addLock(new KeyLock(lockId, pos, lockStack));
+        LockManager.get(level).addLock(new KeyLock(lockId, LockPosition.of(pos), lockStack));
         level.playSound(null, pos, LocksmithSounds.ITEM_LOCK_PLACE.get(), SoundSource.BLOCKS, 0.75F, 1.0F);
 
         level.getBlockState(pos).getVisualShape(level, pos, CollisionContext.empty()).forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {

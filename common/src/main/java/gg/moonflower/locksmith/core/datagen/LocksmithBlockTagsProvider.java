@@ -15,7 +15,7 @@ public class LocksmithBlockTagsProvider extends PollinatedBlockTagsProvider {
 
     @Override
     protected void addTags() {
-        this.tag(LocksmithTags.LOCKABLE).
+        this.tag(LocksmithTags.LOCKABLE_BLOCKS).
                 addTag(BlockTags.WOODEN_DOORS, BlockTags.WOODEN_TRAPDOORS, BlockTags.FENCE_GATES).
                 addOptionalTag(new ResourceLocation("c", "chest")).
                 addOptionalTag(new ResourceLocation("forge", "chests")).

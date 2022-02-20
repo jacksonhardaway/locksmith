@@ -1,5 +1,7 @@
 package gg.moonflower.locksmith.common.lockpicking;
 
+import gg.moonflower.locksmith.api.lock.position.EntityLockPosition;
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -64,8 +66,8 @@ public abstract class LockPickingContext {
         return new ClientPickingContext(containerId);
     }
 
-    public static LockPickingContext server(BlockPos pos, BlockPos clickPos, ServerPlayer player, ItemStack pickStack, InteractionHand pickHand) {
-        return new ServerPickingContext(ContainerLevelAccess.create(player.level, pos), clickPos, player, pickStack, pickHand);
+    public static LockPickingContext server(LockPosition pos, BlockPos clickPos, ServerPlayer player, ItemStack pickStack, InteractionHand pickHand) {
+        return pos instanceof EntityLockPosition ? new ServerEntityPickingContext(((EntityLockPosition) pos).getEntity(), player, pickStack, pickHand) : new ServerBlockPickingContext(ContainerLevelAccess.create(player.level, pos.blockPosition()), clickPos, player, pickStack, pickHand);
     }
 
     public enum GameState {

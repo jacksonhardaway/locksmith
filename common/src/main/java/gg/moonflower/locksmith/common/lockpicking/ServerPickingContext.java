@@ -1,18 +1,17 @@
 package gg.moonflower.locksmith.common.lockpicking;
 
-import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockPickingPacket;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import gg.moonflower.locksmith.core.registry.LocksmithStats;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,30 +21,27 @@ import java.util.stream.IntStream;
 /**
  * @author Ocelot
  */
-public class ServerPickingContext extends LockPickingContext {
+@ApiStatus.Internal
+public abstract class ServerPickingContext extends LockPickingContext {
 
     /**
      * The amount of time to wait before ending the minigame after failing.
      */
-    private static final int FAIL_WAIT_TIME = 10;
+    public static final int FAIL_WAIT_TIME = 10;
     /**
      * The amount of time there must be between setting a pin or else the game fails.
      */
-    private static final int FAIL_THRESHOLD = 10;
+    public static final int FAIL_THRESHOLD = 10;
 
-    private final ContainerLevelAccess access;
-    private final BlockPos clickPos;
-    private final ServerPlayer player;
-    private final ItemStack pickStack;
-    private final InteractionHand pickHand;
-    private final Game game;
-    private int lastSetTime;
-    private GameState state;
-    private int stop;
+    protected final ServerPlayer player;
+    protected final ItemStack pickStack;
+    protected final InteractionHand pickHand;
+    protected final Game game;
+    protected int lastSetTime;
+    protected GameState state;
+    protected int stop;
 
-    ServerPickingContext(ContainerLevelAccess access, BlockPos clickPos, ServerPlayer player, ItemStack pickStack, InteractionHand pickHand) {
-        this.access = access;
-        this.clickPos = clickPos;
+    protected ServerPickingContext(ServerPlayer player, ItemStack pickStack, InteractionHand pickHand) {
         this.player = player;
         this.pickStack = pickStack;
         this.pickHand = pickHand;
@@ -56,6 +52,10 @@ public class ServerPickingContext extends LockPickingContext {
         this.setPickDamage(pickStack.getDamageValue());
     }
 
+    protected abstract void playSound(SoundEvent sound);
+
+    protected abstract void removeLock();
+
     @Override
     public void pick(int pin) {
         if (this.getPinState(pin)) {
@@ -64,7 +64,7 @@ public class ServerPickingContext extends LockPickingContext {
         }
 
         if (this.game.shouldDrop(pin)) {
-            this.access.execute((level, pos) -> level.playSound(this.player, pos, LocksmithSounds.LOCK_PICKING_SET.get(), SoundSource.PLAYERS, 1.0F, 1.0F));
+            this.playSound(LocksmithSounds.LOCK_PICKING_SET.get());
             this.setPinState(pin, true);
             this.game.next(this);
             if (this.areAllPinsSet())
@@ -77,11 +77,11 @@ public class ServerPickingContext extends LockPickingContext {
     @Override
     public void reset() {
         this.game.reset();
-        this.access.execute((level, pos) -> level.playSound(this.player, pos, LocksmithSounds.LOCK_PICKING_PINS_DROP.get(), SoundSource.PLAYERS, 1.0F, 1.0F));
+        this.playSound(LocksmithSounds.LOCK_PICKING_PINS_DROP.get());
         this.pickStack.hurtAndBreak(1, this.player, contextPlayer -> {
             this.state = GameState.FAIL;
             this.stop = this.player.tickCount;
-            this.access.execute((level, pos) -> level.playSound(this.player, pos, LocksmithSounds.LOCK_PICKING_FAIL.get(), SoundSource.PLAYERS, 1.0F, 1.0F));
+            this.playSound(LocksmithSounds.LOCK_PICKING_FAIL.get());
             LocksmithMessages.PLAY.sendTo(this.player, new ClientboundLockPickingPacket(ClientboundLockPickingPacket.Type.FAIL));
             contextPlayer.broadcastBreakEvent(this.pickHand);
         });
@@ -95,12 +95,12 @@ public class ServerPickingContext extends LockPickingContext {
     public void stop(boolean success) {
         this.state = success ? GameState.SUCCESS : GameState.FAIL;
         this.stop = this.player.tickCount;
-        this.access.execute((level, pos) -> level.playSound(this.player, pos, success ? LocksmithSounds.LOCK_PICKING_SUCCESS.get() : LocksmithSounds.LOCK_PICKING_FAIL.get(), SoundSource.PLAYERS, 1.0F, 1.0F));
+        this.playSound(success ? LocksmithSounds.LOCK_PICKING_SUCCESS.get() : LocksmithSounds.LOCK_PICKING_FAIL.get());
 
         if (success) {
             LocksmithMessages.PLAY.sendTo(this.player, new ClientboundLockPickingPacket(ClientboundLockPickingPacket.Type.SUCCESS));
             this.player.awardStat(LocksmithStats.PICK_LOCK);
-            this.access.execute((level, pos) -> LockManager.get(level).removeLock(pos, this.clickPos, false));
+            this.removeLock();
             return;
         }
 
@@ -121,7 +121,7 @@ public class ServerPickingContext extends LockPickingContext {
         super.setPinState(pin, set);
 
         if (this.player.tickCount - this.lastSetTime < FAIL_THRESHOLD) {
-            this.access.execute((level, pos) -> level.playSound(null, pos, LocksmithSounds.LOCK_PICKING_OVERSET.get(), SoundSource.PLAYERS, 1.0F, 1.0F));
+            this.playSound(LocksmithSounds.LOCK_PICKING_OVERSET.get());
             this.stop(false);
             return;
         }
@@ -135,7 +135,7 @@ public class ServerPickingContext extends LockPickingContext {
         return this.player == player && (this.state == GameState.RUNNING || this.player.tickCount - this.stop < FAIL_WAIT_TIME);
     }
 
-    private static class Game {
+    public static class Game {
 
         private final int[] droppingPins;
         private int droppingIndex;
