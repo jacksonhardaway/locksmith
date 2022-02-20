@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IIN",
+    "  I",
+    "  I"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "locksmith:lockpick",
+    "count": 1
+  },
+  "fabric:load_conditions": [
+    {
+      "condition": "pollen:config",
+      "config": "locksmith:server",
+      "name": "Locks.Enable lockpick",
+      "value": true
+    }
+  ]
+}
