@@ -202,6 +202,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
         }
 
         this.entityLocks.load(nbt.getCompound("Entities"));
+        this.entityLocks.locks.values().stream().map(AbstractLock::getPos).filter(EntityLockPosition.class::isInstance).map(EntityLockPosition.class::cast).forEach(pos -> pos.setEntity(() -> this.level.getEntity(pos.getEntityId())));
     }
 
     @Override

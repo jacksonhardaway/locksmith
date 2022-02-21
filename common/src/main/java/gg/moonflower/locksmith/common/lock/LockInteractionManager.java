@@ -54,7 +54,7 @@ public class LockInteractionManager {
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
 
-        if (!lock.onRightClick(player, level, stack, hitResult) && (player.getOffhandItem().isEmpty() || hand == InteractionHand.OFF_HAND)) {
+        if (!lock.onRightClick(player, level, stack, hitResult) && (hand == InteractionHand.OFF_HAND || !lock.onRightClick(player, level, player.getOffhandItem(), hitResult))) {
             player.displayClientMessage(LOCKED, true);
             if (level.isClientSide()) {
                 player.playNotifySound(LocksmithSounds.ITEM_LOCK_LOCKED.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
