@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import gg.moonflower.locksmith.api.key.Key;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.LockType;
-import gg.moonflower.locksmith.common.item.KeyItem;
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.common.lockpicking.LockPickingContext;
 import gg.moonflower.locksmith.common.menu.LockpickingMenu;
 import gg.moonflower.locksmith.core.Locksmith;
@@ -20,6 +20,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -33,17 +34,17 @@ public class KeyLock extends AbstractLock {
 
     public static final Codec<KeyLock> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             SerializableUUID.CODEC.fieldOf("id").forGetter(KeyLock::getId),
-            BlockPos.CODEC.fieldOf("pos").forGetter(KeyLock::getPos),
+            LockPosition.CODEC.fieldOf("pos").forGetter(KeyLock::getPos),
             ItemStack.CODEC.fieldOf("stack").forGetter(KeyLock::getStack)
     ).apply(instance, KeyLock::new));
 
     private static final Component LOCK_PICKING = new TranslatableComponent("container." + Locksmith.MOD_ID + ".lock_picking");
 
-    public KeyLock(LockType type, UUID id, BlockPos pos, ItemStack stack) {
+    public KeyLock(LockType type, UUID id, LockPosition pos, ItemStack stack) {
         super(type, id, pos, stack);
     }
 
-    public KeyLock(UUID id, BlockPos pos, ItemStack stack) {
+    public KeyLock(UUID id, LockPosition pos, ItemStack stack) {
         this(LocksmithLocks.KEY.get(), id, pos, stack);
     }
 
@@ -58,7 +59,7 @@ public class KeyLock extends AbstractLock {
     }
 
     @Override
-    public boolean pick(Player player, Level level, BlockPos clickPos, ItemStack pickStack, InteractionHand hand) {
+    public boolean pick(Player player, Level level, LockPosition pos, ItemStack pickStack, InteractionHand hand) {
         if (pickStack.getItem() != LocksmithItems.LOCKPICK.get())
             return false;
 
@@ -71,7 +72,7 @@ public class KeyLock extends AbstractLock {
 
                 @Override
                 public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-                    return new LockpickingMenu(containerId, LockPickingContext.server(KeyLock.this.getPos(), clickPos, (ServerPlayer) player, pickStack, hand));
+                    return new LockpickingMenu(containerId, LockPickingContext.server(KeyLock.this.getPos(), pos.blockPosition(), (ServerPlayer) player, pickStack, hand));
                 }
             });
         }
@@ -91,5 +92,19 @@ public class KeyLock extends AbstractLock {
     @Override
     public boolean onLeftClick(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction) {
         return Locksmith.CONFIG.allowLocksToBeBroken.get();
+    }
+
+    @Override
+    public boolean onRightClick(Player player, Level level, ItemStack stack, Entity entity) {
+        if (this.canUnlock(player, level, stack)) {
+            player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onLeftClick(Player player, Level level, InteractionHand hand, Entity entity) {
+        return false;
     }
 }

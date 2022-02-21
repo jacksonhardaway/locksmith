@@ -1,6 +1,7 @@
 package gg.moonflower.locksmith.core.mixin;
 
 import gg.moonflower.locksmith.api.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -29,7 +30,7 @@ public abstract class BaseContainerBlockEntityMixin extends BlockEntity {
         if (this.name != null || this.getLevel() == null)
             return;
 
-        if (LockManager.get(this.getLevel()).getLock(this.getBlockPos()) == null)
+        if (LockManager.get(this.getLevel()).getLock(LockPosition.of(this.getBlockPos())) == null)
             return;
 
         cir.setReturnValue(new TranslatableComponent("container.locksmith.locked", cir.getReturnValue()));

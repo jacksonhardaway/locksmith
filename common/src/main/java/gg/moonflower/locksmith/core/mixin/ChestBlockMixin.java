@@ -2,6 +2,7 @@ package gg.moonflower.locksmith.core.mixin;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.core.extension.ChestBlockExtension;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -35,7 +36,7 @@ public class ChestBlockMixin {
             if (level == null)
                 return;
 
-            AbstractLock lock = LockManager.getLock(level, left.getBlockPos());
+            AbstractLock lock = LockManager.get(level).getLock(LockPosition.of(left.getBlockPos()));
             if (lock == null || left.hasCustomName() || right.hasCustomName())
                 return;
 

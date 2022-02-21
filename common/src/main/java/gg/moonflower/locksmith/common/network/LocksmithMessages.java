@@ -1,7 +1,7 @@
 package gg.moonflower.locksmith.common.network;
 
 import gg.moonflower.locksmith.common.network.play.ClientboundAddLocksPacket;
-import gg.moonflower.locksmith.common.network.play.ClientboundDeleteLockPacket;
+import gg.moonflower.locksmith.common.network.play.ClientboundDeleteLocksPacket;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockPickingPacket;
 import gg.moonflower.locksmith.common.network.play.handler.LocksmithClientPlayPacketHandlerImpl;
 import gg.moonflower.locksmith.core.Locksmith;
@@ -16,7 +16,7 @@ public class LocksmithMessages {
 
     public static void init() {
         PLAY.register(ClientboundAddLocksPacket.class, ClientboundAddLocksPacket::new, PollinatedPacketDirection.PLAY_CLIENTBOUND);
-        PLAY.register(ClientboundDeleteLockPacket.class, ClientboundDeleteLockPacket::new, PollinatedPacketDirection.PLAY_CLIENTBOUND);
+        PLAY.register(ClientboundDeleteLocksPacket.class, ClientboundDeleteLocksPacket::new, PollinatedPacketDirection.PLAY_CLIENTBOUND);
         PLAY.register(ClientboundLockPickingPacket.class, ClientboundLockPickingPacket::new, PollinatedPacketDirection.PLAY_CLIENTBOUND);
     }
 }

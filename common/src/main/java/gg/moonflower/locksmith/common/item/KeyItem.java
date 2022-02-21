@@ -5,6 +5,7 @@ import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.core.Locksmith;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.locksmith.api.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.core.registry.LocksmithTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -45,7 +46,7 @@ public class KeyItem extends Item implements Key {
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
         Level level = context.getLevel();
-        AbstractLock abstractLock = LockManager.getLock(level, pos);
+        AbstractLock abstractLock = LockManager.get(level).getLock(LockPosition.of(pos));
         if (player == null || abstractLock == null)
             return InteractionResult.PASS;
 
@@ -53,7 +54,7 @@ public class KeyItem extends Item implements Key {
             if (level.isClientSide())
                 return InteractionResult.SUCCESS;
 
-            LockManager.get(level).removeLock(abstractLock.getPos(), pos, true);
+            LockManager.get(level).removeLock(abstractLock.getPos().blockPosition(), pos, true);
             player.awardStat(Stats.ITEM_USED.get(this));
             return InteractionResult.CONSUME;
         }

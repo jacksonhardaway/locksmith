@@ -2,16 +2,21 @@ package gg.moonflower.locksmith.common.lock;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.position.BlockLockPosition;
+import gg.moonflower.locksmith.api.lock.position.EntityLockPosition;
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.common.network.play.ClientboundAddLocksPacket;
-import gg.moonflower.locksmith.common.network.play.ClientboundDeleteLockPacket;
+import gg.moonflower.locksmith.common.network.play.ClientboundDeleteLocksPacket;
 import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
+import gg.moonflower.pollen.api.util.NbtConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
@@ -24,20 +29,23 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public final class ServerLockManager extends SavedData implements LockManager {
+
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Map<ChunkPos, ChunkLockData> locks = new HashMap<>();
+    private final ChunkLockData entityLocks = new ChunkLockData();
     private final ServerLevel level;
 
     private ServerLockManager(ServerLevel level) {
         this.level = level;
     }
 
-    private ServerLockManager(ServerLevel level, CompoundTag tag) {
+    private ServerLockManager(ServerLevel level, CompoundTag nbt) {
         this(level);
-        ListTag chunks = tag.getList("Chunks", 10);
+        ListTag chunks = nbt.getList("Chunks", NbtConstants.COMPOUND);
         for (int i = 0; i < chunks.size(); i++) {
             CompoundTag lock = chunks.getCompound(i);
             ChunkLockData data = new ChunkLockData();
@@ -45,7 +53,11 @@ public final class ServerLockManager extends SavedData implements LockManager {
 
             this.locks.put(new ChunkPos(lock.getInt("X"), lock.getInt("Z")), data);
         }
+
+        this.entityLocks.load(nbt.getCompound("Entities"));
+        this.entityLocks.locks.values().stream().map(AbstractLock::getPos).filter(EntityLockPosition.class::isInstance).map(EntityLockPosition.class::cast).forEach(pos -> pos.setEntity(() -> level.getEntity(pos.getEntityId())));
     }
+
 
     public static ServerLockManager getOrCreate(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(tag -> new ServerLockManager(level, tag), () -> new ServerLockManager(level), "locksmithLocks");
@@ -56,16 +68,46 @@ public final class ServerLockManager extends SavedData implements LockManager {
             if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
                 return;
 
-            Collection<AbstractLock> locks = LockManager.get(player.level).getLocks(chunk);
+            Collection<AbstractLock> locks = getOrCreate((ServerLevel) player.level).getLocks(chunk);
             if (locks.isEmpty())
                 return;
 
-            LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundAddLocksPacket(chunk, locks, true));
+            LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundAddLocksPacket(locks, true));
+        });
+        ServerPlayerTrackingEvents.STOP_TRACKING_CHUNK.register((player, chunk) -> {
+            if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
+                return;
+
+            Collection<AbstractLock> locks = getOrCreate((ServerLevel) player.level).getLocks(chunk);
+            if (locks.isEmpty())
+                return;
+
+            LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundDeleteLocksPacket(locks.stream().map(AbstractLock::getPos).collect(Collectors.toSet())));
+        });
+
+        ServerPlayerTrackingEvents.START_TRACKING_ENTITY.register((player, chunk) -> {
+            if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
+                return;
+
+            Collection<AbstractLock> locks = getOrCreate((ServerLevel) player.level).entityLocks.getLocks();
+            if (locks.isEmpty())
+                return;
+
+            LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundAddLocksPacket(locks, true));
+        });
+        ServerPlayerTrackingEvents.STOP_TRACKING_ENTITY.register((player, chunk) -> {
+            if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
+                return;
+
+            Collection<AbstractLock> locks = getOrCreate((ServerLevel) player.level).entityLocks.getLocks();
+            if (locks.isEmpty())
+                return;
+
+            LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundDeleteLocksPacket(locks.stream().map(AbstractLock::getPos).collect(Collectors.toSet())));
         });
     }
 
-    @Override
-    public Collection<AbstractLock> getLocks(ChunkPos chunkPos) {
+    private Collection<AbstractLock> getLocks(ChunkPos chunkPos) {
         ChunkLockData chunk = this.locks.get(chunkPos);
         if (chunk == null)
             return Collections.emptySet();
@@ -74,63 +116,115 @@ public final class ServerLockManager extends SavedData implements LockManager {
 
     @Override
     @Nullable
-    public AbstractLock getLock(BlockPos pos) {
-        ChunkLockData chunk = this.locks.get(new ChunkPos(pos));
+    public AbstractLock getLock(LockPosition pos) {
+        ChunkLockData chunk = this.get(pos, false);
         if (chunk == null)
             return null;
 
-        return chunk.getLock(pos);
+        AbstractLock lock = chunk.getLock(pos);
+        if (lock != null)
+            return lock;
+
+        if (pos instanceof BlockLockPosition) {
+            BlockPos offsetPos = LockManager.getLockPosition(this.level, pos.blockPosition());
+            if (!pos.blockPosition().equals(offsetPos))
+                return chunk.getLock(LockPosition.of(offsetPos));
+        }
+
+        return null;
     }
 
     @Override
     public void addLock(AbstractLock data) {
-        ChunkPos chunk = new ChunkPos(data.getPos());
-        this.locks.compute(chunk, (chunkPos, chunkLockData) -> {
-            ChunkLockData chunkData = chunkLockData == null ? new ChunkLockData() : chunkLockData;
-            chunkData.addLock(data);
-            return chunkData;
-        });
+        ChunkLockData lockData = this.get(data.getPos(), true);
+        LockPosition pos = data.getPos();
+
+        if (pos instanceof BlockLockPosition) {
+            LocksmithMessages.PLAY.sendToTracking(this.level, new ChunkPos(pos.blockPosition()), new ClientboundAddLocksPacket(Collections.singleton(data), false));
+        } else {
+            LocksmithMessages.PLAY.sendToTracking(((EntityLockPosition) pos).getEntity(), new ClientboundAddLocksPacket(Collections.singleton(data), false));
+        }
+
+        lockData.addLock(data);
         this.setDirty();
-        LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundAddLocksPacket(chunk, Collections.singleton(data), false));
     }
 
-    @Override
-    public void removeLock(BlockPos pos, BlockPos clickPos, boolean drop) {
-        ChunkPos chunk = new ChunkPos(pos);
-        ChunkLockData chunkData = this.locks.get(chunk);
+    private ChunkLockData get(LockPosition pos, boolean create) {
+        ChunkLockData chunkData;
+
+        if (pos instanceof BlockLockPosition) {
+            ChunkPos chunk = new ChunkPos(pos.blockPosition());
+            chunkData = this.locks.get(chunk);
+            if (chunkData != null || !create)
+                return chunkData;
+            chunkData = new ChunkLockData();
+            this.locks.put(chunk, chunkData);
+            return chunkData;
+        } else {
+            return this.entityLocks;
+        }
+    }
+
+    private void removeLock(LockPosition pos, BlockPos clickPos, boolean drop) {
+        ChunkLockData chunkData = this.get(pos, false);
         if (chunkData == null)
             return;
 
         AbstractLock lock = chunkData.removeLock(pos);
-        if (lock != null) {
-            lock.onRemove(this.level, pos, clickPos);
+        if (lock == null)
+            return;
+
+        if (pos instanceof BlockLockPosition) {
+            lock.onRemove(this.level, pos.blockPosition(), clickPos);
             if (drop) {
                 ItemStack lockStack = lock.getStack();
                 if (!lockStack.isEmpty())
                     Block.popResource(this.level, clickPos, lockStack);
             }
-            this.setDirty();
-            LocksmithMessages.PLAY.sendToTracking(this.level, chunk, new ClientboundDeleteLockPacket(pos));
+            LocksmithMessages.PLAY.sendToTracking(this.level, new ChunkPos(pos.blockPosition()), new ClientboundDeleteLocksPacket(Collections.singleton(pos)));
+        } else {
+            Entity entity = ((EntityLockPosition) pos).getEntity();
+            lock.onRemove(entity);
+            if (drop) {
+                ItemStack lockStack = lock.getStack();
+                if (!lockStack.isEmpty())
+                    Block.popResource(this.level, clickPos, lockStack);
+            }
+            LocksmithMessages.PLAY.sendToTracking(entity, new ClientboundDeleteLocksPacket(Collections.singleton(pos)));
         }
+
+        this.setDirty();
     }
 
     @Override
-    public CompoundTag save(CompoundTag compoundTag) {
-        ListTag list = new ListTag();
+    public void removeLock(BlockPos pos, BlockPos clickPos, boolean drop) {
+        this.removeLock(LockPosition.of(pos), clickPos, drop);
+    }
+
+    @Override
+    public void removeLock(Entity entity, boolean drop) {
+        this.removeLock(LockPosition.of(entity), entity.blockPosition(), drop);
+    }
+
+    @Override
+    public CompoundTag save(CompoundTag nbt) {
+        ListTag locksNbt = new ListTag();
         for (ChunkPos pos : this.locks.keySet()) {
             CompoundTag tag = new CompoundTag();
             tag.putInt("X", pos.x);
             tag.putInt("Z", pos.z);
 
-            list.add(this.locks.get(pos).save(tag));
+            locksNbt.add(this.locks.get(pos).save(tag));
         }
 
-        compoundTag.put("Chunks", list);
-        return compoundTag;
+        nbt.put("Chunks", locksNbt);
+        nbt.put("Entities", this.entityLocks.save(new CompoundTag()));
+        return nbt;
     }
 
     private static class ChunkLockData {
-        private final Map<BlockPos, AbstractLock> locks = new HashMap<>();
+
+        private final Map<LockPosition, AbstractLock> locks = new HashMap<>();
 
         public void load(CompoundTag compoundTag) {
             ListTag tag = compoundTag.getList("Locks", 10);
@@ -155,7 +249,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
         }
 
         @Nullable
-        public AbstractLock getLock(BlockPos pos) {
+        public AbstractLock getLock(LockPosition pos) {
             return this.locks.get(pos);
         }
 
@@ -164,7 +258,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
         }
 
         @Nullable
-        public AbstractLock removeLock(BlockPos pos) {
+        public AbstractLock removeLock(LockPosition pos) {
             return this.locks.remove(pos);
         }
     }

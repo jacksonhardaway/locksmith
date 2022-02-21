@@ -2,6 +2,7 @@ package gg.moonflower.locksmith.core.mixin.client;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.core.registry.LocksmithParticles;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -22,14 +23,14 @@ public abstract class ParticleEngineMixin {
 
     @Shadow
     protected ClientLevel level;
+
     @Shadow
     public abstract void add(Particle effect);
 
     @Inject(method = "crack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/ParticleEngine;add(Lnet/minecraft/client/particle/Particle;)V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     public void crack(BlockPos pos, Direction side, CallbackInfo ci, BlockState state, int x, int y, int z, float f, AABB shape, double randX, double randY, double randZ) {
-        AbstractLock lock = LockManager.getLock(this.level, pos);
-        if (lock == null)
-            return;
-        this.level.addParticle(LocksmithParticles.LOCK_BREAK.get(), randX, randY, randZ, 0, 0, 0);
+        AbstractLock lock = LockManager.get(this.level).getLock(LockPosition.of(pos));
+        if (lock != null)
+            this.level.addParticle(LocksmithParticles.LOCK_BREAK.get(), randX, randY, randZ, 0, 0, 0);
     }
 }

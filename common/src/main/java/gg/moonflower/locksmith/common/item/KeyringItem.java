@@ -3,6 +3,7 @@ package gg.moonflower.locksmith.common.item;
 import gg.moonflower.locksmith.api.key.Key;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.LockManager;
+import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.common.menu.KeyringMenu;
 import gg.moonflower.locksmith.common.tooltip.KeyringTooltip;
 import gg.moonflower.locksmith.core.Locksmith;
@@ -133,7 +134,7 @@ public class KeyringItem extends Item implements Key {
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
         Level level = context.getLevel();
-        AbstractLock lock = LockManager.getLock(level, pos);
+        AbstractLock lock = LockManager.get(level).getLock(LockPosition.of(pos));
         if (player == null || lock == null)
             return InteractionResult.PASS;
 
@@ -142,7 +143,7 @@ public class KeyringItem extends Item implements Key {
                 if (level.isClientSide())
                     return InteractionResult.SUCCESS;
 
-                LockManager.get(level).removeLock(lock.getPos(), pos, true);
+                LockManager.get(level).removeLock(lock.getPos().blockPosition(), pos, true);
                 player.awardStat(Stats.ITEM_USED.get(this));
                 return InteractionResult.CONSUME;
             }
