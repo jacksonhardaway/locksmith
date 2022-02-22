@@ -9,7 +9,7 @@ version = "${version}"
 displayName = "${name}"
 authors = "Moonflower"
 credits = "Jackson, Ocelot"
-description = "A mod about locks"
+description = "Immersive protection with locks and keys."
 displayURL = "https://www.moonflower.gg/"
 logoFile = "logo.png"
 

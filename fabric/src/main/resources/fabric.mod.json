@@ -3,7 +3,7 @@
   "id": "${id}",
   "version": "${version}",
   "name": "${name}",
-  "description": "A mod about locks",
+  "description": "Immersive protection with locks and keys.",
   "authors": [ "Moonflower" ],
   "contributors": [ "Jackson", "Ocelot" ],
   "contact": {
