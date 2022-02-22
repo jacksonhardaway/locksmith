@@ -24,8 +24,7 @@
     ]
   },
   "depends": {
-    "fabric": "*",
     "minecraft": "1.16.5",
-    "pollen": "1.0.0"
+    "pollen": "1.x"
   }
 }
