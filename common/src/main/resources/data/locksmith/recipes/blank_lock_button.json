@@ -1,19 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "II",
-    "OO",
-    "OO"
+    " I ",
+    "ILI",
+    " I "
   ],
   "key": {
-    "O": {
-      "tag": "minecraft:planks"
+    "L": {
+      "item": "locksmith:blank_lock"
     },
     "I": {
       "item": "minecraft:iron_ingot"
     }
   },
   "result": {
-    "item": "locksmith:locksmithing_table"
+    "item": "locksmith:blank_lock_button"
   }
 }

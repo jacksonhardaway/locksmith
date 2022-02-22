@@ -3,14 +3,15 @@
   "id": "${id}",
   "version": "${version}",
   "name": "${name}",
-  "description": "A mod about locks",
+  "description": "Immersive protection with locks and keys.",
   "authors": [ "Moonflower" ],
-  "contributors": [ "Jackson" ],
+  "contributors": [ "Jackson", "Farcr", "Ocelot" ],
   "contact": {
     "homepage": "https://moonflower.gg",
 	"issues": "https://github.com/MoonflowerTeam/${repo}/issues",
     "sources": "https://github.com/MoonflowerTeam/${repo}/"
   },
+  "icon": "icon.png",
   "license": "GPLv3",
   "environment": "*",
   "mixins": [

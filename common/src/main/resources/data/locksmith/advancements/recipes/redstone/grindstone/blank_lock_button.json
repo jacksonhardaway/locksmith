@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "locksmith:grindstone/blank_lock_button"
+    ]
+  },
+  "criteria": {
+    "has_lock_button": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "locksmith:lock_button"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "locksmith:grindstone/blank_lock_button"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_lock_button",
+      "has_the_recipe"
+    ]
+  ]
+}
