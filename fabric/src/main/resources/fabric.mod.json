@@ -11,6 +11,7 @@
 	"issues": "https://github.com/MoonflowerTeam/${repo}/issues",
     "sources": "https://github.com/MoonflowerTeam/${repo}/"
   },
+  "icon": "icon.png",
   "license": "GPLv3",
   "environment": "*",
   "mixins": [
