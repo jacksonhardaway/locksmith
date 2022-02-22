@@ -5,7 +5,7 @@
   "name": "${name}",
   "description": "A mod about locks",
   "authors": [ "Moonflower" ],
-  "contributors": [ "Jackson" ],
+  "contributors": [ "Jackson", "Ocelot" ],
   "contact": {
     "homepage": "https://moonflower.gg",
 	"issues": "https://github.com/MoonflowerTeam/${repo}/issues",
