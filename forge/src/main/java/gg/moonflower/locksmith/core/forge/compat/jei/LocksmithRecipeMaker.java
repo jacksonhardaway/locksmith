@@ -1,6 +1,6 @@
 package gg.moonflower.locksmith.core.forge.compat.jei;
 
-import gg.moonflower.locksmith.core.mixin.forge.client.RecipeManagerAccessor;
+import gg.moonflower.pollen.core.mixin.forge.client.RecipeManagerAccessor;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
