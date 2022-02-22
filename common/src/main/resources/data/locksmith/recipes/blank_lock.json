@@ -1,20 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "###",
+    "III",
     "i i",
     "iii"
   ],
   "key": {
-    "#": {
+    "i": {
       "item": "minecraft:iron_nugget"
     },
-    "i": {
+    "I": {
       "item": "minecraft:iron_ingot"
     }
   },
   "result": {
-    "item": "locksmith:blank_lock",
-    "count": 1
+    "item": "locksmith:blank_lock"
   }
 }
