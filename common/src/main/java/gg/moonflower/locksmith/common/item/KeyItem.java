@@ -126,10 +126,8 @@ public class KeyItem extends Item implements Key {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        if (KeyItem.isOriginal(stack))
-            tooltipComponents.add(ORIGINAL);
-        else
-            tooltipComponents.add(COPY);
+        if (level != null)
+            tooltipComponents.add(KeyItem.isOriginal(stack) ? ORIGINAL : COPY);
 
         if (isAdvanced.isAdvanced()) {
             UUID id = KeyItem.getLockId(stack);
