@@ -8,6 +8,8 @@ pluginManagement {
     }
 }
 
+rootProject.name = "locksmith"
+
 include("common")
 include("fabric")
 include("forge")

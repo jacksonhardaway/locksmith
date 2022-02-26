@@ -70,11 +70,11 @@ public class LocksmithRecipeProvider extends PollinatedRecipeProvider {
 
         ShapedRecipeBuilder.shaped(LocksmithBlocks.LOCKSMITHING_TABLE.get())
                 .define('O', ItemTags.PLANKS)
-                .define('I', Items.IRON_INGOT)
+                .define('I', Items.IRON_NUGGET)
                 .pattern("II")
                 .pattern("OO")
                 .pattern("OO")
-                .unlockedBy("has_iron_ingot", has(Items.IRON_INGOT))
+                .unlockedBy("has_iron_nugget", has(Items.IRON_NUGGET))
                 .save(consumer);
 
         addConditions(new ResourceLocation(Locksmith.MOD_ID, "lockpick"), PollinatedResourceCondition.config(Locksmith.MOD_ID, PollinatedConfigType.SERVER, "Locks.Enable lockpick", true));
