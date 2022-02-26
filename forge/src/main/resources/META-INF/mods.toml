@@ -13,6 +13,9 @@ description = "Immersive protection with locks and keys."
 displayURL = "https://www.moonflower.gg/"
 logoFile = "logo.png"
 
+[modproperties.${id}]
+catalogueImageIcon="icon.png"
+
 [[dependencies.${id}]]
 modId = "forge"
 mandatory = true
