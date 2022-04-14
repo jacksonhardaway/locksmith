@@ -16,7 +16,7 @@
   "item.locksmith.lockpick": "Scoundrel's best matey",
   "lock.locksmith.locked": "Tha loot be locked.",
   "screen.locksmith.locksmithing_table.invalid_key": "Wrong pass code, ye scallywag",
-  "screen.locksmith.locksmithing_table.invalid_key.tooltip": "Tha passcode ain't be havin' a shape. It mus' be forg'd usin' magic instead o' tha lockmakin' bench.",
+  "screen.locksmith.locksmithing_table.invalid_key.tooltip": "Tha passcode ain't have a shape! It mus' be forg'd usin' witchcraft instead o' tha lockmakin' bench.",
   "screen.locksmith.locksmithing_table.missing_input": "Missin' blank item!",
   "screen.locksmith.locksmithing_table.missing_input.tooltip": "Mus' give a blank passcode o' loot's guard t' tha bottom slot t' create o' copy a passcode",
   "screen.locksmith.locksmithing_table.missing_key": "Where's yer passcode, matey?",
@@ -25,6 +25,6 @@
   "screen.locksmith.locksmithing_table.unoriginal_key.tooltip": "Tha copycats cant make more copycats",
   "stat.locksmith.interact_with_locksmithing_table": "Lockmker's bench us'd",
   "stat.locksmith.pick_lock": "Loot guardians deceived",
-  "subtitles.locksmith.item.lock.locked": "Loot guardian be protectin'",
+  "subtitles.locksmith.item.lock.locked": "Loot guardian be guardin' tha loot",
   "subtitles.locksmith.item.lock.place": "Guardian o' loot finds its loot"
 }
