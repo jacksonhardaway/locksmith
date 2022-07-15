@@ -1,7 +1,7 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "0.10.0-SNAPSHOT" apply false
-    id "io.github.juuxel.loom-quiltflower-mini" version "1.0.0" apply false
+    id "dev.architectury.loom" version "0.11.0-SNAPSHOT" apply false
+    id "io.github.juuxel.loom-quiltflower" version "1.7.1" apply false
 }
 
 architectury {
@@ -10,7 +10,7 @@ architectury {
 
 subprojects {
     apply plugin: "dev.architectury.loom"
-    apply plugin: "io.github.juuxel.loom-quiltflower-mini"
+    apply plugin: "io.github.juuxel.loom-quiltflower"
 
     loom {
         silentMojangMappingsLicense()
@@ -56,14 +56,15 @@ allprojects {
         withSourcesJar()
     }
 
+    def ENV = System.getenv()
     publishing {
-        repositories {
-            if (project.hasProperty("moonflowerUsername") && project.hasProperty("moonflowerToken")) {
-                maven {
-                    url "https://repo.moonflower.gg/releases"
+        if (ENV.MAVEN_URL) {
+            repositories.maven {
+                url ENV.MAVEN_URL
+                if (ENV.MAVEN_USERNAME) {
                     credentials {
-                        username = project.properties.moonflowerUsername
-                        password = project.properties.moonflowerToken
+                        username ENV.MAVEN_USERNAME
+                        password ENV.MAVEN_PASSWORD
                     }
                 }
             }

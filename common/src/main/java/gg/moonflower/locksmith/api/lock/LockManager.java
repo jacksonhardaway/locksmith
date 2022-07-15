@@ -2,6 +2,7 @@ package gg.moonflower.locksmith.api.lock;
 
 import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.client.lock.ClientLockManager;
+import gg.moonflower.locksmith.common.lock.EmptyLockManager;
 import gg.moonflower.locksmith.common.lock.ServerLockManager;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -26,7 +27,7 @@ public interface LockManager {
      * @return The lock manager.
      */
     static LockManager get(Level level) {
-        return level.isClientSide() ? ClientLockManager.getOrCreate((ClientLevel) level) : ServerLockManager.getOrCreate((ServerLevel) level);
+        return level instanceof ClientLevel ? ClientLockManager.getOrCreate((ClientLevel) level) : level instanceof ServerLevel ? ServerLockManager.getOrCreate((ServerLevel) level) : new EmptyLockManager();
     }
 
     @ApiStatus.Internal
