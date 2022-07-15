@@ -50,7 +50,7 @@ repositories {
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
 
-    modApi("gg.moonflower:pollen-forge:${rootProject.pollen_version}") { transitive = false }
+    modApi("gg.moonflower:pollen-forge:${rootProject.pollen_version}")
 	
 	modRuntimeOnly "curse.maven:configured-457570:3559398"
     modRuntimeOnly "curse.maven:catalogue-459701:3559402"
