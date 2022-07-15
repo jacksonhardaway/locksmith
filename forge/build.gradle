@@ -50,7 +50,7 @@ repositories {
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
 
-    modApi("gg.moonflower:pollen-forge:${rootProject.pollen_version}") { transitive = false }
+    modApi("gg.moonflower:pollen-forge:${rootProject.pollen_version}")
 	
 	modRuntimeOnly "curse.maven:configured-457570:3533860"
     modRuntimeOnly "curse.maven:catalogue-459701:3529457"
@@ -58,8 +58,7 @@ dependencies {
     modCompileOnly "mezz.jei:jei-${rootProject.minecraft_version}:${rootProject.jei_version}:api"
     modRuntimeOnly "mezz.jei:jei-${rootProject.minecraft_version}:${rootProject.jei_version}"
 
-    implementation(project(path: ":common", configuration: "namedElements")) { transitive false }
-    developmentForge(project(path: ":common", configuration: "namedElements")) { transitive false }
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }
 
@@ -106,17 +105,29 @@ sourcesJar {
     from commonSources.archiveFile.map { zipTree(it) }
 }
 
-components.java {
-    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-        skip()
-    }
-}
-
 publishing {
     publications {
         mavenForge(MavenPublication) {
             artifactId = project.archivesBaseName
-            from components.java
+
+            artifact remapJar
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+
+            pom.withXml {
+                def depsNode = asNode().appendNode('dependencies')
+                [this.configurations.modApi, this.configurations.api].each {
+                    it.allDependencies.each {
+                        def depNode = depsNode.appendNode('dependency')
+                        depNode.appendNode('groupId', it.group)
+                        depNode.appendNode('artifactId', it.name)
+                        depNode.appendNode('version', it.version)
+                    }
+                }
+            }
         }
     }
 }
+
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenForge)

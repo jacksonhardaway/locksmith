@@ -33,13 +33,12 @@ repositories {
 
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    modApi("gg.moonflower:pollen-fabric:${rootProject.pollen_version}") { transitive = false }
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    modApi("gg.moonflower:pollen-fabric:${rootProject.pollen_version}")
 
     modRuntimeOnly "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
 
-    implementation(project(path: ":common", configuration: "namedElements")) { transitive false }
-    developmentFabric(project(path: ":common", configuration: "namedElements")) { transitive false }
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
@@ -84,17 +83,29 @@ sourcesJar {
     from commonSources.archiveFile.map { zipTree(it) }
 }
 
-components.java {
-    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-        skip()
-    }
-}
-
 publishing {
     publications {
         mavenFabric(MavenPublication) {
             artifactId = project.archivesBaseName
-            from components.java
+
+            artifact remapJar
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+
+            pom.withXml {
+                def depsNode = asNode().appendNode('dependencies')
+                [this.configurations.modApi, this.configurations.api].each {
+                    it.allDependencies.each {
+                        def depNode = depsNode.appendNode('dependency')
+                        depNode.appendNode('groupId', it.group)
+                        depNode.appendNode('artifactId', it.name)
+                        depNode.appendNode('version', it.version)
+                    }
+                }
+            }
         }
     }
 }
+
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenFabric)

@@ -3,7 +3,7 @@ dependencies {
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
-    modApi("gg.moonflower:pollen:${rootProject.pollen_version}") { transitive = false }
+    modApi("gg.moonflower:pollen:${rootProject.pollen_version}")
 }
 
 architectury {
@@ -14,7 +14,25 @@ publishing {
     publications {
         mavenCommon(MavenPublication) {
             artifactId = project.archivesBaseName
-            from components.java
+
+            artifact remapJar
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+
+            pom.withXml {
+                def depsNode = asNode().appendNode('dependencies')
+                [this.configurations.modApi, this.configurations.api].each {
+                    it.allDependencies.each {
+                        def depNode = depsNode.appendNode('dependency')
+                        depNode.appendNode('groupId', it.group)
+                        depNode.appendNode('artifactId', it.name)
+                        depNode.appendNode('version', it.version)
+                    }
+                }
+            }
         }
     }
 }
+
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenCommon)
