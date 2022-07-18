@@ -1,11 +1,9 @@
 {
   "block.locksmith.lock_button": "Кнопка с прорезью",
   "block.locksmith.locksmithing_table": "Стол ключника",
-  
   "container.locksmith.lock_picking": "Взлом",
   "container.locksmith.locked": "%s (Закрыто)",
   "container.locksmith.locksmithing_table": "Стол ключника",
-
   "item.locksmith.blank_key": "Заготовка ключа",
   "item.locksmith.blank_lock": "Заготовка замка",
   "item.locksmith.blank_lock_button": "Заготовка кнопки с прорезью",
@@ -16,9 +14,7 @@
   "item.locksmith.lock": "Замок",
   "item.locksmith.lock.key": "Нужен %s",
   "item.locksmith.lockpick": "Отмычка",
-
   "lock.locksmith.locked": "Зактыто",
-
   "screen.locksmith.locksmithing_table.invalid_key": "Ключ инвалид",
   "screen.locksmith.locksmithing_table.invalid_key.tooltip": "У ключа отсутствует 'Lock id'. Это обычно случается если ключ спавнится/выдаётся а не создаётся с помощью заготовки.",
   "screen.locksmith.locksmithing_table.missing_input": "Отсутствует заготовка",
@@ -27,10 +23,8 @@
   "screen.locksmith.locksmithing_table.missing_key.tooltip": "Нужен ключ в верхнем слоте",
   "screen.locksmith.locksmithing_table.unoriginal_key": "Копия ключа",
   "screen.locksmith.locksmithing_table.unoriginal_key.tooltip": "Только с помощью оригинального ключа можно создавать копии.",
-
   "stat.locksmith.interact_with_locksmithing_table": "Взаимодействий со столом ключника",
   "stat.locksmith.pick_lock": "Взломано замков",
-
   "subtitles.locksmith.item.lock.locked": "Замок закрыт",
   "subtitles.locksmith.item.lock.place": "Замок установлен"
 }
