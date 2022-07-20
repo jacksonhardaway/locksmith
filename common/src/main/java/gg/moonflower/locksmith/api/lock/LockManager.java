@@ -27,7 +27,14 @@ public interface LockManager {
      * @return The lock manager.
      */
     static LockManager get(Level level) {
-        return level instanceof ClientLevel ? ClientLockManager.getOrCreate((ClientLevel) level) : level instanceof ServerLevel ? ServerLockManager.getOrCreate((ServerLevel) level) : new EmptyLockManager();
+        if (level instanceof ServerLevel) {
+            return ServerLockManager.getOrCreate((ServerLevel) level);
+        } else if (level.isClientSide()) { // Ensure we are on the client before using client classes
+            if (level instanceof ClientLevel)
+                return ClientLockManager.getOrCreate((ClientLevel) level);
+        }
+
+        return new EmptyLockManager();
     }
 
     @ApiStatus.Internal
