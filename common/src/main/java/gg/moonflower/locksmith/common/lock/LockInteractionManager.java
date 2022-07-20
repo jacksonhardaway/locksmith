@@ -1,5 +1,6 @@
 package gg.moonflower.locksmith.common.lock;
 
+import com.mojang.serialization.DataResult;
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.api.lock.position.LockPosition;
@@ -89,9 +90,20 @@ public class LockInteractionManager {
                 return;
 
             CompoundTag lockTag = (CompoundTag) tag;
-            lockTag.put("pos", BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, lock.getPos().blockPosition().relative(ChestBlock.getConnectedDirection(state))).getOrThrow(false, LOGGER::error));
-            AbstractLock newLock = AbstractLock.CODEC.parse(NbtOps.INSTANCE, lockTag).getOrThrow(false, LOGGER::error);
-            LockManager.get(level).addLock(newLock);
+            DataResult<Tag> newPos = BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, lock.getPos().blockPosition().relative(ChestBlock.getConnectedDirection(state)));
+            if (newPos.error().isPresent()) {
+                LOGGER.warn("Failed to encode lock data {}", newPos.error().get());
+                return;
+            }
+
+            lockTag.put("pos", newPos.result().get());
+            DataResult<AbstractLock> newLock = AbstractLock.CODEC.parse(NbtOps.INSTANCE, lockTag);
+            if (newLock.result().isPresent()) {
+                LOGGER.warn("Failed to create lock {}", newLock.error().get());
+                return;
+            }
+            
+            LockManager.get(level).addLock(newLock.result().get());
             return;
         }
 
