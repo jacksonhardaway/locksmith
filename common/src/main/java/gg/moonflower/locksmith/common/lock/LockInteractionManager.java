@@ -84,6 +84,9 @@ public class LockInteractionManager {
         if (lock == null)
             return;
 
+        LockManager.get(level).removeLock(lock.getPos().blockPosition(), pos, false);
+
+        // Hack to move lock to other chest if a double chest
         if (state.hasProperty(ChestBlock.TYPE) && state.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
             Tag tag = AbstractLock.CODEC.encodeStart(NbtOps.INSTANCE, lock).getOrThrow(false, LOGGER::error);
             if (!(tag instanceof CompoundTag))
@@ -104,9 +107,6 @@ public class LockInteractionManager {
             }
             
             LockManager.get(level).addLock(newLock.result().get());
-            return;
         }
-
-        LockManager.get(level).removeLock(lock.getPos().blockPosition(), pos, false);
     }
 }
