@@ -8,12 +8,13 @@ import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
 import gg.moonflower.locksmith.common.network.play.ClientboundAddLocksPacket;
 import gg.moonflower.locksmith.common.network.play.ClientboundDeleteLocksPacket;
-import gg.moonflower.pollen.api.event.events.entity.player.server.ServerPlayerTrackingEvents;
-import gg.moonflower.pollen.api.util.NbtConstants;
+import gg.moonflower.pollen.api.event.entity.v1.EntityTrackingEvent;
+import gg.moonflower.pollen.api.event.level.v1.ChunkTrackingEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -45,7 +46,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
 
     private ServerLockManager(ServerLevel level, CompoundTag nbt) {
         this(level);
-        ListTag chunks = nbt.getList("Chunks", NbtConstants.COMPOUND);
+        ListTag chunks = nbt.getList("Chunks", Tag.TAG_COMPOUND);
         for (int i = 0; i < chunks.size(); i++) {
             CompoundTag lock = chunks.getCompound(i);
             ChunkLockData data = new ChunkLockData();
@@ -64,7 +65,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
     }
 
     public static void init() {
-        ServerPlayerTrackingEvents.START_TRACKING_CHUNK.register((player, chunk) -> {
+        ChunkTrackingEvent.START_TRACKING.register((player, chunk) -> {
             if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
                 return;
 
@@ -74,7 +75,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
 
             LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundAddLocksPacket(locks, true));
         });
-        ServerPlayerTrackingEvents.STOP_TRACKING_CHUNK.register((player, chunk) -> {
+        ChunkTrackingEvent.STOP_TRACKING.register((player, chunk) -> {
             if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
                 return;
 
@@ -85,7 +86,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
             LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundDeleteLocksPacket(locks.stream().map(AbstractLock::getPos).collect(Collectors.toSet())));
         });
 
-        ServerPlayerTrackingEvents.START_TRACKING_ENTITY.register((player, chunk) -> {
+        EntityTrackingEvent.START_TRACKING.register((player, chunk) -> {
             if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
                 return;
 
@@ -95,7 +96,7 @@ public final class ServerLockManager extends SavedData implements LockManager {
 
             LocksmithMessages.PLAY.sendTo((ServerPlayer) player, new ClientboundAddLocksPacket(locks, true));
         });
-        ServerPlayerTrackingEvents.STOP_TRACKING_ENTITY.register((player, chunk) -> {
+        EntityTrackingEvent.STOP_TRACKING.register((player, chunk) -> {
             if (!(player.level instanceof ServerLevel) || !(player instanceof ServerPlayer))
                 return;
 

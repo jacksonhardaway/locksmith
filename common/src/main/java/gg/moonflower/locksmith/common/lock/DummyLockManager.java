@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Lock manager used for fake level instances
  */
-public class EmptyLockManager implements LockManager {
+public class DummyLockManager implements LockManager {
 
     @Override
     public void addLock(AbstractLock data) {

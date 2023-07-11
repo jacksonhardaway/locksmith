@@ -1,11 +1,10 @@
-package gg.moonflower.locksmith.client.particle;
+package gg.moonflower.locksmith.clientsource.client.particle;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.util.Mth;
 
 public class LockSparkParticle extends SimpleAnimatedParticle {
 

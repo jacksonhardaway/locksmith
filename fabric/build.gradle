@@ -1,21 +1,10 @@
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
-
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
-
-archivesBaseName = "${rootProject.archivesBaseName}-${project.name}"
 
 architectury {
     platformSetupLoomIde()
     fabric()
-}
-
-loom {
-    mixin {
-        defaultRefmapName = "${project.mod_id}-refmap.json"
-    }
 }
 
 configurations {
@@ -26,48 +15,44 @@ configurations {
     developmentFabric.extendsFrom common
 }
 
-
-repositories {
-    maven { url "https://maven.terraformersmc.com/" }
-}
-
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    modApi("gg.moonflower:pollen-fabric:${rootProject.pollen_version}")
-
-    modRuntimeOnly "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
+    modApi "gg.moonflower:pollen-fabric:${rootProject.pollen_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
 processResources {
-    inputs.property "id", rootProject.mod_id
-    inputs.property "name", rootProject.mod_name
-    inputs.property "version", rootProject.mod_version
-    inputs.property "repo", rootProject.name
+    inputs.property "mod_id", project.mod_id
+    inputs.property "mod_version", project.mod_version
+    inputs.property "mod_name", project.mod_name
+    inputs.property "mod_description", project.mod_description
+    inputs.property "archives_base_name", project.archives_base_name
 
-    filesMatching("fabric.mod.json") {
-        expand "id": rootProject.mod_id,
-                "name": rootProject.mod_name,
-                "version": rootProject.mod_version,
-                "repo": rootProject.name
-    }
+    inputs.property "minecraft_version", project.minecraft_version
 
-    doLast {
-        fileTree(dir: outputs.files.asPath, include: "**/*.json").each {
-            File file -> file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
-        }
+    filesMatching(["fabric.mod.json"]) {
+        expand "mod_id": project.mod_id,
+                "mod_version": project.mod_version,
+                "mod_name": project.mod_name,
+                "mod_description": project.mod_description,
+                "archives_base_name": project.archives_base_name,
+                "minecraft_version": project.minecraft_version
     }
 }
 
 shadowJar {
+    exclude "architectury.common.json"
+
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
 }
 
 remapJar {
+    injectAccessWidener = true
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
@@ -77,35 +62,8 @@ jar {
     classifier "dev"
 }
 
-sourcesJar {
-    def commonSources = project(":common").sourcesJar
-    dependsOn commonSources
-    from commonSources.archiveFile.map { zipTree(it) }
-}
-
-publishing {
-    publications {
-        mavenFabric(MavenPublication) {
-            artifactId = project.archivesBaseName
-
-            artifact remapJar
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
-
-            pom.withXml {
-                def depsNode = asNode().appendNode('dependencies')
-                [this.configurations.modApi, this.configurations.api].each {
-                    it.allDependencies.each {
-                        def depNode = depsNode.appendNode('dependency')
-                        depNode.appendNode('groupId', it.group)
-                        depNode.appendNode('artifactId', it.name)
-                        depNode.appendNode('version', it.version)
-                    }
-                }
-            }
-        }
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
     }
 }
-
-loom.disableDeprecatedPomGeneration(publishing.publications.mavenFabric)

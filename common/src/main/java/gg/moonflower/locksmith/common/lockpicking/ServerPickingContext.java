@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -45,7 +46,7 @@ public abstract class ServerPickingContext extends LockPickingContext {
         this.player = player;
         this.pickStack = pickStack;
         this.pickHand = pickHand;
-        Random random = player.level.getRandom();
+        RandomSource random = player.level.getRandom();
         this.game = new Game(2, random);
         this.state = GameState.RUNNING;
         this.stop = 0;
@@ -99,7 +100,7 @@ public abstract class ServerPickingContext extends LockPickingContext {
 
         if (success) {
             LocksmithMessages.PLAY.sendTo(this.player, new ClientboundLockPickingPacket(ClientboundLockPickingPacket.Type.SUCCESS));
-            this.player.awardStat(LocksmithStats.PICK_LOCK);
+//            this.player.awardStat(LocksmithStats.PICK_LOCK);
             this.removeLock();
             return;
         }
@@ -140,7 +141,7 @@ public abstract class ServerPickingContext extends LockPickingContext {
         private final int[] droppingPins;
         private int droppingIndex;
 
-        private Game(int complexity, Random random) {
+        private Game(int complexity, RandomSource random) {
             int size = Mth.clamp(complexity, 0, 4);
             List<Integer> pins = new ArrayList<>(size);
             while (pins.size() < size)

@@ -1,10 +1,9 @@
 package gg.moonflower.locksmith.common.network.play;
 
-import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.common.network.play.handler.LocksmithClientPlayPacketHandler;
-import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
-import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
+import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketContext;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.io.IOException;

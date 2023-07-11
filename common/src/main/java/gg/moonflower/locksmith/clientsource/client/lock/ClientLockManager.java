@@ -1,11 +1,11 @@
-package gg.moonflower.locksmith.client.lock;
+package gg.moonflower.locksmith.clientsource.client.lock;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.api.lock.position.BlockLockPosition;
 import gg.moonflower.locksmith.api.lock.position.LockPosition;
-import gg.moonflower.pollen.api.event.events.network.ClientNetworkEvents;
-import gg.moonflower.pollen.api.event.events.world.ChunkEvents;
+import gg.moonflower.pollen.api.event.level.v1.ClientChunkLoadingEvent;
+import gg.moonflower.pollen.api.event.network.v1.ClientNetworkEvent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
@@ -20,13 +20,12 @@ import java.util.Map;
 public final class ClientLockManager implements LockManager {
 
     private static final Map<ResourceKey<Level>, ClientLockManager> INSTANCES = new HashMap<>();
-    private final Map<LockPosition, AbstractLock> locks = new HashMap<>();
 
     static {
-        ClientNetworkEvents.LOGOUT.register((controller, player, connection) -> INSTANCES.clear());
-        ChunkEvents.UNLOAD.register((level, chunk) -> {
-            if (level instanceof Level) {
-                ClientLockManager manager = INSTANCES.get(((Level) level).dimension());
+        ClientNetworkEvent.DISCONNECT.register((controller, player, connection) -> INSTANCES.clear());
+        ClientChunkLoadingEvent.UNLOAD_CHUNK.register((level, chunk) -> {
+            if (level != null) {
+                ClientLockManager manager = INSTANCES.get(((ClientLevel) level).dimension());
                 if (manager == null)
                     return;
                 manager.clearLocks(chunk.getPos());
@@ -34,6 +33,7 @@ public final class ClientLockManager implements LockManager {
         });
     }
 
+    private final Map<LockPosition, AbstractLock> locks = new HashMap<>();
     private final ClientLevel level;
 
     private ClientLockManager(ClientLevel level) {

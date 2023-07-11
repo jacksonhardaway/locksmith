@@ -8,11 +8,10 @@ import gg.moonflower.locksmith.common.menu.KeyringMenu;
 import gg.moonflower.locksmith.common.tooltip.KeyringTooltip;
 import gg.moonflower.locksmith.core.Locksmith;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
-import gg.moonflower.locksmith.core.registry.LocksmithLocks;
-import gg.moonflower.pollen.api.util.NbtConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -36,7 +35,12 @@ import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class KeyringItem extends Item implements Key {
 
@@ -44,6 +48,125 @@ public class KeyringItem extends Item implements Key {
 
     public KeyringItem(Properties properties) {
         super(properties);
+    }
+
+    public static List<ItemStack> getKeys(ItemStack stack) {
+        if (!stack.is(LocksmithItems.KEYRING.get()))
+            return Collections.emptyList();
+
+        CompoundTag nbt = stack.getTag();
+        if (nbt == null || !nbt.contains("Keys", Tag.TAG_LIST))
+            return Collections.emptyList();
+
+        ListTag keysNbt = nbt.getList("Keys", Tag.TAG_COMPOUND);
+        if (keysNbt.isEmpty())
+            return Collections.emptyList();
+
+        List<ItemStack> list = new ArrayList<>(keysNbt.size());
+        for (int i = 0; i < Math.min(MAX_KEYS, keysNbt.size()); i++) {
+            ItemStack key = ItemStack.of(keysNbt.getCompound(i));
+            if (!key.isEmpty())
+                list.add(key);
+        }
+
+        return list;
+    }
+
+    public static void setKeys(ItemStack stack, Collection<ItemStack> keys) {
+        if (!stack.is(LocksmithItems.KEYRING.get()) || keys.isEmpty())
+            return;
+
+        CompoundTag nbt = stack.getOrCreateTag();
+        ListTag keysNbt = new ListTag();
+        int i = 0;
+        for (ItemStack key : keys) {
+            if (key.isEmpty())
+                continue;
+            if (i >= MAX_KEYS)
+                break;
+            keysNbt.add(key.save(new CompoundTag()));
+            i++;
+        }
+        nbt.put("Keys", keysNbt);
+    }
+
+    private static Optional<ItemStack> removeOne(Player player, ItemStack keyRing) {
+        CompoundTag tag = keyRing.getOrCreateTag();
+        if (!tag.contains("Keys", Tag.TAG_LIST))
+            return Optional.empty();
+
+        ListTag keysNbt = tag.getList("Keys", Tag.TAG_COMPOUND);
+        if (keysNbt.isEmpty())
+            return Optional.empty();
+
+        CompoundTag keyNbt = keysNbt.getCompound(0);
+        ItemStack keyStack = ItemStack.of(keyNbt);
+        keysNbt.remove(0);
+
+        if (keysNbt.size() == 1) {
+            ItemStack last = ItemStack.of(keysNbt.getCompound(0));
+
+            ItemStack carried = player.inventoryMenu.getCarried();
+            if (!carried.isEmpty() && carried == keyRing) {
+                keyRing.setCount(0);
+                player.inventoryMenu.setCarried(last);
+                return Optional.of(keyStack);
+            }
+
+            Inventory inventory = player.getInventory();
+            for (int i = 0; i < inventory.items.size(); ++i) {
+                if (!inventory.items.get(i).isEmpty() && keyRing == inventory.items.get(i)) {
+                    keyRing.setCount(0);
+                    inventory.setItem(i, last);
+                    return Optional.of(keyStack);
+                }
+            }
+
+            inventory.placeItemBackInInventory(last);
+        }
+
+        if (keysNbt.isEmpty())
+            keyRing.setCount(0);
+
+        return Optional.of(keyStack);
+    }
+
+    private static boolean dropContents(ItemStack itemStack, Player player) {
+        CompoundTag tag = itemStack.getOrCreateTag();
+        if (!tag.contains("Keys"))
+            return false;
+
+        if (player instanceof ServerPlayer) {
+            ListTag listTag = tag.getList("Keys", Tag.TAG_COMPOUND);
+
+            for (int i = 0; i < listTag.size(); i++)
+                player.getInventory().placeItemBackInInventory(ItemStack.of(listTag.getCompound(i)));
+        }
+
+        itemStack.removeTagKey("Keys");
+        return true;
+    }
+
+    private static void add(ItemStack keyRing, ItemStack key) {
+        if (!keyRing.is(LocksmithItems.KEYRING.get()) || !key.is(LocksmithItems.KEY.get()))
+            return;
+
+        CompoundTag tag = keyRing.getOrCreateTag();
+        if (!tag.contains("Keys"))
+            tag.put("Keys", new ListTag());
+
+        ListTag keysNbt = tag.getList("Keys", Tag.TAG_COMPOUND);
+
+        ItemStack singleKey = key.split(1);
+        CompoundTag keyTag = new CompoundTag();
+        singleKey.save(keyTag);
+        keysNbt.add(0, keyTag);
+    }
+
+    private static boolean canAdd(ItemStack keyRing, ItemStack key) {
+        if (!keyRing.is(LocksmithItems.KEYRING.get()) || !key.is(LocksmithItems.KEY.get()))
+            return false;
+        return keyRing.getTag() == null || (keyRing.getTag().contains("Keys", Tag.TAG_LIST) && keyRing.getTag().getList("Keys", Tag.TAG_COMPOUND).size() < MAX_KEYS);
     }
 
     @Override
@@ -171,124 +294,5 @@ public class KeyringItem extends Item implements Key {
 
     private void playDropContentsSound(Entity entity) {
         entity.playSound(SoundEvents.BUNDLE_DROP_CONTENTS, 0.8F, 0.8F + entity.getLevel().getRandom().nextFloat() * 0.4F);
-    }
-
-    public static List<ItemStack> getKeys(ItemStack stack) {
-        if (!stack.is(LocksmithItems.KEYRING.get()))
-            return Collections.emptyList();
-
-        CompoundTag nbt = stack.getTag();
-        if (nbt == null || !nbt.contains("Keys", NbtConstants.LIST))
-            return Collections.emptyList();
-
-        ListTag keysNbt = nbt.getList("Keys", NbtConstants.COMPOUND);
-        if (keysNbt.isEmpty())
-            return Collections.emptyList();
-
-        List<ItemStack> list = new ArrayList<>(keysNbt.size());
-        for (int i = 0; i < Math.min(MAX_KEYS, keysNbt.size()); i++) {
-            ItemStack key = ItemStack.of(keysNbt.getCompound(i));
-            if (!key.isEmpty())
-                list.add(key);
-        }
-
-        return list;
-    }
-
-    public static void setKeys(ItemStack stack, Collection<ItemStack> keys) {
-        if (!stack.is(LocksmithItems.KEYRING.get()) || keys.isEmpty())
-            return;
-
-        CompoundTag nbt = stack.getOrCreateTag();
-        ListTag keysNbt = new ListTag();
-        int i = 0;
-        for (ItemStack key : keys) {
-            if (key.isEmpty())
-                continue;
-            if (i >= MAX_KEYS)
-                break;
-            keysNbt.add(key.save(new CompoundTag()));
-            i++;
-        }
-        nbt.put("Keys", keysNbt);
-    }
-
-    private static Optional<ItemStack> removeOne(Player player, ItemStack keyRing) {
-        CompoundTag tag = keyRing.getOrCreateTag();
-        if (!tag.contains("Keys", NbtConstants.LIST))
-            return Optional.empty();
-
-        ListTag keysNbt = tag.getList("Keys", NbtConstants.COMPOUND);
-        if (keysNbt.isEmpty())
-            return Optional.empty();
-
-        CompoundTag keyNbt = keysNbt.getCompound(0);
-        ItemStack keyStack = ItemStack.of(keyNbt);
-        keysNbt.remove(0);
-
-        if (keysNbt.size() == 1) {
-            ItemStack last = ItemStack.of(keysNbt.getCompound(0));
-
-            ItemStack carried = player.inventoryMenu.getCarried();
-            if (!carried.isEmpty() && carried == keyRing) {
-                keyRing.setCount(0);
-                player.inventoryMenu.setCarried(last);
-                return Optional.of(keyStack);
-            }
-
-            Inventory inventory = player.getInventory();
-            for (int i = 0; i < inventory.items.size(); ++i) {
-                if (!inventory.items.get(i).isEmpty() && keyRing == inventory.items.get(i)) {
-                    keyRing.setCount(0);
-                    inventory.setItem(i, last);
-                    return Optional.of(keyStack);
-                }
-            }
-
-            inventory.placeItemBackInInventory(last);
-        }
-
-        if (keysNbt.isEmpty())
-            keyRing.setCount(0);
-
-        return Optional.of(keyStack);
-    }
-
-    private static boolean dropContents(ItemStack itemStack, Player player) {
-        CompoundTag tag = itemStack.getOrCreateTag();
-        if (!tag.contains("Keys"))
-            return false;
-
-        if (player instanceof ServerPlayer) {
-            ListTag listTag = tag.getList("Keys", NbtConstants.COMPOUND);
-
-            for (int i = 0; i < listTag.size(); i++)
-                player.getInventory().placeItemBackInInventory(ItemStack.of(listTag.getCompound(i)));
-        }
-
-        itemStack.removeTagKey("Keys");
-        return true;
-    }
-
-    private static void add(ItemStack keyRing, ItemStack key) {
-        if (!keyRing.is(LocksmithItems.KEYRING.get()) || !key.is(LocksmithItems.KEY.get()))
-            return;
-
-        CompoundTag tag = keyRing.getOrCreateTag();
-        if (!tag.contains("Keys"))
-            tag.put("Keys", new ListTag());
-
-        ListTag keysNbt = tag.getList("Keys", NbtConstants.COMPOUND);
-
-        ItemStack singleKey = key.split(1);
-        CompoundTag keyTag = new CompoundTag();
-        singleKey.save(keyTag);
-        keysNbt.add(0, keyTag);
-    }
-
-    private static boolean canAdd(ItemStack keyRing, ItemStack key) {
-        if (!keyRing.is(LocksmithItems.KEYRING.get()) || !key.is(LocksmithItems.KEY.get()))
-            return false;
-        return keyRing.getTag() == null || (keyRing.getTag().contains("Keys", NbtConstants.LIST) && keyRing.getTag().getList("Keys", NbtConstants.COMPOUND).size() < MAX_KEYS);
     }
 }

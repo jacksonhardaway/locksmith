@@ -2,7 +2,7 @@ package gg.moonflower.locksmith.api.lock.position;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.SerializableUUID;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.Validate;
@@ -14,11 +14,10 @@ import java.util.function.Supplier;
 @ApiStatus.NonExtendable
 public class EntityLockPosition implements LockPosition {
 
-    public static final Codec<EntityLockPosition> CODEC = SerializableUUID.CODEC.xmap(EntityLockPosition::new, pos -> pos.entity.get().getUUID());
-
-    private Supplier<Entity> entity;
+    public static final Codec<EntityLockPosition> CODEC = ExtraCodecs.UUID.xmap(EntityLockPosition::new, pos -> pos.entity.get().getUUID());
     private final UUID entityId;
     private final int hashCode;
+    private Supplier<Entity> entity;
 
     private EntityLockPosition(UUID entityId) {
         this.entity = null;
@@ -52,6 +51,12 @@ public class EntityLockPosition implements LockPosition {
         return this.entity.get();
     }
 
+    @ApiStatus.Internal
+    public void setEntity(Supplier<Entity> entity) {
+        Validate.isTrue(this.entity == null);
+        this.entity = entity;
+    }
+
     public UUID getEntityId() {
         return entityId;
     }
@@ -69,11 +74,5 @@ public class EntityLockPosition implements LockPosition {
         Entity thisEntity = this.getEntity();
         Entity thatEntity = that.getEntity();
         return thisEntity != null && thatEntity != null ? thisEntity.equals(thatEntity) : this.entityId.equals(that.entityId);
-    }
-
-    @ApiStatus.Internal
-    public void setEntity(Supplier<Entity> entity) {
-        Validate.isTrue(this.entity == null);
-        this.entity = entity;
     }
 }

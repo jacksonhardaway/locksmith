@@ -1,4 +1,4 @@
-package gg.moonflower.locksmith.client.tooltip;
+package gg.moonflower.locksmith.clientsource.client.tooltip;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
@@ -78,7 +77,7 @@ public class ClientKeyringTooltip implements ClientTooltipComponent {
     private void updateTooltip(ItemStack stack) {
         this.tooltipList.clear();
 
-        MutableComponent name = new TextComponent("").append(stack.getHoverName()).withStyle(stack.getRarity().color);
+        MutableComponent name = Component.literal("").append(stack.getHoverName()).withStyle(stack.getRarity().color);
         if (stack.hasCustomHoverName())
             name.withStyle(ChatFormatting.ITALIC);
         this.tooltipList.add(name);

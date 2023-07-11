@@ -6,6 +6,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * @author Ocelot
@@ -41,6 +42,11 @@ public class LockpickingMenu extends AbstractContainerMenu {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public ItemStack quickMoveStack(Player player, int i) {
+        return ItemStack.EMPTY;
     }
 
     @Override

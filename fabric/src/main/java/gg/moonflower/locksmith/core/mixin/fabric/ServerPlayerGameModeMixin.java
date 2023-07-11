@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class ServerPlayerGameModeMixin {
 
     @Shadow
-    public ServerLevel level;
+    protected ServerLevel level;
 
     @Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
     public void destroyBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state) {

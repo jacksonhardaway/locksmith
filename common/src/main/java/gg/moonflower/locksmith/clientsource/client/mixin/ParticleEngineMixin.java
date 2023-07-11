@@ -1,4 +1,4 @@
-package gg.moonflower.locksmith.core.mixin.client;
+package gg.moonflower.locksmith.clientsource.client.mixin;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.LockManager;

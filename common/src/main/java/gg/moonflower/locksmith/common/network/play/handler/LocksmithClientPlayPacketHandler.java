@@ -3,7 +3,7 @@ package gg.moonflower.locksmith.common.network.play.handler;
 import gg.moonflower.locksmith.common.network.play.ClientboundAddLocksPacket;
 import gg.moonflower.locksmith.common.network.play.ClientboundDeleteLocksPacket;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockPickingPacket;
-import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
+import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketContext;
 
 public interface LocksmithClientPlayPacketHandler {
 

@@ -1,14 +1,14 @@
 package gg.moonflower.locksmith.core;
 
-import gg.moonflower.pollen.api.config.PollinatedConfigBuilder;
-import gg.moonflower.pollen.api.config.PollinatedConfigBuilder.ConfigValue;
+
+import gg.moonflower.pollen.api.config.v1.PollinatedConfigBuilder;
 
 public class LocksmithServerConfig {
 
-    public final ConfigValue<Boolean> allowLocksToBeBroken;
-    public final ConfigValue<Double> lockBreakingMultiplier;
-    public final ConfigValue<Boolean> enableLockpicking;
-    public final ConfigValue<Boolean> useKeyringMenu;
+    public final PollinatedConfigBuilder.ConfigValue<Boolean> allowLocksToBeBroken;
+    public final PollinatedConfigBuilder.ConfigValue<Double> lockBreakingMultiplier;
+    public final PollinatedConfigBuilder.ConfigValue<Boolean> enableLockpicking;
+    public final PollinatedConfigBuilder.ConfigValue<Boolean> useKeyringMenu;
 
     protected LocksmithServerConfig(PollinatedConfigBuilder builder) {
         builder.push("Locks");

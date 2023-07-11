@@ -1,17 +1,18 @@
-package gg.moonflower.locksmith.common.network.play.handler;
+package gg.moonflower.locksmith.clientsource.client.network.play.handler;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.api.lock.position.BlockLockPosition;
 import gg.moonflower.locksmith.api.lock.position.EntityLockPosition;
 import gg.moonflower.locksmith.api.lock.position.LockPosition;
-import gg.moonflower.locksmith.client.lock.ClientLockManager;
-import gg.moonflower.locksmith.client.screen.LockPickingScreen;
+import gg.moonflower.locksmith.clientsource.client.lock.ClientLockManager;
+import gg.moonflower.locksmith.clientsource.client.screen.LockPickingScreen;
 import gg.moonflower.locksmith.common.lockpicking.LockPickingContext;
 import gg.moonflower.locksmith.common.network.play.ClientboundAddLocksPacket;
 import gg.moonflower.locksmith.common.network.play.ClientboundDeleteLocksPacket;
 import gg.moonflower.locksmith.common.network.play.ClientboundLockPickingPacket;
-import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
+import gg.moonflower.locksmith.common.network.play.handler.LocksmithClientPlayPacketHandler;
+import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;

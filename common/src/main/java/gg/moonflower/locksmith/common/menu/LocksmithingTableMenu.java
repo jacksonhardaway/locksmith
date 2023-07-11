@@ -8,7 +8,7 @@ import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithMenus;
 import gg.moonflower.locksmith.core.registry.LocksmithRecipes;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
-import gg.moonflower.pollen.api.util.QuickMoveHelper;
+import gg.moonflower.pollen.api.container.util.v1.QuickMoveHelper;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;

@@ -1,4 +1,4 @@
-package gg.moonflower.locksmith.core.mixin.client;
+package gg.moonflower.locksmith.clientsource.client.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -51,7 +51,7 @@ public class GuiMixin extends GuiComponent {
             return;
 
         boolean moveDown = false;
-        if (this.minecraft.options.attackIndicator == AttackIndicatorStatus.CROSSHAIR) {
+        if (this.minecraft.options.attackIndicator().get() == AttackIndicatorStatus.CROSSHAIR) {
             float strengthScale = player.getAttackStrengthScale(0.0F);
             moveDown = strengthScale < 1.0F;
 
@@ -64,8 +64,8 @@ public class GuiMixin extends GuiComponent {
         int y = this.screenHeight / 2 + 9 + (moveDown ? 9 : 0);
         int x = this.screenWidth / 2 - 5;
         RenderSystem.setShaderTexture(0, LOCK_ICONS);
-        blit(matrixStack, x, y, lock.canUnlock(player, level, player.getMainHandItem()) ? 9 : 0, 0, 9, 9, 32, 32);
+        GuiComponent.blit(matrixStack, x, y, lock.canUnlock(player, level, player.getMainHandItem()) ? 9 : 0, 0, 9, 9, 32, 32);
 
-        RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
+        RenderSystem.setShaderTexture(0, GuiComponent.GUI_ICONS_LOCATION);
     }
 }

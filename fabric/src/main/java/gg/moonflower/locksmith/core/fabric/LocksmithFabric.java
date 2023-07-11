@@ -6,6 +6,6 @@ import net.fabricmc.api.ModInitializer;
 public class LocksmithFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        Locksmith.PLATFORM.setup();
+        Locksmith.init();
     }
 }

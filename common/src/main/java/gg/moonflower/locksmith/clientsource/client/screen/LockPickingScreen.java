@@ -1,4 +1,4 @@
-package gg.moonflower.locksmith.client.screen;
+package gg.moonflower.locksmith.clientsource.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -7,7 +7,7 @@ import gg.moonflower.locksmith.common.lockpicking.LockPickingContext;
 import gg.moonflower.locksmith.common.menu.LockpickingMenu;
 import gg.moonflower.locksmith.core.Locksmith;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
-import gg.moonflower.pollen.api.client.render.ShapeRenderer;
+import gg.moonflower.pollen.api.render.util.v1.ShapeRenderer;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;

@@ -1,38 +1,31 @@
 modLoader = "javafml"
-loaderVersion = "[40,)"
-issueTrackerURL = "https://github.com/MoonflowerTeam/${repo}/issues"
-license = "GPLv3"
+loaderVersion = "[${forge_major_version},)"
+issueTrackerURL = "https://github.com/MoonflowerTeam/${archives_base_name}/issues"
+license = "LGPLv3"
 
 [[mods]]
-modId = "${id}"
-version = "${version}"
-displayName = "${name}"
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+description = "${mod_description}"
+logoFile = "${mod_id}.logo.png"
 authors = "Moonflower"
-credits = "Jackson, Farcr, Ocelot"
-description = "Immersive protection with locks and keys."
-displayURL = "https://www.moonflower.gg/"
-logoFile = "logo.png"
+credits = "Jackson, Ocelot"
+displayURL= "https://www.moonflower.gg/"
 
-[modproperties.${id}]
-catalogueImageIcon="icon.png"
+[modproperties.'${mod_id}']
+catalogueImageIcon="${mod_id}.icon.png"
 
-[[dependencies.${id}]]
+[[dependencies.'${mod_id}']]
 modId = "forge"
 mandatory = true
-versionRange = "[40,)"
-ordering = "NONE"
+versionRange = "[${forge_major_version},)"
+ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.${id}]]
+[[dependencies.'${mod_id}']]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18.2,1.19)"
-ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.${id}]]
-modId = "pollen"
-mandatory = true
-versionRange = "[1.0.0,)"
-ordering = "BEFORE"
+versionRange = "[${minecraft_version},)"
+ordering = "AFTER"
 side = "BOTH"

@@ -1,4 +1,4 @@
-package gg.moonflower.locksmith.client.screen;
+package gg.moonflower.locksmith.clientsource.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -9,10 +9,7 @@ import gg.moonflower.locksmith.core.registry.LocksmithRecipes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
@@ -27,22 +24,22 @@ public class LocksmithingTableScreen extends AbstractContainerScreen<Locksmithin
 
     public static final ResourceLocation LOCKSMITHING_LOCATION = new ResourceLocation(Locksmith.MOD_ID, "textures/gui/container/locksmithing_table.png");
 
-    private static final Component MISSING_KEY = new TextComponent("")
-            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.missing_key"))
+    private static final Component MISSING_KEY = Component.literal("")
+            .append(Component.translatable("screen." + Locksmith.MOD_ID + ".locksmithing_table.missing_key"))
             .append("\n")
-            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.missing_key.tooltip").withStyle(ChatFormatting.GRAY));
-    private static final Component MISSING_INPUT = new TextComponent("")
-            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.missing_input"))
+            .append(Component.translatable("screen." + Locksmith.MOD_ID + ".locksmithing_table.missing_key.tooltip").withStyle(ChatFormatting.GRAY));
+    private static final Component MISSING_INPUT = Component.literal("")
+            .append(Component.translatable("screen." + Locksmith.MOD_ID + ".locksmithing_table.missing_input"))
             .append("\n")
-            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.missing_input.tooltip").withStyle(ChatFormatting.GRAY));
-    private static final Component UNORIGINAL_KEY = new TextComponent("")
-            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.unoriginal_key"))
+            .append(Component.translatable("screen." + Locksmith.MOD_ID + ".locksmithing_table.missing_input.tooltip").withStyle(ChatFormatting.GRAY));
+    private static final Component UNORIGINAL_KEY = Component.literal("")
+            .append(Component.translatable("screen." + Locksmith.MOD_ID + ".locksmithing_table.unoriginal_key"))
             .append("\n")
-            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.unoriginal_key.tooltip").withStyle(ChatFormatting.GRAY));
-    private static final Component INVALID_KEY = new TextComponent("")
-            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_key"))
+            .append(Component.translatable("screen." + Locksmith.MOD_ID + ".locksmithing_table.unoriginal_key.tooltip").withStyle(ChatFormatting.GRAY));
+    private static final Component INVALID_KEY = Component.literal("")
+            .append(Component.translatable("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_key"))
             .append("\n")
-            .append(new TranslatableComponent("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_key.tooltip").withStyle(ChatFormatting.GRAY));
+            .append(Component.translatable("screen." + Locksmith.MOD_ID + ".locksmithing_table.invalid_key.tooltip").withStyle(ChatFormatting.GRAY));
 
     private ItemStack keyStack = ItemStack.EMPTY;
     private ItemStack inputStack = ItemStack.EMPTY;

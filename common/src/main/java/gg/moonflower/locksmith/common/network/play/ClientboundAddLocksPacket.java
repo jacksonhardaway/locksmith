@@ -2,12 +2,10 @@ package gg.moonflower.locksmith.common.network.play;
 
 import gg.moonflower.locksmith.api.lock.AbstractLock;
 import gg.moonflower.locksmith.common.network.play.handler.LocksmithClientPlayPacketHandler;
-import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
-import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
+import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketContext;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.ChunkPos;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -21,7 +19,7 @@ public class ClientboundAddLocksPacket implements PollinatedPacket<LocksmithClie
         this.replace = replace;
     }
 
-    public ClientboundAddLocksPacket(FriendlyByteBuf buf) throws IOException {
+    public ClientboundAddLocksPacket(FriendlyByteBuf buf) {
         int size = buf.readVarInt();
         this.locks = new HashSet<>();
         for (int i = 0; i < size; i++)
@@ -30,7 +28,7 @@ public class ClientboundAddLocksPacket implements PollinatedPacket<LocksmithClie
     }
 
     @Override
-    public void writePacketData(FriendlyByteBuf buf) throws IOException {
+    public void writePacketData(FriendlyByteBuf buf) {
         buf.writeVarInt(this.locks.size());
         for (AbstractLock lock : this.locks)
             buf.writeWithCodec(AbstractLock.CODEC, lock);

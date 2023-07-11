@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import gg.moonflower.locksmith.common.item.KeyringItem;
 import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.locksmith.core.registry.LocksmithMenus;
-import gg.moonflower.pollen.api.util.QuickMoveHelper;
+import gg.moonflower.pollen.api.container.util.v1.QuickMoveHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;

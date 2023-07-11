@@ -1,30 +1,43 @@
 {
   "schemaVersion": 1,
-  "id": "${id}",
-  "version": "${version}",
-  "name": "${name}",
-  "description": "Immersive protection with locks and keys.",
-  "authors": [ "Moonflower" ],
-  "contributors": [ "Jackson", "Farcr", "Ocelot" ],
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "icon": "${mod_id}.icon.png",
+  "authors": [
+    "Moonflower"
+  ],
+  "contributors": [
+    "Jackson",
+    "Farcr",
+    "Ocelot"
+  ],
   "contact": {
-    "homepage": "https://moonflower.gg",
-	"issues": "https://github.com/MoonflowerTeam/${repo}/issues",
-    "sources": "https://github.com/MoonflowerTeam/${repo}/"
+    "homepage": "https://www.moonflower.gg/",
+    "issues": "https://github.com/MoonflowerTeam/${archives_base_name}/issues",
+    "sources": "https://github.com/MoonflowerTeam/${archives_base_name}/"
   },
-  "icon": "icon.png",
   "license": "GPLv3",
   "environment": "*",
-  "mixins": [
-    "${id}-common.mixins.json",
-    "${id}.mixins.json"
-  ],
   "entrypoints": {
     "main": [
       "gg.moonflower.locksmith.core.fabric.LocksmithFabric"
+    ],
+    "client": [
+      "gg.moonflower.locksmith.clientsource.core.fabric.LocksmithFabricClient"
     ]
   },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}-common.mixins.json",
+    {
+      "config": "${mod_id}-common.client.mixins.json",
+      "environment": "client"
+    }
+  ],
   "depends": {
-    "minecraft": ">=1.18.2 <1.19",
-    "pollen": "1.x"
+    "fabric": "*",
+    "minecraft": "~${minecraft_version}"
   }
 }

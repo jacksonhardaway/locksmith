@@ -7,13 +7,11 @@ import gg.moonflower.locksmith.common.lock.types.KeyLock;
 import gg.moonflower.locksmith.core.registry.LocksmithParticles;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import gg.moonflower.locksmith.core.registry.LocksmithTags;
-import gg.moonflower.pollen.api.util.NbtConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -77,13 +75,13 @@ public class LockItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        getKeyName(stack).ifPresent(name -> tooltipComponents.add(new TranslatableComponent(this.getDescriptionId(stack) + ".key", name.copy().withStyle(ChatFormatting.GRAY))));
+        getKeyName(stack).ifPresent(name -> tooltipComponents.add(Component.translatable(this.getDescriptionId(stack) + ".key", name.copy().withStyle(ChatFormatting.GRAY))));
         if (isAdvanced.isAdvanced()) {
             UUID id = KeyItem.getLockId(stack);
             if (id == null)
                 return;
 
-            tooltipComponents.add(new TextComponent("Lock Id: " + id).withStyle(ChatFormatting.DARK_GRAY));
+            tooltipComponents.add(Component.literal("Lock Id: " + id).withStyle(ChatFormatting.DARK_GRAY));
         }
     }
 
@@ -91,7 +89,7 @@ public class LockItem extends Item {
         if (!(stack.getItem() instanceof LockItem))
             return Optional.empty();
         CompoundTag nbt = stack.getTag();
-        if (nbt == null || !nbt.contains("KeyName", NbtConstants.STRING))
+        if (nbt == null || !nbt.contains("KeyName", Tag.TAG_STRING))
             return Optional.empty();
 
         try {

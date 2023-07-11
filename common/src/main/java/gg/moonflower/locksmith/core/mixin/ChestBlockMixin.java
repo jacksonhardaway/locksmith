@@ -5,7 +5,6 @@ import gg.moonflower.locksmith.api.lock.LockManager;
 import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.core.extension.ChestBlockExtension;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -40,7 +39,7 @@ public class ChestBlockMixin {
             if (lock == null || left.hasCustomName() || right.hasCustomName())
                 return;
 
-            cir.setReturnValue(new TranslatableComponent("container.locksmith.locked", cir.getReturnValue()));
+            cir.setReturnValue(Component.translatable("container.locksmith.locked", cir.getReturnValue()));
         }
     }
 }

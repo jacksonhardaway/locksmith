@@ -1,20 +1,23 @@
 package gg.moonflower.locksmith.common.recipe;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import gg.moonflower.locksmith.common.item.KeyItem;
 import gg.moonflower.locksmith.common.item.LockItem;
 import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
 import gg.moonflower.locksmith.core.registry.LocksmithRecipes;
-import gg.moonflower.pollen.api.platform.Platform;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 
 import java.util.UUID;
@@ -152,8 +155,40 @@ public class LocksmithingRecipe implements Recipe<Container> {
         return LocksmithRecipes.LOCKSMITHING_TYPE.get();
     }
 
-    @ExpectPlatform
-    public static RecipeSerializer<LocksmithingRecipe> createSerializer() {
-        return Platform.error();
+    public static class Serializer implements RecipeSerializer<LocksmithingRecipe> {
+
+        @Override
+        public LocksmithingRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+            String group = GsonHelper.getAsString(json, "group", "");
+            Ingredient topInput = Ingredient.fromJson(json.get("topInput"));
+            Ingredient bottomInput = Ingredient.fromJson(json.get("bottomInput"));
+
+            boolean singleResult = json.has("result");
+            if (singleResult && (json.has("leftResult") || json.has("rightResult")))
+                throw new JsonSyntaxException("'result' is not compatible with either 'leftResult' or 'rightResult'");
+
+            ItemStack leftResult = new ItemStack(ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, singleResult ? "result" : "leftResult")));
+            ItemStack rightResult = singleResult ? ItemStack.EMPTY : new ItemStack(ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "rightResult")));
+            return new LocksmithingRecipe(recipeId, group, topInput, bottomInput, leftResult, rightResult);
+        }
+
+        @Override
+        public LocksmithingRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buf) {
+            String group = buf.readUtf();
+            Ingredient topInput = Ingredient.fromNetwork(buf);
+            Ingredient bottomInput = Ingredient.fromNetwork(buf);
+            ItemStack leftResult = buf.readItem();
+            ItemStack rightResult = buf.readItem();
+            return new LocksmithingRecipe(recipeId, group, topInput, bottomInput, leftResult, rightResult);
+        }
+
+        @Override
+        public void toNetwork(FriendlyByteBuf buf, LocksmithingRecipe recipe) {
+            buf.writeUtf(recipe.getGroup());
+            recipe.getTopInput().toNetwork(buf);
+            recipe.getBottomInput().toNetwork(buf);
+            buf.writeItem(recipe.getResultItem());
+            buf.writeItem(recipe.getSecondResultItem());
+        }
     }
 }

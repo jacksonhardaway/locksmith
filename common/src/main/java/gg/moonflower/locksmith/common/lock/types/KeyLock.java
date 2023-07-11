@@ -13,11 +13,10 @@ import gg.moonflower.locksmith.core.registry.LocksmithItems;
 import gg.moonflower.locksmith.core.registry.LocksmithLocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.SerializableUUID;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
@@ -26,26 +25,25 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.UUID;
 
 public class KeyLock extends AbstractLock {
 
     public static final Codec<KeyLock> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            SerializableUUID.CODEC.fieldOf("id").forGetter(KeyLock::getId),
+            ExtraCodecs.UUID.fieldOf("id").forGetter(KeyLock::getId),
             LockPosition.CODEC.fieldOf("pos").forGetter(KeyLock::getPos),
             ItemStack.CODEC.fieldOf("stack").forGetter(KeyLock::getStack)
     ).apply(instance, KeyLock::new));
 
-    private static final Component LOCK_PICKING = new TranslatableComponent("container." + Locksmith.MOD_ID + ".lock_picking");
+    private static final Component LOCK_PICKING = Component.translatable("container." + Locksmith.MOD_ID + ".lock_picking");
 
     public KeyLock(LockType type, UUID id, LockPosition pos, ItemStack stack) {
         super(type, id, pos, stack);
     }
 
     public KeyLock(UUID id, LockPosition pos, ItemStack stack) {
-        this(LocksmithLocks.KEY.get(), id, pos, stack);
+        this(LocksmithLocks.KEY, id, pos, stack);
     }
 
     @Override
@@ -81,7 +79,7 @@ public class KeyLock extends AbstractLock {
     }
 
     @Override
-    public boolean onRightClick(Player player, Level level, ItemStack stack, BlockHitResult hitResult) {
+    public boolean onRightClick(Player player, Level level, ItemStack stack, InteractionHand hand, BlockPos pos, Direction direction) {
         if (this.canUnlock(player, level, stack)) {
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
             return true;
@@ -95,7 +93,7 @@ public class KeyLock extends AbstractLock {
     }
 
     @Override
-    public boolean onRightClick(Player player, Level level, ItemStack stack, Entity entity) {
+    public boolean onRightClick(Player player, Level level, ItemStack stack, InteractionHand hand, Entity entity) {
         if (this.canUnlock(player, level, stack)) {
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
             return true;

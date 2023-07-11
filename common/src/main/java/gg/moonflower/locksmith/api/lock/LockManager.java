@@ -1,9 +1,11 @@
 package gg.moonflower.locksmith.api.lock;
 
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.locksmith.api.lock.position.LockPosition;
-import gg.moonflower.locksmith.client.lock.ClientLockManager;
-import gg.moonflower.locksmith.common.lock.EmptyLockManager;
+import gg.moonflower.locksmith.clientsource.client.lock.ClientLockManager;
+import gg.moonflower.locksmith.common.lock.DummyLockManager;
 import gg.moonflower.locksmith.common.lock.ServerLockManager;
+import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 
 public interface LockManager {
 
+    LockManager DUMMY = new DummyLockManager();
+
     /**
      * Gets a lock manager for a level.
      *
@@ -27,14 +31,17 @@ public interface LockManager {
      * @return The lock manager.
      */
     static LockManager get(Level level) {
-        if (level instanceof ServerLevel) {
-            return ServerLockManager.getOrCreate((ServerLevel) level);
-        } else if (level.isClientSide()) { // Ensure we are on the client before using client classes
-            if (level instanceof ClientLevel)
-                return ClientLockManager.getOrCreate((ClientLevel) level);
-        }
+        return level.isClientSide() ? client(level) : server(level);
+    }
 
-        return new EmptyLockManager();
+    static LockManager client(Level level) {
+        return ClientLockManager.getOrCreate((ClientLevel) level);
+    }
+
+    static LockManager server(Level level) {
+        if (level instanceof ServerLevel)
+            return ServerLockManager.getOrCreate((ServerLevel) level);
+        return DUMMY;
     }
 
     @ApiStatus.Internal

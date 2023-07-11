@@ -5,7 +5,6 @@ import gg.moonflower.locksmith.core.Locksmith;
 import gg.moonflower.locksmith.core.registry.LocksmithStats;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -19,7 +18,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class LocksmithingTableBlock extends Block {
 
-    private static final Component CONTAINER_TITLE = new TranslatableComponent("container." + Locksmith.MOD_ID + ".locksmithing_table");
+    private static final Component CONTAINER_TITLE = Component.translatable("container." + Locksmith.MOD_ID + ".locksmithing_table");
 
     public LocksmithingTableBlock(Properties properties) {
         super(properties);
@@ -30,7 +29,7 @@ public class LocksmithingTableBlock extends Block {
         if (level.isClientSide())
             return InteractionResult.SUCCESS;
         player.openMenu(state.getMenuProvider(level, pos));
-        player.awardStat(LocksmithStats.INTERACT_WITH_LOCKSMITHING_TABLE);
+//        player.awardStat(LocksmithStats.INTERACT_WITH_LOCKSMITHING_TABLE);
         return InteractionResult.CONSUME;
     }
 

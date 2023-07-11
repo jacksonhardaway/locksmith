@@ -1,4 +1,4 @@
-package gg.moonflower.locksmith.client.screen;
+package gg.moonflower.locksmith.clientsource.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;

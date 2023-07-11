@@ -25,7 +25,7 @@ import java.util.UUID;
  */
 public abstract class AbstractLock {
 
-    public static final Codec<AbstractLock> CODEC = LocksmithLocks.LOCKS.dispatch(AbstractLock::getType, LockType::codec);
+    public static final Codec<AbstractLock> CODEC = LocksmithLocks.LOCK_TYPES.byNameCodec().dispatch(AbstractLock::getType, LockType::codec);
 
     private final LockType type;
     private final UUID id;
@@ -137,7 +137,7 @@ public abstract class AbstractLock {
      *
      * @return Whether the right-click action should succeed.
      */
-    public abstract boolean onRightClick(Player player, Level level, ItemStack stack, BlockHitResult hitResult);
+    public abstract boolean onRightClick(Player player, Level level, ItemStack stack, InteractionHand hand, BlockPos pos, Direction direction);
 
     /**
      * Fires when a player left-clicks on a locked block.
@@ -151,7 +151,7 @@ public abstract class AbstractLock {
      *
      * @return Whether the right-click action should succeed.
      */
-    public abstract boolean onRightClick(Player player, Level level, ItemStack stack, Entity hitResult);
+    public abstract boolean onRightClick(Player player, Level level, ItemStack stack, InteractionHand hand, Entity entity);
 
     /**
      * Fires when a player left-clicks on a locked entity.

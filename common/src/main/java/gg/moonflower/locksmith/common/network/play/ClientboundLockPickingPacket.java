@@ -1,12 +1,10 @@
 package gg.moonflower.locksmith.common.network.play;
 
 import gg.moonflower.locksmith.common.network.play.handler.LocksmithClientPlayPacketHandler;
-import gg.moonflower.pollen.api.network.packet.PollinatedPacket;
-import gg.moonflower.pollen.api.network.packet.PollinatedPacketContext;
+import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacket;
+import gg.moonflower.pollen.api.network.v1.packet.PollinatedPacketContext;
 import net.minecraft.network.FriendlyByteBuf;
 import org.apache.commons.lang3.Validate;
-
-import java.io.IOException;
 
 public class ClientboundLockPickingPacket implements PollinatedPacket<LocksmithClientPlayPacketHandler> {
 
@@ -27,14 +25,14 @@ public class ClientboundLockPickingPacket implements PollinatedPacket<LocksmithC
         this.set = false;
     }
 
-    public ClientboundLockPickingPacket(FriendlyByteBuf buf) throws IOException {
+    public ClientboundLockPickingPacket(FriendlyByteBuf buf) {
         this.type = buf.readEnum(Type.class);
         this.pin = this.type == Type.SET ? buf.readVarInt() : -1;
         this.set = this.type == Type.SET && buf.readBoolean();
     }
 
     @Override
-    public void writePacketData(FriendlyByteBuf buf) throws IOException {
+    public void writePacketData(FriendlyByteBuf buf) {
         buf.writeEnum(this.type);
         if (this.type == Type.SET) {
             buf.writeVarInt(this.pin);

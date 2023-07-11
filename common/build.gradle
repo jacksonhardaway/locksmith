@@ -1,38 +1,17 @@
-dependencies {
-    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
-    // Do NOT use other classes from fabric loader
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-
-    modApi("gg.moonflower:pollen:${rootProject.pollen_version}")
-}
-
 architectury {
-    common()
+    common(rootProject.enabled_platforms.split(","))
 }
 
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            artifactId = project.archivesBaseName
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modApi "dev.architectury:architectury:${rootProject.architectury_version}"
+    modApi "gg.moonflower:pollen-common:${rootProject.pollen_version}"
+}
 
-            artifact remapJar
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
+processResources {
+    inputs.property "mod_id", project.mod_id
 
-            pom.withXml {
-                def depsNode = asNode().appendNode('dependencies')
-                [this.configurations.modApi, this.configurations.api].each {
-                    it.allDependencies.each {
-                        def depNode = depsNode.appendNode('dependency')
-                        depNode.appendNode('groupId', it.group)
-                        depNode.appendNode('artifactId', it.name)
-                        depNode.appendNode('version', it.version)
-                    }
-                }
-            }
-        }
+    filesMatching(["architectury.common.json"]) {
+        expand "mod_id": project.mod_id
     }
 }
-
-loom.disableDeprecatedPomGeneration(publishing.publications.mavenCommon)
