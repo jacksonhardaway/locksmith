@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Gui.class)
 public class GuiMixin extends GuiComponent {
+
     private static final ResourceLocation LOCK_ICONS = new ResourceLocation(Locksmith.MOD_ID, "textures/gui/crosshair_icons.png");
 
     @Shadow

@@ -100,7 +100,7 @@ public abstract class ServerPickingContext extends LockPickingContext {
 
         if (success) {
             LocksmithMessages.PLAY.sendTo(this.player, new ClientboundLockPickingPacket(ClientboundLockPickingPacket.Type.SUCCESS));
-//            this.player.awardStat(LocksmithStats.PICK_LOCK);
+            this.player.awardStat(LocksmithStats.PICK_LOCK.get());
             this.removeLock();
             return;
         }

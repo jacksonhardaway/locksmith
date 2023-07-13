@@ -29,7 +29,7 @@ public class LocksmithingTableBlock extends Block {
         if (level.isClientSide())
             return InteractionResult.SUCCESS;
         player.openMenu(state.getMenuProvider(level, pos));
-//        player.awardStat(LocksmithStats.INTERACT_WITH_LOCKSMITHING_TABLE);
+        player.awardStat(LocksmithStats.INTERACT_WITH_LOCKSMITHING_TABLE.get());
         return InteractionResult.CONSUME;
     }
 

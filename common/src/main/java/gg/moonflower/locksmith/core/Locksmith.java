@@ -1,18 +1,10 @@
 package gg.moonflower.locksmith.core;
 
 import dev.architectury.event.events.common.InteractionEvent;
-import dev.architectury.registry.registries.Registries;
 import gg.moonflower.locksmith.common.lock.LockInteractionManager;
 import gg.moonflower.locksmith.common.lock.ServerLockManager;
 import gg.moonflower.locksmith.common.network.LocksmithMessages;
-import gg.moonflower.locksmith.core.registry.LocksmithBlocks;
-import gg.moonflower.locksmith.core.registry.LocksmithItems;
-import gg.moonflower.locksmith.core.registry.LocksmithLocks;
-import gg.moonflower.locksmith.core.registry.LocksmithMenus;
-import gg.moonflower.locksmith.core.registry.LocksmithParticles;
-import gg.moonflower.locksmith.core.registry.LocksmithRecipes;
-import gg.moonflower.locksmith.core.registry.LocksmithSounds;
-import gg.moonflower.locksmith.core.registry.LocksmithStats;
+import gg.moonflower.locksmith.core.registry.*;
 import gg.moonflower.pollen.api.config.v1.ConfigManager;
 import gg.moonflower.pollen.api.config.v1.PollinatedConfigType;
 
@@ -29,7 +21,7 @@ public class Locksmith {
         LocksmithParticles.REGISTRY.register();
         LocksmithRecipes.RECIPES.register();
         LocksmithRecipes.RECIPE_TYPES.register();
-//        LocksmithStats.REGISTRY.register();
+        LocksmithStats.REGISTRY.register();
         LocksmithLocks.register();
         LocksmithMessages.init();
         ServerLockManager.init();

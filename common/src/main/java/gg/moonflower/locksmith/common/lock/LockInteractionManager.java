@@ -49,7 +49,7 @@ public class LockInteractionManager {
                 player.playNotifySound(LocksmithSounds.ITEM_LOCK_LOCKED.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
                 player.swing(hand); // so awful
             }
-            return EventResult.interruptFalse();
+            return EventResult.interrupt(level.isClientSide());
         }
         return EventResult.pass();
     }

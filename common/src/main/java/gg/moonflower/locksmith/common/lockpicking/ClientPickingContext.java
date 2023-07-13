@@ -1,6 +1,5 @@
-package gg.moonflower.locksmith.clientsource.client.lockpicking;
+package gg.moonflower.locksmith.common.lockpicking;
 
-import gg.moonflower.locksmith.common.lockpicking.LockPickingContext;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;

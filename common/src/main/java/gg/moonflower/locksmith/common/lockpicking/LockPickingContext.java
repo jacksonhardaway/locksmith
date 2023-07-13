@@ -1,9 +1,7 @@
 package gg.moonflower.locksmith.common.lockpicking;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.locksmith.api.lock.position.EntityLockPosition;
 import gg.moonflower.locksmith.api.lock.position.LockPosition;
-import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -64,9 +62,8 @@ public abstract class LockPickingContext {
 
     public abstract boolean stillValid(Player player);
 
-    @ExpectPlatform
     public static LockPickingContext client(int containerId) {
-        return Pollen.expect();
+        return new ClientPickingContext(containerId);
     }
 
     public static LockPickingContext server(LockPosition pos, BlockPos clickPos, ServerPlayer player, ItemStack pickStack, InteractionHand pickHand) {
