@@ -17,11 +17,10 @@ public class LocksmithRecipes {
 
     public static final RegistrySupplier<SimpleRecipeSerializer<KeyringRecipe>> KEYRING = RECIPES.register("keyring", () -> new SimpleRecipeSerializer<>(KeyringRecipe::new));
     public static final RegistrySupplier<RecipeSerializer<LocksmithingRecipe>> LOCKSMITHING = RECIPES.register("locksmithing", LocksmithingRecipe.Serializer::new);
-    public static final RegistrySupplier<RecipeType<LocksmithingRecipe>> LOCKSMITHING_TYPE = RECIPE_TYPES.register("locksmithing", () -> new RecipeType<LocksmithingRecipe>() {
+    public static final RegistrySupplier<RecipeType<LocksmithingRecipe>> LOCKSMITHING_TYPE = RECIPE_TYPES.register("locksmithing", () -> new RecipeType<>() {
         @Override
         public String toString() {
             return Locksmith.MOD_ID + ":locksmithing";
         }
     });
-
 }

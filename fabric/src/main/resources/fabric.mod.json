@@ -26,6 +26,9 @@
     ],
     "client": [
       "gg.moonflower.locksmith.clientsource.core.fabric.LocksmithFabricClient"
+    ],
+    "jei_mod_plugin": [
+      "gg.moonflower.locksmith.core.compat.jei.LocksmithJeiPlugin"
     ]
   },
   "mixins": [
