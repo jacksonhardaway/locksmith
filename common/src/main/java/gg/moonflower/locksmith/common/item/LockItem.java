@@ -8,6 +8,7 @@ import gg.moonflower.locksmith.core.registry.LocksmithParticles;
 import gg.moonflower.locksmith.core.registry.LocksmithSounds;
 import gg.moonflower.locksmith.core.registry.LocksmithTags;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -75,10 +76,14 @@ public class LockItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        getKeyName(stack).ifPresent(name -> tooltipComponents.add(Component.translatable(this.getDescriptionId(stack) + ".key", name.copy().withStyle(ChatFormatting.GRAY))));
+        appendHoverText(stack, tooltipComponents, isAdvanced);
+    }
+
+    public static void appendHoverText(ItemStack stack, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+        getKeyName(stack).ifPresent(name -> tooltipComponents.add(Component.translatable(stack.getItem().getDescriptionId(stack) + ".key", name.copy().withStyle(ChatFormatting.GRAY))));
         if (isAdvanced.isAdvanced()) {
             UUID id = KeyItem.getLockId(stack);
-            if (id == null)
+            if (id == null || Util.NIL_UUID.equals(id))
                 return;
 
             tooltipComponents.add(Component.literal("Lock Id: " + id).withStyle(ChatFormatting.DARK_GRAY));
