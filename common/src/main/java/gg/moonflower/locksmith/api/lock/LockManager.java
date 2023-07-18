@@ -1,11 +1,9 @@
 package gg.moonflower.locksmith.api.lock;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import gg.moonflower.locksmith.api.lock.position.LockPosition;
 import gg.moonflower.locksmith.clientsource.client.lock.ClientLockManager;
 import gg.moonflower.locksmith.common.lock.DummyLockManager;
 import gg.moonflower.locksmith.common.lock.ServerLockManager;
-import gg.moonflower.pollen.core.Pollen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,19 +26,23 @@ public interface LockManager {
      * Gets a lock manager for a level.
      *
      * @param level The level storing the locks.
-     * @return The lock manager.
+     * @return The lock manager for that level
      */
     static LockManager get(Level level) {
         return level.isClientSide() ? client(level) : server(level);
     }
 
     static LockManager client(Level level) {
-        return ClientLockManager.getOrCreate((ClientLevel) level);
+        if (level instanceof ClientLevel clientLevel) {
+            return ClientLockManager.getOrCreate(clientLevel);
+        }
+        return DUMMY;
     }
 
     static LockManager server(Level level) {
-        if (level instanceof ServerLevel)
-            return ServerLockManager.getOrCreate((ServerLevel) level);
+        if (level instanceof ServerLevel serverLevel) {
+            return ServerLockManager.getOrCreate(serverLevel);
+        }
         return DUMMY;
     }
 
