@@ -31,10 +31,10 @@ public class LocksmithClient {
         ParticleProviderRegistry.register(LocksmithParticles.LOCK_SPARK, LockSparkParticle.Provider::new);
 
         LocksmithMessages.PLAY.setClientHandler(new LocksmithClientPlayPacketHandlerImpl());
+        ClientTooltipComponentRegistry.register(KeyringTooltip.class, ClientKeyringTooltip::new);
     }
 
     public static void postInit() {
-        ClientTooltipComponentRegistry.register(KeyringTooltip.class, ClientKeyringTooltip::new);
         MenuRegistry.registerScreenFactory(LocksmithMenus.LOCKSMITHING_TABLE_MENU.get(), LocksmithingTableScreen::new);
         MenuRegistry.registerScreenFactory(LocksmithMenus.KEYRING_MENU.get(), KeyringScreen::new);
         MenuRegistry.registerScreenFactory(LocksmithMenus.LOCK_PICKING_MENU.get(), LockPickingScreen::new);
