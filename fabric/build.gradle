@@ -27,6 +27,8 @@ dependencies {
     modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-fabric-api:${rootProject.jei_version}")
     modRuntimeOnly("mezz.jei:jei-${rootProject.minecraft_version}-fabric:${rootProject.jei_version}")
 
+    include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:0.2.0-beta.9")))
+
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }

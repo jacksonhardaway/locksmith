@@ -9,7 +9,9 @@
     "BaseContainerBlockEntityMixin",
     "BlockStateBaseMixin",
     "ChestBlockMixin$DoubleBlockCombinerMixin",
-    "ChestBlockMixin$MenuProviderMixin"
+    "ChestBlockMixin$MenuProviderMixin",
+    "DoorBlockMixin",
+    "WalkNodeEvaluatorMixin"
   ],
   "injectors": {
     "defaultRequire": 1
