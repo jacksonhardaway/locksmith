@@ -13,24 +13,24 @@ authors = "Moonflower"
 credits = "Jackson, Ocelot"
 displayURL= "https://www.moonflower.gg/"
 
-[modproperties.'${mod_id}']
+[modproperties.${mod_id}]
 catalogueImageIcon="${mod_id}.icon.png"
 
-[[dependencies.'${mod_id}']]
+[[dependencies.${mod_id}]]
 modId = "forge"
 mandatory = true
 versionRange = "[${forge_major_version},)"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.'${mod_id}']]
+[[dependencies.${mod_id}]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[${minecraft_version},)"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.${id}]]
+[[dependencies.${mod_id}]]
 modId = "pollen"
 mandatory = true
 versionRange = "[2.0.0,)"
