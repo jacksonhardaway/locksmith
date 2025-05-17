@@ -1,0 +1,10 @@
+{
+  "block.locksmith.locksmithing_table": "Locksmithing Table",
+  "item.locksmith.blank_key": "Blank Key",
+  "item.locksmith.blank_lock": "Blank Lock",
+  "item.locksmith.key": "Key",
+  "item.locksmith.key.copied_key": "%s #%s",
+  "item.locksmith.key.original_key": "Original",
+  "item.locksmith.lock": "Lock",
+  "item.locksmith.lock.requires_key": "Requires %s"
+}

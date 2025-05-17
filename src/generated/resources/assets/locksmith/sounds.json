@@ -1,0 +1,22 @@
+{
+  "item.lock.locked": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chest.locked"
+      }
+    ],
+    "subtitle": "subtitles.locksmith.item.lock.locked"
+  },
+  "item.lock.place": {
+    "sounds": [
+      "locksmith:item/lock/place"
+    ],
+    "subtitle": "subtitles.locksmith.item.lock.place"
+  },
+  "ui.locksmithing_table.take_result": {
+    "sounds": [
+      "locksmith:ui/locksmithing_table/take_result"
+    ]
+  }
+}

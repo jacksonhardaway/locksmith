@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "O": {
+      "tag": "minecraft:planks"
+    },
+    "i": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "pattern": [
+    "ii",
+    "OO",
+    "OO"
+  ],
+  "result": {
+    "count": 1,
+    "id": "locksmith:locksmithing_table"
+  }
+}

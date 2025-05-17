@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "locksmith:block/locksmithing_table_bottom",
+    "east": "locksmith:block/locksmithing_table_side",
+    "north": "locksmith:block/locksmithing_table_front",
+    "particle": "locksmith:block/locksmithing_table_front",
+    "south": "locksmith:block/locksmithing_table_front",
+    "up": "locksmith:block/locksmithing_table_top",
+    "west": "locksmith:block/locksmithing_table_side"
+  }
+}

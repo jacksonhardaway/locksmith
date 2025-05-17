@@ -1,0 +1,21 @@
+{
+	"credit": "Made by Farcr",
+	"textures": {
+		"texture": "locksmith:block/lock_button",
+		"particle": "locksmith:block/lock_button"
+	},
+	"elements": [
+		{
+			"from": [4.5, 0, 4.5],
+			"to": [11.5, 3, 11.5],
+			"faces": {
+				"north": {"uv": [4, 8, 11, 11], "texture": "#texture"},
+				"east": {"uv": [0, 8, 3, 15], "rotation": 270, "texture": "#texture"},
+				"south": {"uv": [4, 12, 11, 15], "rotation": 180, "texture": "#texture"},
+				"west": {"uv": [12, 8, 15, 15], "rotation": 90, "texture": "#texture"},
+				"up": {"uv": [0, 7, 7, 0], "texture": "#texture"},
+				"down": {"uv": [7, 0, 14, 7], "texture": "#texture", "cullface": "down"}
+			}
+		}
+	]
+}

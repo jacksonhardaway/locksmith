@@ -1,0 +1,7 @@
+// 1.21.1	2025-05-15T02:07:23.8174262	Recipes
+e90b54c55fe0ae6b4f9fee45d45d9f17b764947e data/locksmith/advancement/recipes/decorations/locksmithing_table.json
+f27e861bfa8b7e4b2c536099e950f107e3780523 data/locksmith/advancement/recipes/tools/blank_key.json
+66c23f416a9931c6d5bbaf86b4ca5bb765068028 data/locksmith/advancement/recipes/tools/blank_lock.json
+23d0b69176c885af83dbb0304cc4d29284d28eac data/locksmith/recipe/blank_key.json
+51367ad3883054922c387d7025db54ca8d818b58 data/locksmith/recipe/blank_lock.json
+75d162503855b7deb354b689325f1e032ef6f69f data/locksmith/recipe/locksmithing_table.json

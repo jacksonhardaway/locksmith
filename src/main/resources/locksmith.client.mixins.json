@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "dev.hardaway.locksmith.core.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
