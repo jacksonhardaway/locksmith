@@ -2,9 +2,7 @@ package dev.hardaway.locksmith.common.item;
 
 import dev.hardaway.locksmith.api.lock.Lock;
 import dev.hardaway.locksmith.api.lock.Lockable;
-import dev.hardaway.locksmith.common.component.CopiedKey;
 import dev.hardaway.locksmith.common.component.KeyData;
-import dev.hardaway.locksmith.common.component.OriginalKey;
 import dev.hardaway.locksmith.core.registry.LocksmithCapabilities;
 import dev.hardaway.locksmith.core.registry.LocksmithComponents;
 import net.minecraft.ChatFormatting;
@@ -20,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
@@ -76,15 +75,10 @@ public class KeyItem extends Item {
         if (keyData == null)
             return stackName;
 
-        OriginalKey originalKey = stack.get(LocksmithComponents.ORIGINAL_KEY);
-        if (originalKey != null)
+        if (keyData.copyId() <= 0)
             return stackName;
 
-        CopiedKey copiedKey = stack.get(LocksmithComponents.COPIED_KEY);
-        if (copiedKey != null)
-            return Component.translatable(this.getDescriptionId() + ".copied_key", keyData.label(), copiedKey.copy());
-
-        return keyData.label();
+        return Component.translatable(this.getDescriptionId() + ".copied_key", keyData.label(), keyData.copyId());
     }
 
     @Override
@@ -92,21 +86,34 @@ public class KeyItem extends Item {
         if (!player.isSecondaryUseActive())
             return InteractionResult.PASS;
 
-        KeyData keyData = stack.get(LocksmithComponents.KEY_DATA);
-        if (keyData == null)
+        Lockable lockable = target.getCapability(LocksmithCapabilities.ENTITY_LOCKABLE);
+        if (lockable == null)
             return InteractionResult.PASS;
 
-        Lockable lockable = target.getCapability(LocksmithCapabilities.LOCKABLE_ENTITY);
-        if (lockable == null || lockable.getLock().isEmpty())
-            return InteractionResult.PASS;
-
-        Lock lock = lockable.getLock().get();
-        if (keyData.id().equals(lock.getId())) { // TODO: check lock component
-            if (!player.level().isClientSide()) lockable.unlock();
+        if (lockable.canUnlock(stack)) {
+            lockable.unlock();
             return InteractionResult.sidedSuccess(player.level().isClientSide());
         }
 
         return InteractionResult.FAIL;
+    }
+
+    private void onEntityInteraction(PlayerInteractEvent.EntityInteractSpecific event) {
+        Player player = event.getEntity();
+        if (!player.isSecondaryUseActive())
+            return;
+
+        Entity target = event.getTarget();
+        Lockable lockable = target.getCapability(LocksmithCapabilities.ENTITY_LOCKABLE);
+        if (lockable == null)
+            return;
+
+        ItemStack stack = event.getItemStack();
+        if (lockable.canUnlock(stack)) {
+            lockable.unlock();
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.sidedSuccess(event.getLevel().isClientSide()));
+        }
     }
 
     @Override
@@ -115,22 +122,17 @@ public class KeyItem extends Item {
             return InteractionResult.PASS;
 
         ItemStack stack = context.getItemInHand();
-        KeyData keyData = stack.get(LocksmithComponents.KEY_DATA);
-        if (keyData == null)
-            return InteractionResult.PASS;
-
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);
         BlockEntity be = level.getBlockEntity(pos);
 
-        Lockable lockable = level.getCapability(LocksmithCapabilities.LOCKABLE_BLOCK, pos, state, be);
-        if (lockable == null || lockable.getLock().isEmpty())
+        Lockable lockable = level.getCapability(LocksmithCapabilities.BLOCK_LOCKABLE, pos, state, be);
+        if (lockable == null)
             return InteractionResult.PASS;
 
-        Lock lock = lockable.getLock().get();
-        if (keyData.id().equals(lock.getId())) { // TODO: check lock component
-            if (!level.isClientSide()) lockable.unlock();
+        if (lockable.canUnlock(stack)) {
+            lockable.unlock();
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
 
@@ -139,32 +141,8 @@ public class KeyItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        OriginalKey originalKey = stack.get(LocksmithComponents.ORIGINAL_KEY);
-        if (originalKey != null)
-            tooltipComponents.add(Component.translatable(this.getDescriptionId() + ".original_key").withStyle(ChatFormatting.GRAY));
-    }
-
-    private void onEntityInteraction(PlayerInteractEvent.EntityInteractSpecific event) {
-        Player player = event.getEntity();
-        Level level = event.getLevel();
-        if (!player.isSecondaryUseActive())
-            return;
-
-        ItemStack stack = event.getItemStack();
         KeyData keyData = stack.get(LocksmithComponents.KEY_DATA);
-        if (keyData == null)
-            return;
-
-        Entity target = event.getTarget();
-        Lockable lockable = target.getCapability(LocksmithCapabilities.LOCKABLE_ENTITY);
-        if (lockable == null || lockable.getLock().isEmpty())
-            return;
-
-        Lock lock = lockable.getLock().get();
-        if (keyData.id().equals(lock.getId())) { // TODO: check lock component
-            lockable.unlock();
-            event.setCanceled(true);
-            event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide()));
-        }
+        if (keyData != null && keyData.copyId() <= 0)
+            tooltipComponents.add(Component.translatable(this.getDescriptionId() + ".original_key").withStyle(ChatFormatting.GRAY));
     }
 }

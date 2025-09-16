@@ -79,6 +79,8 @@ public class Locksmith {
         generator.addProvider(event.includeClient(), new LocksmithBlockStateProvider(packOutput, existingFileHelper));
         generator.addProvider(event.includeClient(), new LocksmithItemModelProvider(packOutput, existingFileHelper));
 
+        generator.addProvider(event.includeServer(), new LocksmithBlockTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeServer(), new LocksmithEntityTypeTagsProvider(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(event.includeServer(), new LocksmithRecipeProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new LocksmithLootTableProvider(packOutput, Set.of(), List.of(
                 new LootTableProvider.SubProviderEntry(LocksmithBlockLootProvider::new, LootContextParamSets.BLOCK)

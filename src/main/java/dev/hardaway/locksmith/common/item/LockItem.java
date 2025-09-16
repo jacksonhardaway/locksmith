@@ -2,9 +2,10 @@ package dev.hardaway.locksmith.common.item;
 
 import dev.hardaway.locksmith.api.lock.Lock;
 import dev.hardaway.locksmith.api.lock.Lockable;
-import dev.hardaway.locksmith.common.component.KeyData;
+import dev.hardaway.locksmith.common.component.LockData;
 import dev.hardaway.locksmith.core.registry.LocksmithCapabilities;
 import dev.hardaway.locksmith.core.registry.LocksmithComponents;
+import dev.hardaway.locksmith.core.registry.LocksmithTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -33,39 +34,61 @@ public class LockItem extends Item {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand usedHand) {
-        KeyData keyData = stack.get(LocksmithComponents.KEY_DATA);
-        if (keyData == null)
+        Lockable lockable = target.getCapability(LocksmithCapabilities.ENTITY_LOCKABLE);
+        if (lockable == null)
             return InteractionResult.PASS;
 
-        Lockable lockable = target.getCapability(LocksmithCapabilities.LOCKABLE_ENTITY);
-        if (lockable == null || lockable.getLock().isPresent())
-            return InteractionResult.PASS;
-
-        if (lockable.lock(new Lock(keyData.id(), stack.split(1)))) {
-            return InteractionResult.sidedSuccess(player.level().isClientSide());
+        if (lockable.canLock(stack)) {
+            Lock lock = stack.get(LocksmithComponents.LOCK_DATA).createLock(stack.copyWithCount(1));
+            if (lockable.lock(lock)) {
+                stack.consume(1, player);
+                return InteractionResult.sidedSuccess(player.level().isClientSide());
+            }
         }
 
         return InteractionResult.FAIL;
     }
 
+    private void onEntityInteraction(PlayerInteractEvent.EntityInteractSpecific event) {
+        ItemStack stack = event.getItemStack();
+        Level level = event.getLevel();
+        Entity target = event.getTarget();
+
+        Lockable lockable = target.getCapability(LocksmithCapabilities.ENTITY_LOCKABLE);
+        if (lockable == null)
+            return;
+
+        if (lockable.canLock(stack)) {
+            Lock lock = stack.get(LocksmithComponents.LOCK_DATA).createLock(stack.copyWithCount(1));
+            if (lockable.lock(lock)) {
+                stack.consume(1, event.getEntity());
+                event.setCanceled(true);
+                event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide()));
+            }
+        }
+    }
+
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        ItemStack stack = context.getItemInHand();
-        KeyData keyData = stack.get(LocksmithComponents.KEY_DATA);
-        if (keyData == null)
+        if (!context.isSecondaryUseActive())
             return InteractionResult.PASS;
 
+        ItemStack stack = context.getItemInHand();
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);
         BlockEntity be = level.getBlockEntity(pos);
 
-        Lockable lockable = level.getCapability(LocksmithCapabilities.LOCKABLE_BLOCK, pos, state, be);
-        if (lockable == null || lockable.getLock().isPresent())
+        Lockable lockable = level.getCapability(LocksmithCapabilities.BLOCK_LOCKABLE, pos, state, be);
+        if (lockable == null)
             return InteractionResult.PASS;
 
-        if (lockable.lock(new Lock(keyData.id(), stack.split(1)))) {
-            return InteractionResult.sidedSuccess(level.isClientSide());
+        if (lockable.canLock(stack)) {
+            Lock lock = stack.get(LocksmithComponents.LOCK_DATA).createLock(stack.copyWithCount(1));
+            if (lockable.lock(lock)) {
+                stack.consume(1, context.getPlayer());
+                return InteractionResult.sidedSuccess(level.isClientSide());
+            }
         }
 
         return InteractionResult.FAIL;
@@ -73,32 +96,10 @@ public class LockItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        KeyData keyData = stack.get(LocksmithComponents.KEY_DATA);
-        if (keyData == null)
+        LockData lock = stack.get(LocksmithComponents.LOCK_DATA);
+        if (lock == null)
             return;
 
-        tooltipComponents.add(Component.translatable(this.getDescriptionId() + ".requires_key", keyData.label()).withStyle(ChatFormatting.GRAY));
-    }
-
-    private void onEntityInteraction(PlayerInteractEvent.EntityInteractSpecific event) {
-        ItemStack stack = event.getItemStack();
-        if (!stack.is(this))
-            return;
-
-        Level level = event.getLevel();
-        Entity target = event.getTarget();
-
-        KeyData keyData = stack.get(LocksmithComponents.KEY_DATA);
-        if (keyData == null)
-            return;
-
-        Lockable lockable = target.getCapability(LocksmithCapabilities.LOCKABLE_ENTITY);
-        if (lockable == null || lockable.getLock().isPresent())
-            return;
-
-        if (lockable.lock(new Lock(keyData.id(), stack.split(1)))) {
-            event.setCanceled(true);
-            event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide()));
-        }
+        tooltipComponents.add(Component.translatable(this.getDescriptionId() + ".requires_key", lock.label()).withStyle(ChatFormatting.GRAY));
     }
 }

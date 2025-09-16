@@ -1,9 +1,15 @@
 package dev.hardaway.locksmith.api.storage;
 
+import com.jcraft.jorbis.Block;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.hardaway.locksmith.api.lock.Lock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,8 +19,14 @@ import java.util.Optional;
 public class LockContainer {
 
     public static final Codec<LockContainer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.unboundedMap(BlockPos.CODEC, Lock.CODEC).fieldOf("locks").forGetter(container -> container.locks)
+            Codec.unboundedMap(Codec.STRING.xmap(s -> BlockPos.of(Long.decode(s)), pos -> Long.toString(pos.asLong())), Lock.CODEC).fieldOf("locks").forGetter(container -> container.locks)
     ).apply(instance, LockContainer::new));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, LockContainer> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.map(HashMap::new, BlockPos.STREAM_CODEC, Lock.STREAM_CODEC),
+            container -> container.locks,
+            LockContainer::new
+    );
 
     private final Map<BlockPos, Lock> locks;
 
