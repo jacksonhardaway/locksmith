@@ -1,6 +1,9 @@
 package dev.hardaway.locksmith.api.lock;
 
-import dev.hardaway.locksmith.core.registry.*;
+import dev.hardaway.locksmith.core.registry.LocksmithAttachments;
+import dev.hardaway.locksmith.core.registry.LocksmithParticles;
+import dev.hardaway.locksmith.core.registry.LocksmithSounds;
+import dev.hardaway.locksmith.core.registry.LocksmithTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -16,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class BasicBlockLockable extends KeyAndLockLockable {
+public class BasicBlockLockable implements Lockable {
 
     protected final Level level;
     protected final BlockPos pos;
@@ -75,7 +78,7 @@ public class BasicBlockLockable extends KeyAndLockLockable {
 
     @Override
     public boolean canLock(ItemStack stack) {
-        return super.canLock(stack) && this.state.is(LocksmithTags.Blocks.LOCKABLES);
+        return Lockable.super.canLock(stack) && this.state.is(LocksmithTags.Blocks.LOCKABLES);
     }
 
     @Override

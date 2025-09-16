@@ -7,7 +7,7 @@ import net.minecraft.client.particle.SimpleAnimatedParticle;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.SimpleParticleType;
 
-public class LockSparkParticle  extends SimpleAnimatedParticle {
+public class LockSparkParticle extends SimpleAnimatedParticle {
 
     public LockSparkParticle(ClientLevel clientLevel, double x, double y, double z, double motionX, double motionY, double motionZ, SpriteSet spriteSet) {
         super(clientLevel, x, y, z, spriteSet, 0);

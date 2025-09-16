@@ -5,8 +5,6 @@ import dev.hardaway.locksmith.api.storage.LockContainer;
 import dev.hardaway.locksmith.core.Locksmith;
 import net.minecraft.Util;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent;
-import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 

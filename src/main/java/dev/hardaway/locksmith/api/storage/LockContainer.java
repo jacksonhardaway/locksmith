@@ -1,15 +1,12 @@
 package dev.hardaway.locksmith.api.storage;
 
-import com.jcraft.jorbis.Block;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.hardaway.locksmith.api.lock.Lock;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.Collections;
 import java.util.HashMap;

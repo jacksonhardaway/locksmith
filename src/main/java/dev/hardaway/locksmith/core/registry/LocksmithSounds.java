@@ -3,9 +3,6 @@ package dev.hardaway.locksmith.core.registry;
 import dev.hardaway.locksmith.core.Locksmith;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.level.block.SoundType;
-import net.neoforged.neoforge.common.util.DeferredSoundType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;

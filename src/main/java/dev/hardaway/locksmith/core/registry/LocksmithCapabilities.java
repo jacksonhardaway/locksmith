@@ -24,7 +24,13 @@ public class LocksmithCapabilities {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlock(LocksmithCapabilities.BLOCK_LOCKABLE, BasicBlockLockable::new, BuiltInRegistries.BLOCK.stream().toArray(Block[]::new));
+        for (Block block : BuiltInRegistries.BLOCK) {
+//            if (block instanceof DoorBlock) {
+//                event.registerBlock(LocksmithCapabilities.BLOCK_LOCKABLE, DoorLockable::new, block);
+//            } else {
+            event.registerBlock(LocksmithCapabilities.BLOCK_LOCKABLE, BasicBlockLockable::new, block);
+//            }
+        }
 
         for (EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
             event.registerEntity(LocksmithCapabilities.ENTITY_LOCKABLE, entityType, BasicEntityLockable::new);

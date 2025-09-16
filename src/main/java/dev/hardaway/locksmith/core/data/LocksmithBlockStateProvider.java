@@ -20,7 +20,7 @@ public class LocksmithBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         TextureMapping texture = this.createTableBlock(LocksmithBlocks.LOCKSMITHING_TABLE);
-        this.simpleBlock(LocksmithBlocks.LOCKSMITHING_TABLE.get(),  this.models().withExistingParent("block/locksmithing_table", "cube")
+        this.simpleBlock(LocksmithBlocks.LOCKSMITHING_TABLE.get(), this.models().withExistingParent("block/locksmithing_table", "cube")
                 .texture("particle", texture.get(TextureSlot.PARTICLE))
                 .texture("down", texture.get(TextureSlot.DOWN))
                 .texture("up", texture.get(TextureSlot.UP))

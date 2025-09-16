@@ -2,12 +2,7 @@ package dev.hardaway.locksmith.api.lock;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.hardaway.locksmith.common.component.KeyData;
-import dev.hardaway.locksmith.core.registry.LocksmithAttachments;
-import dev.hardaway.locksmith.core.registry.LocksmithComponents;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.Util;
-import net.minecraft.core.Rotations;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

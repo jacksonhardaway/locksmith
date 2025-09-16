@@ -1,6 +1,9 @@
 package dev.hardaway.locksmith.api.lock;
 
-import dev.hardaway.locksmith.core.registry.*;
+import dev.hardaway.locksmith.core.registry.LocksmithAttachments;
+import dev.hardaway.locksmith.core.registry.LocksmithParticles;
+import dev.hardaway.locksmith.core.registry.LocksmithSounds;
+import dev.hardaway.locksmith.core.registry.LocksmithTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -14,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class BasicEntityLockable extends KeyAndLockLockable {
+public class BasicEntityLockable implements Lockable {
 
     private final Entity entity;
 
@@ -54,7 +57,7 @@ public class BasicEntityLockable extends KeyAndLockLockable {
 
     @Override
     public boolean canLock(ItemStack stack) {
-        return super.canLock(stack) && this.entity.getType().is(LocksmithTags.Entities.LOCKABLES);
+        return Lockable.super.canLock(stack) && this.entity.getType().is(LocksmithTags.Entities.LOCKABLES);
     }
 
     @Override

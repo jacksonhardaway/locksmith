@@ -1,11 +1,8 @@
 package dev.hardaway.locksmith.core;
 
 import dev.hardaway.locksmith.client.particle.LockSparkParticle;
-import dev.hardaway.locksmith.common.item.KeyringItem;
-import dev.hardaway.locksmith.core.registry.LocksmithItems;
 import dev.hardaway.locksmith.core.registry.LocksmithParticles;
 import net.minecraft.client.particle.SmokeParticle;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;

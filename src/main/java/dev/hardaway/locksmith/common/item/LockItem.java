@@ -5,7 +5,6 @@ import dev.hardaway.locksmith.api.lock.Lockable;
 import dev.hardaway.locksmith.common.component.LockData;
 import dev.hardaway.locksmith.core.registry.LocksmithCapabilities;
 import dev.hardaway.locksmith.core.registry.LocksmithComponents;
-import dev.hardaway.locksmith.core.registry.LocksmithTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

@@ -14,7 +14,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class  LocksmithBlocks {
+public class LocksmithBlocks {
 
     public static final DeferredRegister.Blocks REGISTRY = DeferredRegister.createBlocks(Locksmith.MOD_ID);
 

@@ -5,19 +5,14 @@ import dev.hardaway.locksmith.core.data.loot.LocksmithBlockLootProvider;
 import dev.hardaway.locksmith.core.data.loot.LocksmithLootTableProvider;
 import dev.hardaway.locksmith.core.registry.*;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -60,7 +55,6 @@ public class Locksmith {
 
     private void registerCreativeTabs(BuildCreativeModeTabContentsEvent event) {
     }
-
 
 
     private void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {

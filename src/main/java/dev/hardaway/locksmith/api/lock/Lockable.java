@@ -5,6 +5,7 @@ import dev.hardaway.locksmith.core.registry.LocksmithComponents;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public interface Lockable {
@@ -19,8 +20,6 @@ public interface Lockable {
      */
     boolean lock(Lock lock);
 
-    boolean canLock(ItemStack stack);
-
     /**
      * Removes the current lock.
      *
@@ -28,5 +27,19 @@ public interface Lockable {
      */
     @Nullable Lock unlock();
 
-    boolean canUnlock(ItemStack stack);
+    default boolean canLock(ItemStack stack) {
+        return this.getLock().isEmpty() && stack.has(LocksmithComponents.LOCK_DATA);
+    }
+
+    default boolean canUnlock(ItemStack stack) {
+        Optional<Lock> lock = this.getLock();
+        if (lock.isEmpty())
+            return true;
+
+        if (!stack.has(LocksmithComponents.KEY_DATA))
+            return false;
+
+        KeyData data = stack.get(LocksmithComponents.KEY_DATA);
+        return Objects.equals(lock.get().getId(), data.id());
+    }
 }

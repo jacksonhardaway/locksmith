@@ -1,6 +1,5 @@
 package dev.hardaway.locksmith.common.item;
 
-import dev.hardaway.locksmith.api.lock.Lock;
 import dev.hardaway.locksmith.api.lock.Lockable;
 import dev.hardaway.locksmith.common.component.KeyData;
 import dev.hardaway.locksmith.core.registry.LocksmithCapabilities;
@@ -18,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
